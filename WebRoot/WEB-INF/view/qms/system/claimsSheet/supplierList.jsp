@@ -1,0 +1,86 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%><%@ include file="/common/include.inc.jsp"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<c:import url="../../../_frag/pager/pagerForm.jsp"></c:import>
+<script type="text/javascript">
+	$(function(){
+		var v='${vo.factoryS}';
+		$("#factorySsup").val(v);
+	});
+	function comfirmSelects(){
+		var selVal = $('#supplierListTable input:radio[name="supplierLine"]:checked').val();
+		if(selVal == undefined)
+		{
+			alertMsg.warn('请选择供应商！');
+			return false;
+		}
+		var jsonObj = eval("("+ selVal +")");
+		$.bringBack(jsonObj);
+	}
+</script>
+<div class="pageHeader" style="position:static">
+	<form id="partlist" onsubmit="return dwzSearch(this, 'dialog');" rel="pagerForm" action="system/claimsSheet/supplierList.do" method="post">
+		<div class="searchBar pageFormContent" style="border-style: none">
+			<table class="searchContent">		  
+				<td>工厂：</td>
+				<td>
+					<select id="factorySsup" name="factoryS">
+						<option value="">请选择</option>
+						<c:forEach items="${factorylist}" var="list">
+							<option value="${list}">${list}</option>
+						</c:forEach>
+					</select>
+				</td>
+				<td>供应商编号：</td>
+				<td>
+					<input type="text" id="" name="numbers" value="${vo.numbers }"/>
+				</td>
+				<td>供应商名称：</td>
+				<td>
+					<input type="text" id="" name="name" value="${vo.name }"/>
+				</td>
+				<td>
+					<input type="submit" value="查找">
+				</td>
+			</table>
+		</div>
+	</form>
+</div>
+<div class="pageContent">
+	<table style="width: 100%" class="list" layoutH="140" id="supplierListTable">
+		<thead>
+			<tr>
+				<th style="width: 15%">选择</th>
+				<th style="width: 20%">工厂</th>
+				<th style="width: 15%">供应商编号</th>
+				<th style="width: 25%">供应商名称</th>
+				<th style="width: 10%">供应商简称</th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach items="${list}" var="val">
+				<tr target="dlg" rel="${val.numbers}">
+					<td style="text-align: center;">
+						<input type="radio" group="dlguser" name="supplierLine" value="{supplierNumbers:'${val.numbers}', supplierName:'${val.name}', abbreviation:'${val.abbreviation}'}">
+					</td>
+					<td>${val.factoryS}</td>
+					<td>${val.numbers}</td>
+					<td>${val.name}</td>
+					<td>${val.abbreviation}</td>
+				</tr>
+			</c:forEach>
+		</tbody>
+	</table>
+	<c:import url="../../../_frag/pager/panelBar.jsp">
+       <%-- 对话框分页时需要传此参数 --%>
+       <c:param name="targetName" value="dialog"/>    
+    </c:import>
+	<div class="formBar">
+		<ul>
+			<li><div class="buttonActive"><div class="buttonContent"><button type="button" onclick="comfirmSelects()">确定</button></div></div></li>
+			<li>
+				<div class="button"><div class="buttonContent"><button type="button" class="close" onclick="">取消</button></div></div>
+			</li>
+		</ul>
+	</div>
+</div>
+</div>

@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.peg.dao.smt.SmtMapper">
+
+    <insert id="insertMvData">
+        insert all
+        <foreach collection="list" item="item" index="index">
+            into PFSA_PANA_MV_DATA(lineNum, lineName, zoneNum, zoneName, cartId, cellNum, cellName, lane, stage, zNum, slotNum,
+            subSlotNum, partNum, expectedPart, lotNum, vendor, feeder, quantity, currentQty, partTimeOn, partTimeOff, mountOperator,
+            operation, userData, materialId, mcid, partClass, comparisonId, overrideReason, pacpartno, pacextradata, pacevaluation)
+            values
+            (#{item.lineNum, jdbcType=DECIMAL}, #{item.lineName, jdbcType=VARCHAR}, #{item.zoneNum, jdbcType=DECIMAL},
+            #{item.zoneName, jdbcType=VARCHAR}, #{item.cartId, jdbcType=VARCHAR}, #{item.cellNum, jdbcType=DECIMAL},
+            #{item.cellName, jdbcType=VARCHAR}, #{item.lane, jdbcType=VARCHAR}, #{item.stage, jdbcType=VARCHAR},
+            #{item.zNum, jdbcType=DECIMAL}, #{item.slotNum, jdbcType=DECIMAL}, #{item.subSlotNum, jdbcType=DECIMAL},
+            #{item.partNum, jdbcType=VARCHAR}, #{item.expectedPart, jdbcType=VARCHAR}, #{item.lotNum, jdbcType=VARCHAR},
+            #{item.vendor, jdbcType=VARCHAR}, #{item.feeder, jdbcType=VARCHAR},
+            #{item.quantity, jdbcType=DECIMAL}, #{item.currentQty, jdbcType=DECIMAL}, #{item.partTimeOn, jdbcType=DECIMAL},
+            #{item.partTimeOff, jdbcType=VARCHAR}, #{item.mountOperator, jdbcType=VARCHAR}, #{item.operation, jdbcType=VARCHAR},
+            #{item.userData, jdbcType=VARCHAR}, #{item.materialId, jdbcType=VARCHAR}, #{item.mcid, jdbcType=VARCHAR},
+            #{item.partClass, jdbcType=VARCHAR}, #{item.comparisonId, jdbcType=VARCHAR}, #{item.overrideReason, jdbcType=VARCHAR},
+            #{item.pacpartno, jdbcType=VARCHAR}, #{item.pacextradata, jdbcType=VARCHAR}, #{item.pacevaluation, jdbcType=VARCHAR})
+        </foreach>
+        select 1 from dual
+    </insert>
+
+    <insert id="insertTraceData">
+        insert all
+        <foreach collection="list" item="item" index="index">
+            into PFSA_PANA_TRACE_DATA(lineNum, lineName, cellNum, cellName, lane, stage, pcbName, setupName, prodId,
+            panelBarCode, side, serialNum, boardEntryTime, releaseTime, zNum, slotNum, subSlotNum, partNum, expectedPart,
+            lotNum, vendor, feeder, quantity, partTimeOn, partTimeOff, mountOperator, userData, primaryProductId, materialId,
+            mcid, partClass, patternSerialNum, location)
+            values
+            (#{item.lineNum, jdbcType=DECIMAL}, #{item.lineName, jdbcType=VARCHAR}, #{item.cellNum, jdbcType=DECIMAL},
+            #{item.cellName, jdbcType=VARCHAR}, #{item.lane, jdbcType=VARCHAR}, #{item.stage, jdbcType=VARCHAR},
+            #{item.pcbName, jdbcType=VARCHAR}, #{item.setupName, jdbcType=VARCHAR}, #{item.prodId, jdbcType=VARCHAR},
+            #{item.panelBarCode, jdbcType=VARCHAR}, #{item.side, jdbcType=VARCHAR}, #{item.serialNum, jdbcType=VARCHAR},
+            #{item.boardEntryTime, jdbcType=TIMESTAMP}, #{item.releaseTime, jdbcType=TIMESTAMP},
+            #{item.zNum, jdbcType=DECIMAL}, #{item.slotNum, jdbcType=DECIMAL}, #{item.subSlotNum, jdbcType=DECIMAL},
+            #{item.partNum, jdbcType=VARCHAR}, #{item.expectedPart, jdbcType=VARCHAR}, #{item.lotNum, jdbcType=VARCHAR},
+            #{item.vendor, jdbcType=VARCHAR}, #{item.feeder, jdbcType=VARCHAR}, #{item.quantity, jdbcType=DECIMAL},
+            #{item.partTimeOn, jdbcType=TIMESTAMP}, #{item.partTimeOff, jdbcType=TIMESTAMP},
+            #{item.mountOperator, jdbcType=VARCHAR}, #{item.userData, jdbcType=VARCHAR}, #{item.primaryProductId, jdbcType=VARCHAR},
+            #{item.materialId, jdbcType=VARCHAR}, #{item.mcid, jdbcType=VARCHAR}, #{item.partClass, jdbcType=VARCHAR},
+            #{item.patternSerialNum, jdbcType=VARCHAR}, #{item.location, jdbcType=VARCHAR})
+        </foreach>
+        select 1 from dual
+    </insert>
+
+    <insert id="insertScrapData">
+        insert all
+        <foreach collection="list" item="item" index="index">
+            into PFSA_PANA_SCRAP_DATA(lineName, cellNum, cellName, location, partNum, materialId, pickupCount, placeCount,
+            scrap, starttime, endtime, workOrderName, workOrderStatus)
+            values
+            (#{item.lineName, jdbcType=VARCHAR}, #{item.cellNum, jdbcType=DECIMAL}, #{item.cellName, jdbcType=VARCHAR},
+            #{item.location, jdbcType=VARCHAR}, #{item.partNum, jdbcType=VARCHAR}, #{item.materialId, jdbcType=VARCHAR},
+            #{item.pickupCount, jdbcType=DECIMAL}, #{item.placeCount, jdbcType=DECIMAL}, #{item.scrap, jdbcType=DECIMAL},
+            #{item.starttime, jdbcType=DECIMAL}, #{item.endtime, jdbcType=DECIMAL},
+            #{item.workOrderName, jdbcType=VARCHAR}, #{item.workOrderStatus, jdbcType=VARCHAR})
+        </foreach>
+        select 1 from dual
+    </insert>
+
+    <resultMap id="mvDataMap" type="com.peg.model.smt.PFSAPANAMvData">
+        <result column="LINENAME" property="lineName" jdbcType="VARCHAR" />
+        <result column="ZONENAME" property="zoneName" jdbcType="VARCHAR" />
+        <result column="CELLNAME" property="cellName" jdbcType="VARCHAR" />
+        <result column="LANE" property="lane" jdbcType="VARCHAR" />
+        <result column="STAGE" property="stage" jdbcType="VARCHAR" />
+        <result column="ZNUM" property="zNum" jdbcType="DECIMAL" />
+        <result column="SLOTNUM" property="slotNum" jdbcType="DECIMAL" />
+        <result column="SUBSLOTNUM" property="subSlotNum" jdbcType="DECIMAL" />
+        <result column="PARTNUM" property="partNum" jdbcType="VARCHAR" />
+        <result column="LOTNUM" property="lotNum" jdbcType="VARCHAR" />
+        <result column="VENDOR" property="vendor" jdbcType="VARCHAR" />
+        <result column="FEEDER" property="feeder" jdbcType="VARCHAR" />
+        <result column="PARTTIMEON" property="partTimeOnStr" jdbcType="DECIMAL" />
+    </resultMap>
+    <select id="getMvDataAllByPage" resultMap="mvDataMap">
+        SELECT lineName, zoneName, cellName, lane, stage, zNum, slotNum, subSlotNum, partNum, lotNum, vendor, feeder,
+        TO_CHAR(partTimeOn / (60 * 60 * 24) +
+        TO_DATE('1970-01-01 08:00:00', 'yyyy/mm/dd hh:mi:ss'), 'yyyy/mm/dd hh:mi:ss') as partTimeOn
+        FROM pfsa_pana_mv_data
+        <trim prefix="where" prefixOverrides="and">
+            <if test="mv.stage != null and mv.stage != '' ">
+                AND stage = to_number(#{mv.stage})
+            </if>
+            <if test="mv.partNum != null and mv.partNum != '' ">
+                AND partNum = #{mv.partNum}
+            </if>
+            <if test="mv.slotNum != null and mv.slotNum != '' ">
+                AND slotNum = #{mv.slotNum}
+            </if>
+            <if test="mv.lineName != null and mv.lineName != '' ">
+                AND lineName = #{mv.lineName}
+            </if>
+        </trim>
+        order by partTimeOn desc
+    </select>
+    
+    <select id="getMvDataAll" resultMap="mvDataMap">
+        SELECT lineName, zoneName, cellName, lane, stage, zNum, slotNum, subSlotNum, partNum, lotNum, vendor, feeder,
+        TO_CHAR(partTimeOn / (60 * 60 * 24) +
+        TO_DATE('1970-01-01 08:00:00', 'yyyy/mm/dd hh:mi:ss'), 'yyyy/mm/dd hh:mi:ss') as partTimeOn
+        FROM pfsa_pana_mv_data
+        <trim prefix="where" prefixOverrides="and">
+            <if test="mv.stage != null and mv.stage != '' ">
+                AND stage = to_number(#{mv.stage})
+            </if>
+            <if test="mv.partNum != null and mv.partNum != '' ">
+                AND partNum = #{mv.partNum}
+            </if>
+            <if test="mv.slotNum != null and mv.slotNum != '' ">
+                AND slotNum = #{mv.slotNum}
+            </if>
+            <if test="mv.lineName != null and mv.lineName != '' ">
+                AND lineName = #{mv.lineName}
+            </if>
+        </trim>
+    </select>
+
+    <resultMap id="traceDatatMap" type="com.peg.model.smt.PFSAPANATraceData" >
+        <result column="LINENAME" property="lineName" jdbcType="VARCHAR" />
+        <result column="CELLNAME" property="cellName" jdbcType="VARCHAR" />
+        <result column="PCBNAME" property="pcbName" jdbcType="VARCHAR" />
+        <result column="PANELBARCODE" property="panelBarCode" jdbcType="VARCHAR" />
+        <result column="SIDE" property="side" jdbcType="VARCHAR" />
+        <result column="ZNUM" property="zNum" jdbcType="DECIMAL" />
+        <result column="SLOTNUM" property="slotNum" jdbcType="DECIMAL" />
+        <result column="SUBSLOTNUM" property="subSlotNum" jdbcType="DECIMAL" />
+        <result column="PARTNUM" property="partNum" jdbcType="VARCHAR" />
+        <result column="LOTNUM" property="lotNum" jdbcType="VARCHAR" />
+        <result column="VENDOR" property="vendor" jdbcType="VARCHAR" />
+        <result column="FEEDER" property="feeder" jdbcType="VARCHAR" />
+        <result column="QUANTITY" property="quantity" jdbcType="DECIMAL" />
+        <result column="BOARDENTRYTIME" property="boardEntryTime" jdbcType="TIMESTAMP" />
+        <result column="RELEASETIME" property="releaseTime" jdbcType="TIMESTAMP" />
+        <result column="MOUNTOPERATOR" property="mountOperator" jdbcType="VARCHAR" />
+        <result column="USERDATA" property="userData" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="getTraceDataAllByPage" resultMap="traceDatatMap">
+        SELECT linename, cellname, pcbname, panelbarcode, side, znum, slotnum, subslotnum, partnum, lotnum, vendor, feeder,
+        quantity, boardentrytime, releasetime, mountoperator, userdata FROM pfsa_pana_trace_data
+        <trim prefix="where" prefixOverrides="and">
+            <if test="trace.userData != null and trace.userData != '' ">
+                AND userData = #{trace.userData}
+            </if>
+            <if test="trace.vendor != null and trace.vendor != '' ">
+                AND vendor = #{trace.vendor}
+            </if>
+            <if test="trace.partNum != null and trace.partNum != '' ">
+                AND partNum = #{trace.partNum}
+            </if>
+            <if test="trace.lotNum != null and trace.lotNum != '' ">
+                AND lotNum = #{trace.lotNum}
+            </if>
+            <if test="trace.lineName != null and trace.lineName != '' ">
+                AND lineName = #{trace.lineName}
+            </if>
+            <if test="trace.panelBarCode != null and trace.panelBarCode != '' ">
+                AND panelBarCode = #{trace.panelBarCode}
+            </if>
+            <if test="trace.boardEntryTimeStart != null and trace.boardEntryTimeStart != ''
+                       and trace.boardEntryTimeEnd != null and trace.boardEntryTimeEnd != '' ">
+                AND boardEntryTime between to_date(#{trace.boardEntryTimeStart}, 'yyyy-mm-dd hh24:mi:ss')
+                and to_date(#{trace.boardEntryTimeEnd}, 'yyyy-mm-dd hh24:mi:ss')
+            </if>
+        </trim>
+        ORDER BY boardEntryTime DESC
+    </select>
+    
+        <select id="getTraceDataAll" resultMap="traceDatatMap">
+        SELECT linename, cellname, pcbname, panelbarcode, side, znum, slotnum, subslotnum, partnum, lotnum, vendor, feeder,
+        quantity, boardentrytime, releasetime, mountoperator, userdata FROM pfsa_pana_trace_data
+        <trim prefix="where" prefixOverrides="and">
+            <if test="trace.userData != null and trace.userData != '' ">
+                AND userData = #{trace.userData}
+            </if>
+            <if test="trace.vendor != null and trace.vendor != '' ">
+                AND vendor = #{trace.vendor}
+            </if>
+            <if test="trace.partNum != null and trace.partNum != '' ">
+                AND partNum = #{trace.partNum}
+            </if>
+            <if test="trace.lotNum != null and trace.lotNum != '' ">
+                AND lotNum = #{trace.lotNum}
+            </if>
+            <if test="trace.lineName != null and trace.lineName != '' ">
+                AND lineName = #{trace.lineName}
+            </if>
+            <if test="trace.panelBarCode != null and trace.panelBarCode != '' ">
+                AND panelBarCode = #{trace.panelBarCode}
+            </if>
+            <if test="trace.boardEntryTimeStart != null and trace.boardEntryTimeStart != ''
+                       and trace.boardEntryTimeEnd != null and trace.boardEntryTimeEnd != '' ">
+                AND boardEntryTime between to_date(#{trace.boardEntryTimeStart}, 'yyyy-mm-dd hh24:mi:ss')
+                and to_date(#{trace.boardEntryTimeEnd}, 'yyyy-mm-dd hh24:mi:ss')
+            </if>
+        </trim>
+        ORDER BY boardEntryTime DESC
+    </select>
+
+    <resultMap id="scrapDataMap" type="com.peg.model.smt.PFSAPANAScrapData">
+        <result column="LINENAME" property="lineName" jdbcType="VARCHAR"/>
+        <result column="CELLNAME" property="cellName" jdbcType="VARCHAR" />
+        <result column="LOCATION" property="location" jdbcType="VARCHAR" />
+        <result column="PARTNUM" property="partNum" jdbcType="VARCHAR" />
+        <result column="MATERIALID" property="materialId" jdbcType="VARCHAR" />
+        <result column="PICKUPCOUNT" property="pickupCount" jdbcType="DECIMAL" />
+        <result column="SCRAP" property="scrap" jdbcType="DECIMAL" />
+        <result column="STARTTIME" property="startTimeStamp" jdbcType="DECIMAL" />
+        <result column="ENDTIME" property="endTimeStamp" jdbcType="DECIMAL" />
+    </resultMap>
+    <select id="getScrapDataAllByPage" resultMap="scrapDataMap">
+        SELECT linename, cellname, location, partnum, materialid, pickupcount, scrap,
+        TO_CHAR(starttime / (60 * 60 * 24) +
+        TO_DATE('1970-01-01 08:00:00', 'yyyy/mm/dd hh:mi:ss'), 'yyyy/mm/dd hh:mi:ss') as starttime,
+        TO_CHAR(endtime / (60 * 60 * 24) +
+        TO_DATE('1970-01-01 08:00:00', 'yyyy/mm/dd hh:mi:ss'), 'yyyy/mm/dd hh:mi:ss') as endtime
+        FROM pfsa_pana_scrap_data
+        <trim prefix="where" prefixOverrides="and">
+            <if test="scrap.location != null and scrap.location != '' ">
+                AND location = to_number(#{scrap.location})
+            </if>
+            <if test="scrap.cellName != null and scrap.cellName != '' ">
+                AND cellName = #{scrap.cellName}
+            </if>
+            <if test="scrap.partNum != null and scrap.partNum != '' ">
+                AND partNum = #{scrap.partNum}
+            </if>
+            <if test="scrap.lineName != null and scrap.lineName != '' ">
+                AND lineName = #{scrap.lineName}
+            </if>
+            <if test="scrap.startTimeStamp != null and scrap.startTimeStamp != '' and scrap.endTimeStamp != null and scrap.endTimeStamp != ''">
+                AND starttime BETWEEN
+                to_number(to_date(#{scrap.startTimeStamp}, 'yyyy-mm-dd hh24:mi:ss') - to_date('1970-01-01 8:0:0', 'yyyy-mm-dd hh24:mi:ss')) * 24 * 60 * 60
+                AND
+                to_number(to_date(#{scrap.endTimeStamp}, 'yyyy-mm-dd hh24:mi:ss') - to_date('1970-01-01 8:0:0', 'yyyy-mm-dd hh24:mi:ss')) * 24 * 60 * 60
+            </if>
+        </trim>
+    </select>
+    
+    <select id="getScrapDataAll" resultMap="scrapDataMap">
+        SELECT linename, cellname, location, partnum, materialid, pickupcount, scrap,
+        TO_CHAR(starttime / (60 * 60 * 24) +
+        TO_DATE('1970-01-01 08:00:00', 'yyyy/mm/dd hh:mi:ss'), 'yyyy/mm/dd hh:mi:ss') as starttime,
+        TO_CHAR(endtime / (60 * 60 * 24) +
+        TO_DATE('1970-01-01 08:00:00', 'yyyy/mm/dd hh:mi:ss'), 'yyyy/mm/dd hh:mi:ss') as endtime
+        FROM pfsa_pana_scrap_data
+        <trim prefix="where" prefixOverrides="and">
+            <if test="scrap.location != null and scrap.location != '' ">
+                AND location = to_number(#{scrap.location})
+            </if>
+            <if test="scrap.cellName != null and scrap.cellName != '' ">
+                AND cellName = #{scrap.cellName}
+            </if>
+            <if test="scrap.partNum != null and scrap.partNum != '' ">
+                AND partNum = #{scrap.partNum}
+            </if>
+            <if test="scrap.lineName != null and scrap.lineName != '' ">
+                AND lineName = #{scrap.lineName}
+            </if>
+            <if test="scrap.startTimeStamp != null and scrap.startTimeStamp != '' and scrap.endTimeStamp != null and scrap.endTimeStamp != ''">
+                AND starttime BETWEEN
+                to_number(to_date(#{scrap.startTimeStamp}, 'yyyy-mm-dd hh24:mi:ss') - to_date('1970-01-01 8:0:0', 'yyyy-mm-dd hh24:mi:ss')) * 24 * 60 * 60
+                AND
+                to_number(to_date(#{scrap.endTimeStamp}, 'yyyy-mm-dd hh24:mi:ss') - to_date('1970-01-01 8:0:0', 'yyyy-mm-dd hh24:mi:ss')) * 24 * 60 * 60
+            </if>
+        </trim>
+    </select>
+</mapper>

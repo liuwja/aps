@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.GroupCategoryMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.GroupCategory" >
+    <id column="gc_key" property="gcKey" jdbcType="DECIMAL" />
+    <result column="factory" property="factory" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="category" property="category" jdbcType="VARCHAR" />
+    <association property="uigroup" resultMap="com.peg.dao.bph.GroupMapper.BaseResultMap" columnPrefix="g_"></association> 
+    <collection property="item" resultMap="com.peg.dao.bph.ItemMapper.BaseResultMap" columnPrefix="it_"></collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    gc_key, factory,area,category
+  </sql>
+  
+  <select id="getAllGroupCategory" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from t_group_category
+  </select>
+  
+  <select id="getAllGroupCategoryFromMes" resultMap="BaseResultMap">
+    select rownum as gc_key,a.factory, a.area , a.category 
+    from(
+    select  distinct uda_1 as factory,uda_2 as area,uda_4 as category from app_group where uda_4 is not null
+    ) a
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+  select <include refid="Base_Column_List"></include>
+  from t_group_category
+  where gc_key = #{gcKey}
+  </select>
+
+   <select id="getItemAllByPage" resultMap="BaseResultMap" >
+    select 
+    b.gc_key ,b.factory,b.area  ,b.category ,
+    a.item_key it_item_key, a.gc_key it_gc_key,a.ITEM_CODE it_ITEM_CODE,a.ITEM_NAME it_ITEM_NAME,
+    a.CREATE_USER it_CREATE_USER,a.CREATE_TIME it_CREATE_TIME,a.LAST_UPDATE_TIME it_LAST_UPDATE_TIME,a.LAST_UPDATE_User it_LAST_UPDATE_User
+    from T_ITEM a,t_group_category b
+    where a.gc_key(+) = b.gc_key
+    
+        <if test="hashMap.factory != null">
+           and b.FACTORY like '%${hashMap.factory}%'
+        </if>
+        <if test="hashMap.area != null">
+           and b.area like '%${hashMap.area}%'
+        </if>
+        <if test="hashMap.category != null">
+           and   b.CATEGORY like '%${hashMap.category}%'
+        </if>
+   
+       order by b.FACTORY DESC ,b.area DESC, b.CATEGORY DESC, a.item_code
+  </select> 
+  
+  
+   <select id="getIndexAllByPage" resultMap="BaseResultMap" >
+    select 
+    b.gc_key ,b.factory,b.area  ,b.category ,
+    a.item_key it_item_key, a.gc_key it_gc_key,a.ITEM_CODE it_ITEM_CODE,a.ITEM_NAME it_ITEM_NAME,
+    c.index_key it_in_index_key, c.item_key it_in_item_key,c.index_name it_in_index_name,c.index_code it_in_index_code,
+    c.index_description it_in_index_description,c.mainKey it_in_mainKey,c.CREATE_TIME it_in_CREATE_TIME,c.CREATE_USER it_in_CREATE_USER,
+    c.LAST_UPDATE_TIME it_in_LAST_UPDATE_TIME,c.LAST_UPDATE_USER it_in_LAST_UPDATE_USER
+    from T_ITEM a,t_group_category b ,t_index c
+    where a.gc_key(+) = b.gc_key
+    and a.item_key = c.item_key(+)
+    
+        <if test="hashMap.factory != null">
+           and b.FACTORY like '%${hashMap.factory}%'
+        </if>
+        <if test="hashMap.area != null">
+           and b.area like '%${hashMap.area}%'
+        </if>
+        <if test="hashMap.category != null">
+           and   b.CATEGORY like '%${hashMap.category}%'
+        </if>
+   
+       order by b.FACTORY DESC ,b.area DESC, b.CATEGORY DESC,a.item_code,to_number(substr(replace(c.index_code,'-',''),2,3))
+  </select> 
+  
+  <select id="getMonthAllByPage" resultMap="BaseResultMap" >
+    select 
+    b.gc_key ,b.factory,b.area  ,b.category ,s.group_key g_group_key,s.group_name g_group_name,s.group_code g_group_code,
+    a.item_key it_item_key, a.gc_key it_gc_key,a.ITEM_CODE it_ITEM_CODE,a.ITEM_NAME it_ITEM_NAME,
+    c.index_key it_in_index_key, c.item_key it_in_item_key,c.index_name it_in_index_name,c.index_code it_in_index_code,
+    c.index_description it_in_index_description,c.mainKey it_in_mainKey,
+    d.ma_key it_in_ma_ma_key,d.group_key it_in_ma_group_key, d.index_key it_in_ma_index_key, d.monthly it_in_ma_monthly, 
+    d.item_scale it_in_ma_item_scale, d.index_scale it_in_ma_index_scale, d.index_mainkey it_in_ma_index_mainkey, 
+    d.base_value it_in_ma_base_value, d.target_value it_in_ma_target_value, d.CREATE_TIME it_in_ma_CREATE_TIME, d.CREATE_USER it_in_ma_CREATE_USER
+    from T_ITEM a,t_group_category b ,t_index c, T_MONTHLY_ASSESSMENT d,t_group g,t_group s
+    where b.gc_key = s.category_key
+    and a.gc_key = b.gc_key
+    and a.item_key = c.item_key
+    and c.index_key = d.index_key
+    and d.group_key = g.group_key
+    and s.group_key = g.group_key
+    
+    
+        <if test="hashMap.factory != null">
+           and b.FACTORY like '%${hashMap.factory}%'
+        </if>
+        <if test="hashMap.area != null">
+           and b.area like '%${hashMap.area}%'
+        </if>
+        <if test="hashMap.category != null">
+           and   b.CATEGORY like '%${hashMap.category}%'
+        </if>
+        <if test="hashMap.monthly != null">
+           and   d.monthly like '%${hashMap.monthly}%'
+        </if>
+        <if test="hashMap.groupName != null">
+           and   s.group_name like '%${hashMap.groupName}%'
+        </if>
+   
+       order by b.FACTORY DESC ,b.area DESC, b.CATEGORY DESC,a.item_code,to_number(substr(replace(c.index_code,'-',''),2,3)),d.monthly
+  </select> 
+  
+   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_group_category
+    where  gc_key = #{gcKey,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.bph.GroupCategory" >
+    insert into t_group_category (  factory,area,category )
+    values ( #{factory,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR},#{category,jdbcType=VARCHAR})
+  </insert>
+  
+ </mapper>

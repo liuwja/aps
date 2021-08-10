@@ -1,0 +1,1719 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.CommonMapper" >
+<resultMap id="BaseResultMap" type="com.peg.model.CommonVo" >
+	<id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="region" property="region" jdbcType="VARCHAR" />
+    <result column="product_type" property="productType" jdbcType="VARCHAR" />
+    <result column="part_type" property="partType" jdbcType="VARCHAR" />
+    <result column="productline_number" property="productLineNumber" jdbcType="VARCHAR" />
+    <result column="productline_name" property="productLineName" jdbcType="VARCHAR" />
+    <result column="repair_month" property="repairMonth" jdbcType="VARCHAR" />
+    <result column="ship_month" property="shipMonth" jdbcType="VARCHAR" />
+    <result column="base_month" property="baseMonth" jdbcType="VARCHAR" />
+    <result column="downline_month" property="downLineMonth" jdbcType="VARCHAR" />
+    <result column="fault_type_code" property="faultTypeCode" jdbcType="VARCHAR" />
+    <result column="fault_type_name" property="faultTypeName" jdbcType="VARCHAR" />
+    <result column="fault_reason_code" property="faultReasonCode" jdbcType="VARCHAR" />
+    <result column="fault_reason_name" property="faultReasonName" jdbcType="VARCHAR" />
+    <result column="is_over" property="over" jdbcType="VARCHAR" />
+    <result column="product_family" property="productFamily" jdbcType="VARCHAR" />
+    <result column="repair_count" property="repairCount" jdbcType="DECIMAL" />
+    <result column="faultCode_Count" property="faultCodeCount" jdbcType="DECIMAL" />
+    
+    <result column="ship_count" property="shipCount" jdbcType="DECIMAL" />
+    <result column="downline_count" property="downlineCount" jdbcType="DECIMAL" />
+    <result column="factory" property="factory" jdbcType="VARCHAR" />
+    <result column="shift_group_name" property="shiftGroupTxt" jdbcType="VARCHAR" />
+    <result column="shift_group_code" property="shiftGroupCode" jdbcType="VARCHAR" />
+    <result column="shift_group_score" property="shiftGroupScore" jdbcType="DECIMAL" />
+    
+    <result column="install_month" property="installMonth" jdbcType="VARCHAR" />
+    <result column="install_count" property="installCount" jdbcType="DECIMAL" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="row_id" property="rowId" jdbcType="DECIMAL" />
+    <result column="interval_time" property="intervalTime" jdbcType="DECIMAL"/>
+    <result column="voiceCategory" property="voiceCategory" jdbcType="VARCHAR" />
+    
+</resultMap>
+
+<resultMap id="productionLineMap" type="com.peg.model.ProductionLine" >
+    <result column="factory" property="factory" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="productline_number" property="productionLineNumber" jdbcType="VARCHAR" />
+    <result column="productline_name" property="productionLineName" jdbcType="VARCHAR" />
+</resultMap>
+
+<resultMap id="InstallRepairResultMap" type="com.peg.model.system.SumResult" >
+    <result property="installDate" column="ist_date" jdbcType="VARCHAR" />
+    <result property="installAmount" column="isl_sum" jdbcType="VARCHAR" />
+    <result property="finishDate" column="rp_date" jdbcType="VARCHAR" />
+    <result property="repairAmount" column="rp_sum" jdbcType="VARCHAR" />
+</resultMap>
+  
+<!-- 错误维修条码汇总表 -->
+<select id="getFaultCodeTotal" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo">
+	<![CDATA[	    
+		select to_char(t.finish_date,'yyyy-MM') as repair_month, count(1) as faultCode_Count from T_MARKET_REPAIR_RECORD t 
+		where (t.part_code is null or t.part_code not like '7%'
+	 	or (t.part_code like '7%' and instr(t.part_code,'L')=0 and (length(substr(t.part_code,-10,4))!=4 
+		or nvl2(translate(substr(t.part_code,-10,4),'\1234567890','\'),'char','number')='char' 
+		or substr(t.part_code,-8,2)>'12' or substr(t.part_code,-8,2)<'01' ))
+	 	or( t.part_code like '7%' and instr(t.part_code,'L')>0 and (length(substr(t.part_code,instr(t.part_code,'L'),7))!=7 
+		or nvl2(translate(substr(substr(t.part_code,instr(t.part_code,'L'),7),-4,4), '\1234567890','\'),'char','number')='char'
+		or substr(substr(t.part_code,instr(t.part_code,'L'),7),-2,2)<'01' or substr(substr(t.part_code,instr(t.part_code,'L'),7),-2,2)>'12') ) )
+	]]>
+	<if test="hashMap.startTime != null  and hashMap.endTime != null">
+		and to_char(t.finish_date,'yyyy-MM') between #{hashMap.startTime,jdbcType=VARCHAR} and  #{hashMap.endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="hashMap.productType != null">
+		and t.product_type like '%${hashMap.productType}%'
+	</if>
+  		group by to_char(t.finish_date,'yyyy-MM') order by to_char(t.finish_date,'yyyy-MM') desc
+</select>
+
+<!-- 根据区域获取维修数据 -->
+<select id="getReCountGroupByRegion" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[	    
+		select tmrtr.region as region,sum(tmrtr.repaired_count) as repair_count 
+		from T_MARKET_REPAIR_TOTAL_RECORD tmrtr ,t_Fault_Reason  tfr,t_Fault_Type  tft
+		where 1=1
+		and tmrtr.fault_reason_code=tfr.code(+)
+		and tmrtr.fault_type_code=tft.code(+)
+	]]>
+	
+	<if test="startI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.DOWNLINE_MONTH,'yyyy-mm'))+1 >= '${startI}'
+		]]>
+	</if>
+	<if test="endI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.DOWNLINE_MONTH,'yyyy-mm'))+1 <= '${endI}'
+		]]>
+	</if>
+	<if test="insStartI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.install_month,'yyyy-mm'))+1 >= '${insStartI}'
+		]]>
+	</if>
+	<if test="insEndI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.install_month,'yyyy-mm'))+1 <= '${insEndI}'
+		]]>
+	</if>
+	
+	
+	<if test="isOver != null and isOver != ''" >
+		and tmrtr.is_over = '${isOver}'
+	</if>
+	<if test="isConsumedPart != null and isConsumedPart != ''" >
+		and tmrtr.is_consumed_part = '${isConsumedPart}'
+	</if>
+	<if test="faultReasonValid != null and faultReasonValid != ''">
+		and tfr.valid = '${faultReasonValid}'
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''" >
+		and tmrtr.repaired_month BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="dwStartTime != null and dwStartTime != '' and dwEndTime != null and dwEndTime != ''">
+		and tmrtr.downline_month BETWEEN #{dwStartTime,jdbcType=VARCHAR} and #{dwEndTime,jdbcType=VARCHAR}
+	</if>
+	<if test="insStartTime != null and insStartTime != '' and insEndTime != null and insEndTime != ''">
+		and tmrtr.install_month BETWEEN #{insStartTime,jdbcType=VARCHAR} and #{insEndTime,jdbcType=VARCHAR}
+	</if>
+	<if test="productType != null" >
+		and tmrtr.product_type like '%${productType}%'
+	</if>
+	<if test="partType != null" >
+		and tmrtr.part_type = #{partType,jdbcType=VARCHAR}
+	</if>
+	<if test="productLineNumber != null" >
+		<choose>
+    		<when test="productLineNumber == '产线不明'">
+    			and (tmrtr.productline_number is null or tmrtr.productline_number='')
+    		</when>
+    		<otherwise>and tmrtr.productline_number = #{productLineNumber,jdbcType=VARCHAR}</otherwise>
+    	</choose>
+	</if>
+	<if test="faultTypeName != null" >
+		and tft.name like '%${faultTypeName}'
+	</if>
+	<include refid="multiple_select_List" />
+	<![CDATA[
+		group by tmrtr.region
+		order by sum(tmrtr.repaired_count) desc
+	]]>
+</select>
+
+<!-- 根据区域获取下线数据 -->
+<select id="getShipCountGroupByRegion" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[	    
+		select tstr.region as region,sum(tstr.ship_count) as ship_count 
+		from t_Ship_Total_Record tstr 
+		where 1=1
+	]]>
+	<if test="startTime != null and endTime != null" >
+		and tstr.statistics_month BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="productType != null" >
+		and tstr.product_type like '%${productType}%'
+	</if>
+	<if test="partType != null" >
+		and tstr.part_type = #{partType,jdbcType=VARCHAR}
+	</if>
+	<if test="productLineNumber != null" >
+		<choose>
+    		<when test="productLineNumber == '产线不明'">
+    			and (tstr.productline_number is null or tstr.productline_number='')
+    		</when>
+    		<otherwise>and tstr.productline_number = #{productLineNumber,jdbcType=VARCHAR}</otherwise>
+    	</choose>
+	</if>
+    <include refid="ship_multiple_select_List" />
+	<![CDATA[
+		group by tstr.region
+		order by sum(tstr.ship_count) desc
+	]]>
+</select>
+
+<!-- 根据省份获取维修数据 -->
+<select id="getReCountGroupByProvince" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[	    
+		select tlr.province as province,sum(tmrtr.repaired_count) as repair_count from T_MARKET_REPAIR_TOTAL_RECORD tmrtr ,t_Fault_Reason tfr,t_Fault_Type tft, 
+		(select distinct region,province from t_Location_Region where region is not null order by NLSSORT(region ,'NLS_SORT = SCHINESE_PINYIN_M')) tlr
+		where 1=1 and tmrtr.fault_reason_code=tfr.code and tmrtr.fault_type_code=tft.code and tmrtr.region = tlr.region
+	]]>
+	<if test="isOver != null and isOver != ''" >
+		and tmrtr.is_over = '${isOver}'
+	</if>
+	<if test="isConsumedPart != null and isConsumedPart != ''" >
+		and tmrtr.IS_CONSUMED_PART = '${isConsumedPart}'
+	</if>
+	<if test="faultReasonValid != null and faultReasonValid != ''">
+		and tfr.valid = '${faultReasonValid}'
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''" >
+		and tmrtr.repaired_month BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="productType != null" >
+		and tmrtr.product_type like '%${productType}%'
+	</if>
+	<if test="productFamilys != null">
+		and tmrtr.product_family in
+		<foreach item="item" index="index" collection="productFamilys" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partTypes != null" >
+		and tmrtr.part_type in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="plines != null">
+		and tmrtr.productline_number in
+		<foreach item="item" index="index" collection="plines" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="meshFaultName != null and meshFaultName!=''" >
+		and tfr.meshfaultname like '%${meshFaultName}%'
+	</if>
+	<if test="faultTypes != null">
+		and tmrtr.faul_type_code in
+		<foreach item="item" index="index" collection="faultTypes" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="faultReasons != null">
+    	 and tmrtr.fault_reason_code in
+        <foreach item="item" index="index" collection="faultReasons" open="(" separator="," close=")">
+            #{item}  
+        </foreach>
+	</if>
+	<if test="regions != null">
+		and tmrtr.region in
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="isOver != null and isOver != ''">
+		and tmrtr.is_over = '%${isOver}%'
+	</if>
+	<![CDATA[
+		group by tlr.province
+		order by sum(tmrtr.repaired_count) desc
+	]]>
+</select>
+
+<!-- 根据省份获取下线数据 -->
+<select id="getShipCountGroupByProvince" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[	    
+		select tlr.province as province,sum(tstr.ship_count) as ship_count 
+    	from t_Ship_Total_Record tstr, (select distinct region,province from t_Location_Region where region is not null
+  		order by NLSSORT(region ,'NLS_SORT = SCHINESE_PINYIN_M')) tlr
+    	where 1=1 and tstr.region=tlr.region
+	]]>
+	<if test="startTime != null and endTime != null" >
+		and tstr.statistics_month BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="productType != null" >
+		and tstr.product_type like '%${productType}%'
+	</if>
+	<if test="partType != null" >
+		and tstr.part_type = #{partType,jdbcType=VARCHAR}
+	</if>
+	<if test="productLineNumber != null" >
+		<choose>
+    		<when test="productLineNumber == '产线不明'">
+    			and (tstr.productline_number is null or tstr.productline_number='')
+    		</when>
+    		<otherwise>and tstr.productline_number = #{productLineNumber,jdbcType=VARCHAR}</otherwise>
+    	</choose>
+	</if>
+    <include refid="ship_multiple_select_List" />
+	<![CDATA[
+		group by tlr.province
+		order by sum(tstr.ship_count) desc
+	]]>
+</select>
+
+<!-- 按机型类别分组查询发货数 -->
+<select id="getShipCountGroupByProdType" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	SELECT PRODUCT_TYPE,STATISTICS_MONTH base_month,SUM(SHIP_COUNT) AS SHIP_COUNT 
+	FROM T_MACHINE_TYPE , T_SHIP_TOTAL_RECORD WHERE MACHINE_TYPE=PRODUCT_TYPE 
+	<if test="region != null" >
+	    and region = #{region,jdbcType=VARCHAR}
+	</if> 
+	<if test="partType != null" >
+	    and part_type = #{partType,jdbcType=VARCHAR}
+	</if>  
+	<if test="productLineNumber != null" >
+		<choose>
+			<when test="productLineNumber == '产线不明'">
+				and (productline_number is null or productline_number='') 
+			</when>
+			<otherwise>and productline_number = #{productLineNumber,jdbcType=VARCHAR}</otherwise>
+		</choose>
+	</if>  	    
+	<if test="productType != null" >
+	    and product_type = #{productType,jdbcType=VARCHAR}
+	</if>	    
+	<if test="startTime != null and endTime != null" >
+	    and STATISTICS_MONTH BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	GROUP BY PRODUCT_TYPE,STATISTICS_MONTH 
+	ORDER BY PRODUCT_TYPE,STATISTICS_MONTH 
+</select>
+  
+<!-- 按机型类别分组查询维修数据 -->
+<select id="getReCountGroupByProdType" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	select tmrtr.PRODUCT_TYPE ,tmrtr.REPAIRED_MONTH base_month,sum(repaired_count) as repair_count 
+	from T_MARKET_REPAIR_TOTAL_RECORD tmrtr,t_Fault_Reason  tfr,t_Fault_Type  tft
+    <where>
+    	and tmrtr.is_over = '否'
+    	and fault_reason_code=tfr.code(+)
+    	and tmrtr.fault_type_code=tft.code(+)
+    	and tfr.valid='是'
+        <if test="region != null" >
+            and region like '%${region}%'
+        </if>
+        <if test="isConsumedPart != null and isConsumedPart != '' " >
+            and tmrtr.IS_CONSUMED_PART = '${isConsumedPart}'
+        </if> 
+        <if test="partType != null" >
+            and part_type like '%${partType}%'
+        </if>  
+<!--         <if test="faultTypeName != null and faultTypeName!=''" > -->
+<!--             and tft.name like '%${faultTypeName}%' -->
+<!--         </if> -->
+		<if test="faultTypeCode != null and faultTypeCode != ''">
+			and tft.code = '${faultTypeCode}'
+		</if>
+        <if test="underWarranty != null and underWarranty != ''">
+        	and tmrtr.under_Warranty = '${underWarranty}'
+        </if> 
+        <if test="productLineNumber != null" >
+        	<choose>
+        		<when test="productLineNumber == '产线不明'">
+        			and (productline_number is null or productline_number='')
+        		</when>
+        		<otherwise>and productline_number like '%${productLineNumber}%'</otherwise>
+        	</choose>
+        </if>  
+        <if test="productType != null" >
+            and tmrtr.product_type like  '%${productType}%'
+        </if>                                 
+	    <if test="startTime != null and endTime != null" >
+	        and REPAIRED_MONTH BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	    </if>
+	    <if test="meshFaultName != null and meshFaultName !=''" >
+			and tfr.meshfaultname like '%${meshFaultName}%'
+		</if>
+	    <if test="faultReasons != null">
+	    	  and tfr.code in
+	        <foreach item="item" index="index" collection="faultReasons" open="(" separator="," close=")">  
+	            #{item}  
+	        </foreach>
+	    </if>
+    </where>
+	group by  tmrtr.PRODUCT_TYPE,tmrtr.REPAIRED_MONTH
+	order by tmrtr.PRODUCT_TYPE,tmrtr.REPAIRED_MONTH
+</select>
+
+<!-- 根据型号获取维修数据 -->
+<select id="getReCountGroupByPartType" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[	    
+		select tmrtr.part_type as part_type,sum(tmrtr.repaired_count) as repair_count 
+		from T_MARKET_REPAIR_TOTAL_RECORD tmrtr ,t_Fault_Reason  tfr,t_Fault_Type  tft
+		where 1=1
+		and tmrtr.fault_reason_code=tfr.code(+)
+		and tmrtr.fault_type_code=tft.code(+)
+	]]>
+	
+	<if test="startI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.DOWNLINE_MONTH,'yyyy-mm'))+1 >= '${startI}'
+		]]>
+	</if>
+	<if test="endI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.DOWNLINE_MONTH,'yyyy-mm'))+1 <= '${endI}'
+		]]>
+	</if>
+	<if test="insStartI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.install_month,'yyyy-mm'))+1 >= '${insStartI}'
+		]]>
+	</if>
+	<if test="insEndI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.install_month,'yyyy-mm'))+1 <= '${insEndI}'
+		]]>
+	</if>
+	<if test="isOver != null and isOver != ''" >
+		and tmrtr.is_over = '${isOver}'
+	</if>
+	<if test="isConsumedPart != null and isConsumedPart != ''" >
+		and tmrtr.is_consumed_part = '${isConsumedPart}'
+	</if>
+	<if test="faultReasonValid != null and faultReasonValid != ''">
+		and tfr.valid = '${faultReasonValid}'
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''" >
+		and tmrtr.repaired_month BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="dwStartTime != null and dwStartTime != '' and dwEndTime != null and dwEndTime != ''">
+		and tmrtr.downline_month BETWEEN #{dwStartTime,jdbcType=VARCHAR} and #{dwEndTime,jdbcType=VARCHAR}
+	</if>
+	<if test="insStartTime != null and insStartTime != '' and insEndTime != null and insEndTime != ''">
+		and tmrtr.install_month BETWEEN #{insStartTime,jdbcType=VARCHAR} and #{insEndTime,jdbcType=VARCHAR}
+	</if>
+	<if test="productType != null" >
+		and tmrtr.product_type like '%${productType}%'
+	</if>
+	<if test="productLineNumber != null" >
+		<choose>
+    		<when test="productLineNumber == '产线不明'">
+    			and (tmrtr.productline_number is null or tmrtr.productline_number='')
+    		</when>
+    		<otherwise>and tmrtr.productline_number = #{productLineNumber,jdbcType=VARCHAR}</otherwise>
+    	</choose>
+	</if>
+	<if test="region != null" >
+		and tmrtr.region = #{region,jdbcType=VARCHAR}
+	</if>
+	<if test="faultTypeName != null" >
+		and tft.name = #{faultTypeName,jdbcType=VARCHAR}
+	</if>
+    <include refid="multiple_select_List" />
+	<![CDATA[
+		group by tmrtr.part_type
+		order by sum(tmrtr.repaired_count) desc
+	]]>
+</select>
+
+<!-- 根据产品系列获取维修数据 -->
+<select id="getReCountGroupByProdFamily" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[	    
+		select tmrtr.product_family as product_family,sum(tmrtr.repaired_count) as repair_count 
+		from T_MARKET_REPAIR_TOTAL_RECORD tmrtr ,t_Fault_Reason  tfr,t_Fault_Type  tft
+		where 1=1
+		and tmrtr.fault_reason_code=tfr.code(+)
+		and tmrtr.fault_type_code=tft.code(+)
+		and tmrtr.product_family is not null 
+	]]>
+	<if test="startI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.DOWNLINE_MONTH,'yyyy-mm'))+1 >= '${startI}'
+		]]>
+	</if>
+	<if test="endI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.DOWNLINE_MONTH,'yyyy-mm'))+1 <= '${endI}'
+		]]>
+	</if>
+	<if test="insStartI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.install_month,'yyyy-mm'))+1 >= '${insStartI}'
+		]]>
+	</if>
+	<if test="insEndI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.install_month,'yyyy-mm'))+1 <= '${insEndI}'
+		]]>
+	</if>
+	<if test="isOver != null and isOver != ''" >
+		and tmrtr.is_over = '${isOver}'
+	</if>
+	<if test="isConsumedPart != null and isConsumedPart != ''" >
+		and tmrtr.is_consumed_part = '${isConsumedPart}'
+	</if>
+	<if test="faultReasonValid != null and faultReasonValid != ''">
+		and tfr.valid = '${faultReasonValid}'
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''" >
+		and tmrtr.repaired_month BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="dwStartTime != null and dwStartTime != '' and dwEndTime != null and dwEndTime != ''">
+		and tmrtr.downline_month BETWEEN #{dwStartTime,jdbcType=VARCHAR} and #{dwEndTime,jdbcType=VARCHAR}
+	</if>
+	<if test="insStartTime != null and insStartTime != '' and insEndTime != null and insEndTime != ''">
+		and tmrtr.install_month BETWEEN #{insStartTime,jdbcType=VARCHAR} and #{insEndTime,jdbcType=VARCHAR}
+	</if>
+	<if test="productType != null" >
+		and tmrtr.product_type  like '%${productType}%'
+	</if>
+	<if test="productLineNumber != null" >
+		<choose>
+    		<when test="productLineNumber == '产线不明'">
+    			and (tmrtr.productline_number is null or tmrtr.productline_number='')
+    		</when>
+    		<otherwise>and tmrtr.productline_number = #{productLineNumber,jdbcType=VARCHAR}</otherwise>
+    	</choose>
+	</if>
+	<if test="region != null" >
+		and tmrtr.region = #{region,jdbcType=VARCHAR}
+	</if>
+	<if test="faultReasons != null">
+    	  and tfr.code in
+        <foreach item="item" index="index" collection="faultReasons" open="(" separator="," close=")">  
+            #{item}  
+        </foreach>
+	</if>
+	<if test="faultTypeName != null" >
+		and tft.name = #{faultTypeName,jdbcType=VARCHAR}
+	</if>
+    <include refid="multiple_select_List" />
+	<![CDATA[
+		group by tmrtr.product_family
+		order by sum(tmrtr.repaired_count) desc
+	]]>
+</select>
+
+<!-- 按照维修月份分组查询维修数据 -->
+<select id="getReCountGroupByReMon" resultMap="BaseResultMap">
+	select  t.repaired_month as repair_month,nvl(sum(t.repaired_count),0) as repair_count
+	from T_MARKET_REPAIR_TOTAL_RECORD t where 1=1 
+	<if test="hashMap.startTime != null  and hashMap.endTime != null">
+		and t.repaired_month BETWEEN #{hashMap.startTime,jdbcType=VARCHAR} and #{hashMap.endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="hashMap.productType != null">
+		and t.product_type like '%${hashMap.productType}%' 
+	</if>
+	group by t.repaired_month 
+	order by t.repaired_month desc
+</select>
+  
+<!-- 根据型号获取发货数据 -->
+<select id="getShipCountGroupByPartType" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[	    
+		select tstr.part_type as part_type,sum(tstr.ship_count) as ship_count 
+		from t_Ship_Total_Record tstr 
+		where 1=1
+	]]>
+	<if test="startTime != null and endTime != null" >
+		and tstr.statistics_month BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="productType != null" >
+		and tstr.product_type like '%${productType}%'
+	</if>
+	<if test="productLineNumber != null" >
+		<choose>
+    		<when test="productLineNumber == '产线不明'">
+    			and (tstr.productline_number is null or tstr.productline_number='')
+    		</when>
+    		<otherwise>and tstr.productline_number = #{productLineNumber,jdbcType=VARCHAR}</otherwise>
+    	</choose>
+	</if>
+	<if test="region != null" >
+		and tstr.region = #{region,jdbcType=VARCHAR}
+	</if>
+    <include refid="ship_multiple_select_List" />
+	<![CDATA[
+		group by tstr.part_type
+		order by sum(tstr.ship_count) desc
+	]]>
+</select>
+  
+<!-- 根据产品系列获取发货数据 -->
+<select id="getShipCountGroupByProdFamily" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[	    
+		select tstr.product_family as product_family,sum(tstr.ship_count) as ship_count 
+		from t_Ship_Total_Record tstr 
+		where 1=1 and tstr.product_family is not null 
+	]]>
+	<if test="startTime != null and endTime != null" >
+		and tstr.statistics_month BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="productType != null" >
+		and tstr.product_type like '%${productType}%'
+	</if>
+	<if test="productLineNumber != null" >
+		<choose>
+    		<when test="productLineNumber == '产线不明'">
+    			and (tstr.productline_number is null or tstr.productline_number='')
+    		</when>
+    		<otherwise>and tstr.productline_number = #{productLineNumber,jdbcType=VARCHAR}</otherwise>
+    	</choose>
+	</if>
+	<if test="region != null" >
+		and tstr.region = #{region,jdbcType=VARCHAR}
+	</if>
+    <include refid="ship_multiple_select_List" />
+	<![CDATA[
+		group by tstr.product_family
+		order by sum(tstr.ship_count) desc
+	]]>
+</select>
+  
+<select id="getShipCount" resultType="java.lang.Integer" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[	    
+		select nvl(sum(tstr.ship_count),0) as ship_count 
+		from t_Ship_Total_Record tstr 
+		where 1=1
+	]]>
+	<if test="startTime != null and endTime != null" >
+		and tstr.statistics_month BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="productType != null" >
+		and tstr.product_type like '%${productType}%'
+	</if>
+	<if test="productLineNumber != null" >
+		<choose>
+    		<when test="productLineNumber == '产线不明'">
+    			and (tstr.productline_number is null or tstr.productline_number='')
+    		</when>
+    		<otherwise>and tstr.productline_number = #{productLineNumber,jdbcType=VARCHAR}</otherwise>
+    	</choose>
+	</if>
+	
+	<if test="region != null" >
+		and tstr.region = #{region,jdbcType=VARCHAR}
+	</if>
+    <include refid="ship_multiple_select_List" />
+</select>
+  
+<sql id="ship_multiple_select_List" >
+    <if test="partTypes != null" >
+        and tstr.part_type in
+        <foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">  
+            #{item}  
+        </foreach>
+    </if>
+    <if test="plines != null" >
+        and tstr.productline_number in
+        <foreach item="item" index="index" collection="plines" open="(" separator="," close=")">  
+            #{item}  
+        </foreach> 
+    </if>
+    <if test="productFamilys != null" >
+        and tstr.product_family in
+        <foreach item="item" index="index" collection="productFamilys" open="(" separator="," close=")">  
+            #{item}  
+        </foreach> 
+    </if>    
+    <if test="regions != null" >
+        and tstr.region in
+        <foreach item="item" index="index" collection="regions" open="(" separator="," close=")">  
+            #{item}  
+        </foreach> 
+    </if>   
+</sql>
+
+<!-- 根据产线获取维修数据 -->
+<select id="getReCountGroupByPline" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[	    
+		select nvl(tmrtr.productline_number,'产线不明') as productline_number,sum(tmrtr.repaired_count) as repair_count 
+		from T_MARKET_REPAIR_TOTAL_RECORD tmrtr ,t_Fault_Reason  tfr,t_Fault_Type  tft
+		where 1=1
+		and tmrtr.fault_reason_code=tfr.code(+)
+		and tmrtr.fault_type_code=tft.code(+)
+	]]>
+	<if test="startI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.DOWNLINE_MONTH,'yyyy-mm'))+1 >= '${startI}'
+		]]>
+	</if>
+	<if test="endI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.DOWNLINE_MONTH,'yyyy-mm'))+1 <= '${endI}'
+		]]>
+	</if>
+	<if test="insStartI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.install_month,'yyyy-mm'))+1 >= '${insStartI}'
+		]]>
+	</if>
+	<if test="insEndI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.install_month,'yyyy-mm'))+1 <= '${insEndI}'
+		]]>
+	</if>
+	
+	<if test="isOver != null and isOver != ''" >
+		and tmrtr.is_over = '${isOver}'
+	</if>
+	<if test="isConsumedPart != null and isConsumedPart != ''" >
+		and tmrtr.is_consumed_part = '${isConsumedPart}'
+	</if>
+	<if test="faultReasonValid != null and faultReasonValid != ''">
+		and tfr.valid = '${faultReasonValid}'
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''" >
+		and tmrtr.repaired_month BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="dwStartTime != null and dwStartTime != '' and dwEndTime != null and dwEndTime != ''">
+		and tmrtr.downline_month BETWEEN #{dwStartTime,jdbcType=VARCHAR} and #{dwEndTime,jdbcType=VARCHAR}
+	</if>
+	<if test="insStartTime != null and insStartTime != '' and insEndTime != null and insEndTime != ''">
+		and tmrtr.install_month BETWEEN #{insStartTime,jdbcType=VARCHAR} and #{insEndTime,jdbcType=VARCHAR}
+	</if>
+	<if test="productType != null" >
+		and tmrtr.product_type like '%${productType}%'
+	</if>
+	<if test="partType != null" >
+		and tmrtr.part_type = #{partType,jdbcType=VARCHAR}
+	</if>
+	<if test="region != null" >
+		and tmrtr.region = #{region,jdbcType=VARCHAR}
+	</if>
+	<if test="faultTypeName != null" >
+		and tft.name = #{faultTypeName,jdbcType=VARCHAR}
+	</if>
+    <include refid="multiple_select_List" />
+	<![CDATA[
+		group by tmrtr.productline_number
+		order by sum(tmrtr.repaired_count) desc
+	]]>
+</select>
+
+<!-- 根据产线获取发货数据 -->
+<select id="getShipCountGroupByPline" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[	    
+		select nvl(tstr.productline_number,'产线不明') as productline_number,sum(tstr.ship_count) as ship_count 
+		from t_Ship_Total_Record tstr 
+		where 1=1
+	]]>
+	<if test="startTime != null and endTime != null" >
+		and tstr.statistics_month BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="productType != null" >
+		and tstr.product_type like '%${productType}%'
+	</if>
+	<if test="partType != null" >
+		and tstr.part_type = #{partType,jdbcType=VARCHAR}
+	</if>
+	<if test="region != null" >
+		and tstr.region = #{region,jdbcType=VARCHAR}
+	</if>
+    <include refid="ship_multiple_select_List" />
+	<![CDATA[
+		group by tstr.productline_number
+		order by sum(tstr.ship_count) desc
+	]]>
+</select>
+
+<!-- 根据故障大类代码获取发货数据 -->
+<select id="getReCountGroupFaultType" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[	    
+		select tmrtr.fault_type_code as fault_type_code,tft.name as fault_type_name, sum(tmrtr.repaired_count) as repair_count 
+		from T_MARKET_REPAIR_TOTAL_RECORD tmrtr,t_Fault_Reason  tfr,t_Fault_Type  tft
+		where 1=1
+		and tmrtr.fault_reason_code=tfr.code(+)
+		and tmrtr.fault_type_code=tft.code(+)
+	]]>
+		<if test="startI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.DOWNLINE_MONTH,'yyyy-mm'))+1 >= '${startI}'
+		]]>
+	</if>
+	<if test="endI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.DOWNLINE_MONTH,'yyyy-mm'))+1 <= '${endI}'
+		]]>
+	</if>
+	<if test="insStartI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.install_month,'yyyy-mm'))+1 >= '${insStartI}'
+		]]>
+	</if>
+	<if test="insEndI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.install_month,'yyyy-mm'))+1 <= '${insEndI}'
+		]]>
+	</if>
+	
+	<if test="faultReasonValid != null and faultReasonValid != ''">
+		and tfr.valid = '${faultReasonValid}'
+	</if>
+	<if test="isOver != null and isOver != ''" >
+		and tmrtr.is_over = '${isOver}'
+	</if>
+	<if test="isConsumedPart != null and isConsumedPart != ''" >
+		and tmrtr.is_consumed_part = '${isConsumedPart}'
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''" >
+		and tmrtr.repaired_month BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="dwStartTime != null and dwStartTime != '' and dwEndTime != null and dwEndTime != ''">
+		and tmrtr.downline_month BETWEEN #{dwStartTime,jdbcType=VARCHAR} and #{dwEndTime,jdbcType=VARCHAR}
+	</if>
+	<if test="insStartTime != null and insStartTime != '' and insEndTime != null and insEndTime != ''">
+		and tmrtr.install_month BETWEEN #{insStartTime,jdbcType=VARCHAR} and #{insEndTime,jdbcType=VARCHAR}
+	</if>
+	<if test="startI !=null">
+			<![CDATA[	  
+		and (to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm')-to_date(tmrtr.install_Month,'yyyy-mm'))/30 >= #{startI}
+		]]>
+	</if>
+	<if test="endI !=null">
+	<![CDATA[	
+		and (to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm')-to_date(tmrtr.install_Month,'yyyy-mm'))/30 <= #{endI}
+		]]>
+	</if>
+	<if test="productType != null" >
+		and tmrtr.product_type like '%${productType}%'
+	</if>
+	<if test="region != null" >
+		and tmrtr.region = #{region,jdbcType=VARCHAR}
+	</if>
+	<if test="productLineNumber != null" >
+		<choose>
+    		<when test="productLineNumber == '产线不明'">
+    			and (tmrtr.productline_number is null or tmrtr.productline_number='')
+    		</when>
+    		<otherwise>and tmrtr.productline_number = #{productLineNumber,jdbcType=VARCHAR}</otherwise>
+    	</choose>
+	</if>
+	<include refid="multiple_select_List" />
+	<![CDATA[
+		group by tmrtr.fault_type_code,tft.name
+		order by sum(tmrtr.repaired_count) desc
+	]]>
+</select>
+
+<!-- 根据故障小类代码获取发货数据 -->
+<select id="getReCountGroupFaultReason" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[	    
+		select tfr.meshfaultcode as fault_reason_code,tfr.meshfaultname as fault_reason_name, sum(tmrtr.repaired_count) as repair_count 
+		from T_MARKET_REPAIR_TOTAL_RECORD tmrtr,t_Fault_Reason  tfr,t_Fault_Type  tft
+		where 1=1
+		and tmrtr.fault_reason_code=tfr.code(+)
+        and tmrtr.fault_type_code=tft.code(+)
+	]]>
+	<if test="startI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.DOWNLINE_MONTH,'yyyy-mm'))+1 >= '${startI}'
+		]]>
+	</if>
+	<if test="endI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.DOWNLINE_MONTH,'yyyy-mm'))+1 <= '${endI}'
+		]]>
+	</if>
+	<if test="insStartI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.install_month,'yyyy-mm'))+1 >= '${insStartI}'
+		]]>
+	</if>
+	<if test="insEndI !=null">
+		<![CDATA[
+			and months_between(to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm'),to_date(tmrtr.install_month,'yyyy-mm'))+1 <= '${insEndI}'
+		]]>
+	</if>
+	<if test="isOver != null and isOver != ''" >
+		and tmrtr.is_over = '${isOver}'
+	</if>
+	<if test="isConsumedPart != null and isConsumedPart != ''" >
+		and tmrtr.is_consumed_part = '${isConsumedPart}'
+	</if>
+	<if test="faultReasonValid != null and faultReasonValid != ''">
+		and tfr.valid = '${faultReasonValid}'
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''" >
+        and tmrtr.repaired_month BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+    </if>
+	<if test="dwStartTime != null and dwStartTime != '' and dwEndTime != null and dwEndTime != ''">
+		and tmrtr.downline_month BETWEEN #{dwStartTime,jdbcType=VARCHAR} and #{dwEndTime,jdbcType=VARCHAR}
+	</if>
+	<if test="insStartTime != null and insStartTime != '' and insEndTime != null and insEndTime != ''">
+		and tmrtr.install_month BETWEEN #{insStartTime,jdbcType=VARCHAR} and #{insEndTime,jdbcType=VARCHAR}
+	</if>
+	<if test="productType != null" >
+		and tmrtr.product_type  like '%${productType}%'
+	</if>
+	<if test="partType != null" >
+		and tmrtr.part_type = #{partType,jdbcType=VARCHAR}
+	</if>
+	<if test="region != null" >
+		and tmrtr.region = #{region,jdbcType=VARCHAR}
+	</if>
+	<if test="startI !=null">
+			<![CDATA[	  
+		and (to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm')-to_date(tmrtr.install_Month,'yyyy-mm'))/30 >= #{startI}
+		]]>
+	</if>
+	<if test="endI !=null">
+	<![CDATA[	
+		and (to_date(tmrtr.REPAIRED_MONTH,'yyyy-mm')-to_date(tmrtr.install_Month,'yyyy-mm'))/30 <= #{endI}
+		]]>
+	</if>
+	<if test="productLineNumber != null" >
+		<choose>
+    		<when test="productLineNumber == '产线不明'">
+    			and (tmrtr.productline_number is null or tmrtr.productline_number='')
+    		</when>
+    		<otherwise>and tmrtr.productline_number = #{productLineNumber,jdbcType=VARCHAR}</otherwise>
+    	</choose>
+	</if>
+    <include refid="multiple_select_List" />
+	<![CDATA[
+		group by tfr.meshfaultcode,tfr.meshfaultname
+		order by sum(tmrtr.repaired_count) desc
+	]]>
+</select>
+
+<sql id="multiple_select_List" >
+    <if test="faultTypes != null" >
+        and tft.code in
+        <foreach item="item" index="index" collection="faultTypes" open="(" separator="," close=")">  
+            #{item}  
+        </foreach> 
+    </if>    
+    <if test="partTypes != null" >
+        and tmrtr.part_type in
+        <foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">  
+            #{item}  
+        </foreach> 
+    </if>
+    <if test="regions != null" >
+        and tmrtr.region in
+        <foreach item="item" index="index" collection="regions" open="(" separator="," close=")">  
+            #{item}  
+        </foreach> 
+    </if>
+    <if test="plines != null" >
+        and tmrtr.productline_number in
+        <foreach item="item" index="index" collection="plines" open="(" separator="," close=")">  
+            #{item}  
+        </foreach> 
+    </if>    
+    <if test="productFamilys != null" >
+        and tmrtr.product_family in
+        <foreach item="item" index="index" collection="productFamilys" open="(" separator="," close=")">  
+            #{item}  
+        </foreach> 
+    </if>    
+   <if test="meshFaultReasons != null">
+    	  and tfr.meshfaultcode in
+        <foreach item="item" index="index" collection="meshFaultReasons" open="(" separator="," close=")">  
+            #{item}  
+        </foreach>
+	</if>
+	<if test="faultReasons != null" >
+		and  tfr.code in
+		<foreach item="item" index="index" collection="faultReasons" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach>
+	</if>
+</sql>
+    
+<!-- 根据故障小类代码获取发货数据 -->
+<select id="getReCountGroupFaultsReason" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[	    
+		select tfr.meshfaultcode as fault_reason_code,tfr.meshfaultname as fault_reason_name, sum(tmrtr.repaired_count) as repair_count 
+		from T_MARKET_REPAIR_TOTAL_RECORD tmrtr,t_Fault_Reason  tfr
+		where 1=1
+		and tmrtr.is_over = '否'
+		and tmrtr.fault_reason_code=tfr.code(+)
+		and tfr.valid='是'
+	]]>
+	<if test="queryMonth != null" >
+		and tmrtr.repaired_month = #{queryMonth,jdbcType=VARCHAR}
+	</if>
+	<if test="productType != null" >
+		and tmrtr.product_type like '%${productType}%'
+	</if>
+	<if test="partType != null" >
+		and tmrtr.part_type = #{partType,jdbcType=VARCHAR}
+	</if>
+	<if test="region != null" >
+		and tmrtr.region = #{region,jdbcType=VARCHAR}
+	</if>
+	<if test="productLineNumber != null" >
+		and tmrtr.productline_number = #{productLineNumber,jdbcType=VARCHAR}
+	</if>
+	<if test="faultReasons != null" >
+		and tfr.code in
+		<foreach item="item" index="index" collection="faultReasons" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach> 
+	</if>
+	<![CDATA[
+		group by tfr.meshfaultcode,tfr.meshfaultname
+		order by sum(tmrtr.repaired_count) desc
+	]]>
+</select>
+  
+<!-- 时间序列矩阵P控制图 -->
+<select id="getDownLineCountGroupByMonth" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[	    
+		select tdtr.statistics_month downline_month,sum(tdtr.downline_count) downline_count
+		from T_DOWNLINE_TOTAL_RECORD tdtr 
+		where 1=1
+	]]>
+	<if test="gasCategorys != null">
+		and tdtr.gas in 
+		<foreach item="item" index="index" collection="gasCategorys" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="gas != null and gas != ''">
+		and tdtr.gas = #{gas,jdbcType=VARCHAR}
+	</if>
+	<if test="region != null" >
+        and tdtr.region = #{region,jdbcType=VARCHAR}
+    </if> 
+    <if test="partType != null" >
+        and tdtr.part_type = #{partType,jdbcType=VARCHAR}
+    </if>  
+    <if test="productLineNumber != null" >
+    	<choose>
+    		<when test="productLineNumber == '产线不明'">
+    			and (tdtr.productline_number is null or tdtr.productline_number='')
+    		</when>
+    		<otherwise>and tdtr.productline_number = #{productLineNumber,jdbcType=VARCHAR}</otherwise>
+    	</choose>
+    </if>
+	<if test="startTime != null and startTime != ''" >
+		<![CDATA[ and tdtr.statistics_month >= #{startTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="endTime != null and endTime != ''" >
+		<![CDATA[ and tdtr.statistics_month <= #{endTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="productType != null" >
+		and tdtr.product_type like '%${productType}%'
+	</if>
+	<if test="plines != null" >
+		and tdtr.productline_number in
+		<foreach item="item" index="index" collection="plines" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach> 
+	</if>
+	<if test="regions != null" >
+		and tdtr.region in
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach> 
+	</if>
+	<if test="partTypes != null" >
+		and tdtr.part_type in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach>
+	</if>
+	<if test="productFamilys != null">
+		and tdtr.product_family in 
+		<foreach item="item" index="index" collection="productFamilys" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<![CDATA[
+		group by tdtr.statistics_month
+		order by tdtr.statistics_month
+	]]>
+</select>
+  
+<select id="getReCountGroupByReDlMonth" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[
+		select tmrtr.downline_month downline_month,tmrtr.repaired_month repair_month, sum(tmrtr.repaired_count) repair_count
+		from t_Market_Repair_Total_Record tmrtr ,t_Fault_Reason  tfr, t_fault_type tft
+		where 1=1
+		and tmrtr.fault_reason_code=tfr.code(+)
+		and tmrtr.fault_type_code = tft.code(+)
+	]]>
+	<if test="vocTypeIDs != null">
+		and tmrtr.VOC_TYPE_KEY in
+		<foreach collection="vocTypeIDs" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	
+	</if>
+	<if test="isOver != null and isOver !=''" >
+        and tmrtr.is_over = #{isOver,jdbcType=VARCHAR}
+    </if>
+    <if test="gasCategorys != null">
+		and tmrtr.gas in 
+		<foreach item="item" index="index" collection="gasCategorys" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+    <if test="gas != null and gas != ''">
+		and tmrtr.gas = #{gas,jdbcType=VARCHAR}
+	</if>
+    <if test="faultReasonValid != null and faultReasonValid !=''" >
+        and tfr.valid = #{faultReasonValid,jdbcType=VARCHAR}
+    </if>
+    <if test="isConsumedPart != null and isConsumedPart !=''">
+		AND tmrtr.IS_CONSUMED_PART = #{isConsumedPart,jdbcType=VARCHAR}
+	</if> 
+    <if test="productLineNumber != null" >
+    	<choose>
+    		<when test="productLineNumber == '产线不明'">
+    			and (tmrtr.productline_number is null or tmrtr.productline_number='')
+    		</when>
+    		<otherwise>and tmrtr.productline_number = #{productLineNumber,jdbcType=VARCHAR}</otherwise>
+    	</choose>
+    </if>
+<!--     <if test="meshFaultName"></if> -->
+	<if test="startTime != null and startTime != ''" >
+		<![CDATA[ and tmrtr.downline_month >= #{startTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="startTime != null and endTime != null" >
+		<![CDATA[ and tmrtr.downline_month <= #{endTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="productType != null" >
+		and tmrtr.product_type like '%${productType}%'
+	</if>
+	<include refid="multiple_select_List" />
+	<![CDATA[
+		group by tmrtr.repaired_month,tmrtr.downline_month
+		order by tmrtr.downline_month,tmrtr.repaired_month
+	]]>
+</select>
+
+<!-- 获取安装月份下维修数 -->
+<select id="getInsCountGroupByMonth" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo">
+	SELECT TIR.INSTALL_MONTH, TIR.REPAIR_MONTH, SUM(TIR.REPAIR_COUNT) as repair_count
+	FROM T_INSTALL_REPAIR TIR, T_FAULT_REASON TFR WHERE 1 = 1 AND TIR.FAULT_REASON_CODE = TFR.CODE(+)
+	<if test="productType != null and productType!=''">
+		AND TIR.PRODUCT_TYPE = '${productType}'
+	</if>
+	<if test="gasCategorys != null">
+		and TIR.gas in 
+		<foreach item="item" index="index" collection="gasCategorys" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="faultReasonValid != null and faultReasonValid!=''">
+		AND TFR.VALID = #{faultReasonValid,jdbcType=VARCHAR}
+	</if>
+	<if test="isOver != null and isOver!=''">
+		AND TIR.IS_OVER = #{isOver,jdbcType=VARCHAR}
+	</if>
+	<if test="isConsumedPart != null and isConsumedPart !=''">
+		AND TIR.IS_CONSUMED_PART = #{isConsumedPart,jdbcType=VARCHAR}
+	</if>
+	<if test="isConsumedPart != null and isConsumedPart !=''">
+		AND TIR.IS_CONSUMED_PART = #{isConsumedPart,jdbcType=VARCHAR}
+	</if>
+	<if test="insStartTime != null and insStartTime != ''">
+		<![CDATA[ AND TIR.INSTALL_MONTH >= #{insStartTime,jdbcType=VARCHAR} ]]>
+		<![CDATA[ AND TIR.REPAIR_MONTH >= TIR.INSTALL_MONTH ]]>
+	</if>
+	<if test="insEndTime != null and insEndTime != ''">
+		<![CDATA[ and TIR.INSTALL_MONTH <= #{insEndTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="startTime != null and startTime != ''">
+		<![CDATA[ AND TIR.REPAIR_MONTH >= #{startTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="endTime != null and endTime != ''">
+		<![CDATA[ AND TIR.REPAIR_MONTH <= #{endTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="dlStartTime != null and dlStartTime != ''">
+		<![CDATA[ AND TIR.DOWNLINE_TIME >= #{dlStartTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="dlEndTime != null and dlEndTime != ''">
+		<![CDATA[ AND TIR.DOWNLINE_TIME <= #{dlEndTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="regions != null" >
+	    and TIR.REGION in
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach> 
+	</if>
+	<if test="productFamilys != null">
+		AND TIR.PRODUCT_FAMILY IN
+		<foreach item="item" index="inex" collection="productFamilys" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partTypes != null">
+		and TIR.PART_TYPE in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach>
+	</if>
+	<if test="faultTypes != null">
+		and TIR.FAULT_TYPE_CODE in
+		<foreach item="item" index="index" collection="faultTypes" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach>
+	</if>
+	<if test="faultReasons != null">
+		and TIR.FAULT_REASON_CODE in
+		<foreach item="item" index="index" collection="faultReasons" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach>
+	</if>
+	<if test="meshFaultReasons != null">
+		and TFR.MESHFAULTCODE in
+		<foreach item="item" index="index" collection="meshFaultReasons" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="vocTypeIDs != null">
+		and TIR.VOC_TYPE_KEY in
+		<foreach collection="vocTypeIDs" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	GROUP BY TIR.INSTALL_MONTH, TIR.REPAIR_MONTH
+</select>
+
+<!-- 获取安装月份及安装数 -->
+<select id="getInsCountGroupByReMonth" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo">
+	SELECT INSTALL_MONTH, COUNT(1) as install_count FROM T_INSTALL WHERE 1 = 1
+	<if test="productType != null and productType!='' " >
+		 and product_type like '%${productType}%'
+	</if>
+	<if test="insStartTime != null and insStartTime!=''"  >
+		<![CDATA[ and INSTALL_MONTH >= #{insStartTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="insEndTime != null and insEndTime!=''" >
+		<![CDATA[ and INSTALL_MONTH <= #{insEndTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="dlStartTime != null and dlStartTime != ''">
+		<![CDATA[ AND DOWNLINE_TIME >= #{dlStartTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="dlEndTime != null and dlEndTime != ''">
+		<![CDATA[ AND DOWNLINE_TIME <= #{dlEndTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="productFamilys != null and productFamilys != ''">
+		and PART_FAMILY in
+		<foreach item="item" index="index" collection="productFamilys" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partTypes != null and partTypes!=''">
+		and PART_TYPE in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">  
+			#{item}  
+		</foreach>
+	</if>
+	<if test="regions != null" >
+	    and REGION in
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach> 
+	</if>
+	GROUP BY INSTALL_MONTH
+	ORDER BY INSTALL_MONTH
+</select>
+
+<select id="getInsCountGroupByRePartType" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo">
+	SELECT TIR.PART_TYPE, SUM(TIR.REPAIR_COUNT) as repair_count
+	FROM T_INSTALL_REPAIR TIR, T_FAULT_REASON TFR WHERE 1 = 1 AND TIR.FAULT_REASON_CODE = TFR.CODE
+	<include refid="install_multiple_select_List" />
+	GROUP BY TIR.PART_TYPE
+</select>
+
+<select id="getInsCountGroupByReRegion" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo">
+	SELECT TIR.REGION, SUM(TIR.REPAIR_COUNT) as repair_count
+	FROM T_INSTALL_REPAIR TIR, T_FAULT_REASON TFR WHERE 1 = 1 AND TIR.FAULT_REASON_CODE = TFR.CODE
+	<include refid="install_multiple_select_List" />
+	GROUP BY TIR.REGION
+</select>
+
+<select id="getInsCountGroupByPartType" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo">
+	SELECT PART_TYPE, COUNT(1) as install_count FROM T_INSTALL WHERE 1 = 1
+	<if test="productType != null and productType!='' " >
+		 and product_type like '%${productType}%'
+	</if>
+	<if test="insStartTime != null and insStartTime!=''"  >
+		<![CDATA[ and INSTALL_MONTH >= #{insStartTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="insEndTime != null and insEndTime!=''" >
+		<![CDATA[ and INSTALL_MONTH <= #{insEndTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="productFamilys != null and productFamilys != ''">
+		and PART_FAMILY in
+		<foreach item="item" index="index" collection="productFamilys" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partTypes != null and partTypes!=''">
+		and PART_TYPE in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">  
+			#{item}  
+		</foreach>
+	</if>
+	<if test="regions != null" >
+	    and REGION in
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach> 
+	</if>
+	GROUP BY PART_TYPE
+</select>
+
+<select id="getInsCountGroupByRegion" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo">
+	SELECT REGION, COUNT(1) as install_count FROM T_INSTALL WHERE 1 = 1
+	<if test="productType != null and productType!='' " >
+		 and product_type like '%${productType}%'
+	</if>
+	<if test="insStartTime != null and insStartTime!=''"  >
+		<![CDATA[ and INSTALL_MONTH >= #{insStartTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="insEndTime != null and insEndTime!=''" >
+		<![CDATA[ and INSTALL_MONTH <= #{insEndTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="productFamilys != null and productFamilys != ''">
+		and PART_FAMILY in
+		<foreach item="item" index="index" collection="productFamilys" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partTypes != null and partTypes!=''">
+		and PART_TYPE in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">  
+			#{item}  
+		</foreach>
+	</if>
+	<if test="regions != null" >
+	    and REGION in
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach> 
+	</if>
+	GROUP BY REGION
+</select>
+
+<sql id="install_multiple_select_List">
+	<if test="productType != null and productType!=''">
+		AND TIR.PRODUCT_TYPE = '${productType}'
+	</if>
+	<if test="faultReasonValid != null and faultReasonValid!=''">
+		AND TFR.VALID = #{faultReasonValid,jdbcType=VARCHAR}
+	</if>
+	<if test="isOver != null and isOver!=''">
+		AND TIR.IS_OVER = #{isOver,jdbcType=VARCHAR}
+	</if>
+	<if test="isConsumedPart != null and isConsumedPart !=''">
+		AND TIR.IS_CONSUMED_PART = #{isConsumedPart,jdbcType=VARCHAR}
+	</if>
+	<if test="insStartTime != null and insStartTime != ''">
+		<![CDATA[ AND TIR.INSTALL_MONTH >= #{insStartTime,jdbcType=VARCHAR} ]]>
+		<!-- 8090 安装四象限按安装时间查询的数据与CEM维修明细不一致 -->
+<!-- 		<![CDATA[ AND TIR.REPAIR_MONTH >= TIR.INSTALL_MONTH ]]>
+ -->	</if>
+	<if test="insEndTime != null and insEndTime != ''">
+		<![CDATA[ and TIR.INSTALL_MONTH <= #{insEndTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="startTime != null and startTime != ''">
+		<![CDATA[ AND TIR.REPAIR_MONTH >= #{startTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="endTime != null and endTime != ''">
+		<![CDATA[ AND TIR.REPAIR_MONTH <= #{endTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="regions != null" >
+	    and TIR.REGION in
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach> 
+	</if>
+	<if test="productFamilys != null">
+		AND TIR.PRODUCT_FAMILY IN
+		<foreach item="item" index="inex" collection="productFamilys" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partTypes != null">
+		and TIR.PART_TYPE in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach>
+	</if>
+	<if test="faultTypes != null">
+		and TIR.FAULT_TYPE_CODE in
+		<foreach item="item" index="index" collection="faultTypes" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach>
+	</if>
+	<if test="faultReasons != null">
+		and TIR.FAULT_REASON_CODE in
+		<foreach item="item" index="index" collection="faultReasons" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach>
+	</if>
+	<if test="meshFaultReasons != null">
+		and TFR.MESHFAULTCODE in
+		<foreach item="item" index="index" collection="meshFaultReasons" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+</sql>
+
+<!-- 根据安装月份，统计维修数  -->
+<!--
+<select id="getInsCountGroupByMonth" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	select ins.install_month,ins.repair_month,sum(ins.repair_count) as repair_count  
+	from t_install_total_record ins,t_Fault_Reason tfr, t_fault_type tft 
+	where ins.fault_reason_code=tfr.code(+) and ins.fault_type_code = tft.code(+)
+	<if test="productType != null and productType!=''" >
+		and ins.product_type like '%${productType}%'
+	</if>
+	<if test="faultReasonValid != null and faultReasonValid!=''" >
+		and ins.valid =  #{faultReasonValid,jdbcType=VARCHAR}
+	</if>
+	<if test="isOver != null and isOver!=''" >
+		and ins.is_over =  #{isOver,jdbcType=VARCHAR}
+	</if>
+	<if test="insStartTime != null and insStartTime != ''" >
+		<![CDATA[ and ins.repair_month >= #{insStartTime,jdbcType=VARCHAR} ]]>
+	<![CDATA[ and ins.install_month >= #{insStartTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="insEndTime != null and insEndTime != ''" >
+		<![CDATA[ and ins.install_month <= #{insEndTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="regions != null" >
+	    and ins.region in
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach> 
+	</if>
+	<if test="partTypes != null" >
+		and ins.part_type in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach>
+	</if>
+	<if test="faultTypes != null" >
+		and  ins.fault_type_code in
+		<foreach item="item" index="index" collection="faultTypes" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach>
+	</if>
+	<if test="faultReasons != null" >
+		and  ins.fault_reason_code in
+		<foreach item="item" index="index" collection="faultReasons" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach>
+	</if>
+	<if test="meshFaultReasons != null" >
+		and  tfr.meshfaultcode in
+		<foreach item="item" index="index" collection="meshFaultReasons" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach>
+	</if>
+	 group by ins.install_month,ins.repair_month
+</select>
+-->
+<!-- 获取安装数，根据安装时间，类型 -->
+<!-- 
+<select id="getInsCountGroupByReMonth" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	select ind.install_month, 
+	sum(ind.install_count) install_count from(
+	select distinct tr.product_type ,tr.install_month,tr.install_count from t_install_total_record tr where 1=1
+	<if test="productType != null and productType!='' " >
+		 and tr.product_type like '%${productType}%'
+	</if>
+	<if test="insStartTime != null and insStartTime!=''"  >
+		<![CDATA[ and tr.install_month >= #{insStartTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="insEndTime != null and insEndTime!=''" >
+		<![CDATA[ and tr.install_month <= #{insEndTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="partTypes != null and partTypes!=''">
+		and tr.part_type in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">  
+			#{item}  
+		</foreach>
+	</if>
+	) ind group by ind.install_month
+ 	order by ind.install_month 
+</select>
+-->
+<!-- 获取型号 -->
+<select id="getPartTypeFromMes" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[	    
+		select distinct up.product_type_s as part_type
+	    from part p , uda_part up
+	    where up.product_type_s is not null 
+	    and p.part_key=up.object_key
+    ]]>
+    <if test="productType != null and productType !='蒸箱'" >
+    	and up.mold_type_s = #{productType,jdbcType=VARCHAR}
+	</if>
+	
+	<if test="productType != null and productType =='蒸箱'" >
+    	and up.mold_type_s in ('蒸箱','蒸微')
+	</if>
+	
+	<if test="productFamilyList != null">
+		and up.product_family_s in
+		<foreach item="item" index="index" collection="productFamilyList" open="(" separator="," close=")">
+		#{item}
+		</foreach>
+	</if>
+	<![CDATA[
+    order by NLSSORT(up.product_type_s ,'NLS_SORT = SCHINESE_PINYIN_M')
+	]]>
+</select>
+  
+<!-- 获取产品系列 -->
+<select id="getProductFamilyFromMes" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >    
+	<![CDATA[
+		select distinct up.product_family_s as product_family
+	    from part p , uda_part up
+	    where up.product_family_s is not null 
+	    and p.part_key=up.object_key
+    ]]>
+    <if test="productType != null and productType !='蒸箱'" >
+    	and up.mold_type_s = #{productType,jdbcType=VARCHAR}
+	</if>
+	<if test="productType != null and productType =='蒸箱'" >
+    	and up.mold_type_s in ('蒸箱','蒸微')
+	</if>
+</select>
+
+<select id="getRegion" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo">
+	<![CDATA[
+		SELECT distinct REGION FROM T_LOCATION_REGION WHERE REGION IS NOT NULL
+		order by NLSSORT(REGION, 'NLS_SORT = SCHINESE_PINYIN_M')
+	]]>
+</select>
+
+<!-- 获取区域 -->
+<select id="getMergeRegion" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[	    
+	select distinct merge_region as region from t_Location_Region where merge_region is not null
+    order by NLSSORT(merge_region ,'NLS_SORT = SCHINESE_PINYIN_M')
+	]]>
+</select>
+
+<!-- 获取工厂 -->
+<select id="getFactorys" resultMap="productionLineMap" parameterType="com.peg.model.ProductionLine" >
+	<![CDATA[	    
+	  	select distinct p.uda_1 as factory from PRODUCTION_LINE p
+	  	where 1=1
+	]]>
+</select>
+
+<!-- 根据工厂基础数据表获取工厂 -->
+<select id="getFactorysBySite" resultMap="productionLineMap" parameterType="com.peg.model.ProductionLine">
+	<![CDATA[	    
+	  	SELECT SITE_NAME FACTORYNUMBER, DESCRIPTION FACTORY FROM SITE WHERE 1 = 1
+	]]>
+	<if test="factoryNumber != null and factoryNumber != ''" >
+		AND SITE_NAME = #{factoryNumber,jdbcType=VARCHAR}
+	</if>
+	ORDER BY SITE_NAME
+</select>
+  
+<!-- 获取产线 -->
+<select id="getLines" resultMap="productionLineMap" parameterType="com.peg.model.ProductionLine" >
+	<![CDATA[	    
+	  	select p.uda_1 as factory,p.uda_2 as area,
+       	p.p_line_name as productline_number,p.description as productline_name
+		from PRODUCTION_LINE p
+		where 1=1 
+	]]>
+	<if test="factory != null" >
+		and p.uda_1 = #{factory,jdbcType=VARCHAR}
+	</if>
+	<if test="area != null" >
+		and p.uda_2 = #{area,jdbcType=VARCHAR}
+	</if>
+	order by NLSSORT(p.description ,'NLS_SORT = SCHINESE_PINYIN_M')
+</select>
+
+<select id="getPartTypeListFromMes" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo">
+ <![CDATA[
+  select distinct up.mold_type_s as product_type,up.product_family_s as product_family, up.product_type_s as part_type
+      from part p , uda_part up
+      where up.product_type_s is not null 
+      and p.part_key=up.object_key
+ ]]>     
+      <if test="productType != null and productType!=''" >
+    	and up.mold_type_s = #{productType,jdbcType=VARCHAR}
+	  </if>
+	  <if test="productFamily != null and productFamily !=''" >
+    	and up.product_family_s like '%${productFamily}%'
+	  </if>
+	  <if test="partType != null and partType !=''" >
+    	and up.product_type_s like '%${partType}%' 
+	  </if>
+	  order by up.mold_type_s ,up.product_family_s ,up.product_type_s
+</select>
+
+<!-- 获取安装月份下的保内维修数 -->
+<select id="getInsCountGroupByMonthAndInterval" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo">
+SELECT TIR.INSTALL_MONTH, TIR.INTERVAL_TIME, SUM(TIR.REPAIR_COUNT) as install_count
+	FROM T_INSTALL_REPAIR TIR, T_FAULT_REASON TFR WHERE 1 = 1 AND TIR.FAULT_REASON_CODE = TFR.CODE(+)
+	<if test="productType != null and productType!=''">
+		AND TIR.PRODUCT_TYPE = '${productType}'
+	</if>
+	<if test="faultReasonValid != null and faultReasonValid!=''">
+		AND TFR.VALID = #{faultReasonValid,jdbcType=VARCHAR}
+	</if>
+	<if test="isOver != null and isOver!=''">
+		AND TIR.IS_OVER = #{isOver,jdbcType=VARCHAR}
+	</if>
+	<if test="isConsumedPart != null and isConsumedPart !=''">
+		AND TIR.IS_CONSUMED_PART = #{isConsumedPart,jdbcType=VARCHAR}
+	</if>
+	<if test="insStartTime != null and insStartTime != ''">
+		<![CDATA[ AND TIR.INSTALL_MONTH >= #{insStartTime,jdbcType=VARCHAR} ]]>
+		<![CDATA[ AND TIR.REPAIR_MONTH >= TIR.INSTALL_MONTH ]]>
+	</if>
+	<if test="insEndTime != null and insEndTime != ''">
+		<![CDATA[ and TIR.INSTALL_MONTH <= #{insEndTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="dlStartTime != null and dlStartTime != ''">
+		<![CDATA[ AND TIR.DOWNLINE_TIME >= #{dlStartTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="dlEndTime != null and dlEndTime != ''">
+		<![CDATA[ AND TIR.DOWNLINE_TIME <= #{dlEndTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="regions != null" >
+	    and TIR.REGION in
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach> 
+	</if>
+	<if test="productFamilys != null">
+		AND TIR.PRODUCT_FAMILY IN
+		<foreach item="item" index="inex" collection="productFamilys" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partTypes != null">
+		and TIR.PART_TYPE in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach>
+	</if>
+	<if test="faultTypes != null">
+		and TIR.FAULT_TYPE_CODE in
+		<foreach item="item" index="index" collection="faultTypes" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach>
+	</if>
+	<if test="faultReasons != null">
+		and TIR.FAULT_REASON_CODE in
+		<foreach item="item" index="index" collection="faultReasons" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach>
+	</if>
+	<if test="meshFaultReasons != null">
+		and TFR.MESHFAULTCODE in
+		<foreach item="item" index="index" collection="meshFaultReasons" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<!-- SELECT TIR.INSTALL_MONTH,sum(TIR.REPAIR_COUNT) as install_count,TIR.INTERVAL_TIME FROM T_INSTALL_REPAIR TIR,T_FAULT_REASON TFR  WHERE 1 = 1 AND TIR.FAULT_REASON_CODE = TFR.CODE(+)
+	<if test="productType != null and productType!='' " >
+		 and product_type like '%${productType}%'
+	</if>
+	<if test="insStartTime != null and insStartTime!=''"  >
+		<![CDATA[ and INSTALL_MONTH >= #{insStartTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="insEndTime != null and insEndTime!=''" >
+		<![CDATA[ and INSTALL_MONTH <= #{insEndTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="dlStartTime != null and dlStartTime != ''">
+		<![CDATA[ AND DOWNLINE_TIME >= #{dlStartTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="dlEndTime != null and dlEndTime != ''">
+		<![CDATA[ AND DOWNLINE_TIME <= #{dlEndTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="productFamilys != null and productFamilys != ''">
+		and PART_FAMILY in
+		<foreach item="item" index="index" collection="productFamilys" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partTypes != null and partTypes!=''">
+		and PART_TYPE in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">  
+			#{item}  
+		</foreach>
+	</if>
+	<if test="regions != null" >
+	    and REGION in
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach> 
+	</if>-->
+	AND TIR.INTERVAL_TIME >= 0
+	GROUP BY TIR.INSTALL_MONTH,TIR.INTERVAL_TIME 
+	ORDER BY TIR.INSTALL_MONTH,TIR.INTERVAL_TIME
+</select>
+
+<!-- 获取指定区间总安装数 -->
+<select id="getAllInsCountGroup" resultType="Long" parameterType="com.peg.model.CommonVo">
+	SELECT  COUNT(1) as install_count FROM T_INSTALL WHERE 1 = 1
+	<if test="productType != null and productType!='' " >
+		 and product_type like '%${productType}%'
+	</if>
+	<if test="insStartTime != null and insStartTime!=''"  >
+		<![CDATA[ and INSTALL_MONTH >= #{insStartTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="insEndTime != null and insEndTime!=''" >
+		<![CDATA[ and INSTALL_MONTH <= #{insEndTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="dlStartTime != null and dlStartTime != ''">
+		<![CDATA[ AND DOWNLINE_TIME >= #{dlStartTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="dlEndTime != null and dlEndTime != ''">
+		<![CDATA[ AND DOWNLINE_TIME <= #{dlEndTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="productFamilys != null and productFamilys != ''">
+		and PART_FAMILY in
+		<foreach item="item" index="index" collection="productFamilys" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partTypes != null and partTypes!=''">
+		and PART_TYPE in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">  
+			#{item}  
+		</foreach>
+	</if>
+	<if test="regions != null" >
+	    and REGION in
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">  
+		 	#{item}  
+		</foreach> 
+	</if>
+</select>
+<select id="getVoiceCategory" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo">
+	select CLASS_NAME voiceCategory from T_VOICE_CATEGORY WHERE 1=1
+	<if test="productType != null and productType!=''">
+	and PATER_NUMBER = (select CLASS_NUMBER FROM T_VOICE_CATEGORY WHERE CLASS_NAME = '${productType}')
+	</if>
+</select>
+</mapper>

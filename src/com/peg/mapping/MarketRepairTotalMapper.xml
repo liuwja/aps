@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.MarketRepairTotalMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.MarketRepairTotal" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="PRODUCT_TYPE" property="productType" jdbcType="VARCHAR" />
+    <result column="DOWNLINE_MONTH" property="downlineMonth" jdbcType="VARCHAR" />
+    <result column="REPAIRED_MONTH" property="repairedMonth" jdbcType="VARCHAR" />
+    <result column="PART_TYPE" property="partType" jdbcType="VARCHAR" />
+    <result column="REGION" property="region" jdbcType="VARCHAR" />
+    <result column="PRODUCTLINE_NUMBER" property="productlineNumber" jdbcType="VARCHAR" />
+    <result column="FAULT_TYPE_CODE" property="faultTypeCode" jdbcType="VARCHAR" />
+    <result column="FAULT_REASON_CODE" property="faultReasonCode" jdbcType="VARCHAR" />
+    <result column="REPAIRED_COUNT" property="repairedCount" jdbcType="DECIMAL" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="IS_OVER" property="isOver" jdbcType="VARCHAR" />
+     <result column="product_family" property="productFamily" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, PRODUCT_TYPE, DOWNLINE_MONTH, REPAIRED_MONTH, PART_TYPE, REGION, PRODUCTLINE_NUMBER, 
+    FAULT_TYPE_CODE, FAULT_REASON_CODE, REPAIRED_COUNT, CREATE_TIME, IS_OVER,product_family
+  </sql>
+  
+    <!--显现全部维修汇总表 （分页）-->
+  <select id="findRepairTotalByPage" resultMap="BaseResultMap">
+	select t.product_type ,t.downline_month,t.repaired_month ,t.part_type,t.region,t.productline_number,
+	t.fault_type_code,t.fault_reason_code,t.repaired_count,t.is_over,t.product_family from T_MARKET_REPAIR_TOTAL_RECORD t,t_fault_reason tfr
+	where t.fault_reason_code = tfr.code(+)
+  		<if test="total.productType != null and total.productType != ''" >
+			and t.product_type like '%${total.productType}%'
+		</if>
+		<if test="faultReason.valid != null and faultReason.valid != ''" >
+			and tfr.valid = #{faultReason.valid,jdbcType=VARCHAR}
+		</if>		
+		<if test="faultReason.meshFaultName != null and faultReason.meshFaultName !=''" >
+			and tfr.meshfaultname like '%${total.meshFaultName}%'
+		</if>
+		<if test="total.region != null and total.region !=''" >
+			and t.region like '%${total.region}%'
+		</if>
+		<if test="total.partType != null and total.partType !=''" >
+			and t.part_type = '${total.partType}'
+		</if>
+		<if test="total.downlineMonth != null and total.downlineMonth !=''" >
+			and t.downline_month = #{total.downlineMonth,jdbcType=VARCHAR}
+		</if>
+		<if test="total.productlineNumber != null and total.productlineNumber !=''" >
+			and t.productline_number like '%${total.productlineNumber}%'
+		</if>
+		<if test="total.faultTypeCode != null and total.faultTypeCode !=''" >
+			and t.fault_type_code like '%${total.faultTypeCode}%'
+		</if>
+		<if test="total.faultReasonCode != null and total.faultReasonCode !=''" >
+			and t.fault_reason_code like '%${total.faultReasonCode}%'
+		</if>
+		<if test="total.isOver != null and total.isOver != ''" >
+			and t.is_over = #{total.isOver,jdbcType=VARCHAR}
+		</if>
+		<if test="total.startTime != null  and total.startTime !=''"  >
+			<![CDATA[ and t.repaired_month >= #{total.startTime,jdbcType=VARCHAR} ]]>
+		</if>
+		<if test="total.endTime != null  and total.endTime !=''"  >
+			<![CDATA[ and t.repaired_month <= #{total.endTime,jdbcType=VARCHAR} ]]>
+		</if>
+		order by t.create_time desc
+  </select>
+  
+   <!--显现全部维修汇总表(不分页) -->
+  <select id="findAllRepairTotal" resultMap="BaseResultMap">
+	select t.product_type ,t.downline_month,t.repaired_month ,t.part_type,t.region,t.productline_number,
+	t.fault_type_code,t.fault_reason_code,t.repaired_count,t.is_over,t.product_family from T_MARKET_REPAIR_TOTAL_RECORD t,t_fault_reason tfr
+	where t.fault_reason_code = tfr.code(+)
+  		<if test="total.productType != null and total.productType != ''" >
+			and t.product_type like '%${total.productType}%'
+		</if>
+		<if test="faultReason.valid != null and faultReason.valid != ''" >
+			and tfr.valid = #{faultReason.valid,jdbcType=VARCHAR}
+		</if>		
+		<if test="faultReason.meshFaultName != null and faultReason.meshFaultName !=''" >
+			and tfr.meshfaultname like '%${total.meshFaultName}%'
+		</if>
+		<if test="total.region != null and total.region !=''" >
+			and t.region like '%${total.region}%'
+		</if>
+		<if test="total.partType != null and total.partType !=''" >
+			and t.part_type = '${total.partType}'
+		</if>
+		<if test="total.downlineMonth != null and total.downlineMonth !=''" >
+			and t.downline_month = #{total.downlineMonth,jdbcType=VARCHAR}
+		</if>
+		<if test="total.productlineNumber != null and total.productlineNumber !=''" >
+			and t.productline_number like '%${total.productlineNumber}%'
+		</if>
+		<if test="total.faultTypeCode != null and total.faultTypeCode !=''" >
+			and t.fault_type_code like '%${total.faultTypeCode}%'
+		</if>
+		<if test="total.faultReasonCode != null and total.faultReasonCode !=''" >
+			and t.fault_reason_code like '%${total.faultReasonCode}%'
+		</if>
+		<if test="total.isOver != null and total.isOver != ''" >
+			and t.is_over = #{total.isOver,jdbcType=VARCHAR}
+		</if>
+		<if test="total.startTime != null  and total.startTime !=''"  >
+			<![CDATA[ and t.repaired_month >= #{total.startTime,jdbcType=VARCHAR} ]]>
+		</if>
+		<if test="total.endTime != null  and total.endTime !=''"  >
+			<![CDATA[ and t.repaired_month <= #{total.endTime,jdbcType=VARCHAR} ]]>
+		</if>
+		order by t.create_time desc
+  </select>
+  
+  <!-- 计算维修总数 -->
+   <select id="sumRepair" resultType="java.lang.Integer">
+	select nvl(sum(t.repaired_count),0) from T_MARKET_REPAIR_TOTAL_RECORD t,t_fault_reason tfr
+	where t.fault_reason_code = tfr.code(+)
+   		<if test="total.productType != null and total.productType != ''" >
+			and t.product_type like '%${total.productType}%'
+		</if>
+		<if test="faultReason.valid != null and faultReason.valid != ''" >
+			and tfr.valid = #{faultReason.valid,jdbcType=VARCHAR}
+		</if>		
+		<if test="faultReason.meshFaultName != null and faultReason.meshFaultName !=''" >
+			and tfr.meshfaultname like '%${total.meshFaultName}%'
+		</if>
+		<if test="total.region != null and total.region !=''" >
+			and t.region like '%${total.region}%'
+		</if>
+		<if test="total.partType != null and total.partType !=''" >
+			and t.part_type = '${total.partType}'
+		</if>
+		<if test="total.downlineMonth != null and total.downlineMonth !=''" >
+			and t.downline_month = #{total.downlineMonth,jdbcType=VARCHAR}
+		</if>
+		<if test="total.productlineNumber != null and total.productlineNumber !=''" >
+			and t.productline_number like '%${total.productlineNumber}%'
+		</if>
+		<if test="total.faultTypeCode != null and total.faultTypeCode !=''" >
+			and t.fault_type_code like '%${total.faultTypeCode}%'
+		</if>
+		<if test="total.faultReasonCode != null and total.faultReasonCode !=''" >
+			and t.fault_reason_code like '%${total.faultReasonCode}%'
+		</if>
+		<if test="total.isOver != null and total.isOver != ''" >
+			and t.is_over = #{total.isOver,jdbcType=VARCHAR}
+		</if>
+		<if test="total.startTime != null  and total.startTime !=''"  >
+			<![CDATA[ and t.repaired_month >= #{total.startTime,jdbcType=VARCHAR} ]]>
+		</if>
+		<if test="total.endTime != null  and total.endTime !=''"  >
+			<![CDATA[ and t.repaired_month <= #{total.endTime,jdbcType=VARCHAR} ]]>
+		</if>
+   </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_MARKET_REPAIR_TOTAL_RECORD
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from T_MARKET_REPAIR_TOTAL_RECORD
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  
+  <insert id="insertSelective" parameterType="com.peg.model.MarketRepairTotal" >
+    insert into T_MARKET_REPAIR_TOTAL_RECORD
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="productType != null" >
+        PRODUCT_TYPE,
+      </if>
+      <if test="downlineMonth != null" >
+        DOWNLINE_MONTH,
+      </if>
+      <if test="repairedMonth != null" >
+        REPAIRED_MONTH,
+      </if>
+      <if test="partType != null" >
+        PART_TYPE,
+      </if>
+      <if test="region != null" >
+        REGION,
+      </if>
+      <if test="productlineNumber != null" >
+        PRODUCTLINE_NUMBER,
+      </if>
+      <if test="faultTypeCode != null" >
+        FAULT_TYPE_CODE,
+      </if>
+      <if test="faultReasonCode != null" >
+        FAULT_REASON_CODE,
+      </if>
+      <if test="repairedCount != null" >
+        REPAIRED_COUNT,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="isOver != null" >
+        IS_OVER,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="productType != null" >
+        #{productType,jdbcType=VARCHAR},
+      </if>
+      <if test="downlineMonth != null" >
+        #{downlineMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="repairedMonth != null" >
+        #{repairedMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="partType != null" >
+        #{partType,jdbcType=VARCHAR},
+      </if>
+      <if test="region != null" >
+        #{region,jdbcType=VARCHAR},
+      </if>
+      <if test="productlineNumber != null" >
+        #{productlineNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="faultTypeCode != null" >
+        #{faultTypeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="faultReasonCode != null" >
+        #{faultReasonCode,jdbcType=VARCHAR},
+      </if>
+      <if test="repairedCount != null" >
+        #{repairedCount,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isOver != null" >
+        #{isOver,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.MarketRepairTotal" >
+    update T_MARKET_REPAIR_TOTAL_RECORD
+    <set >
+      <if test="productType != null" >
+        PRODUCT_TYPE = #{productType,jdbcType=VARCHAR},
+      </if>
+      <if test="downlineMonth != null" >
+        DOWNLINE_MONTH = #{downlineMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="repairedMonth != null" >
+        REPAIRED_MONTH = #{repairedMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="partType != null" >
+        PART_TYPE = #{partType,jdbcType=VARCHAR},
+      </if>
+      <if test="region != null" >
+        REGION = #{region,jdbcType=VARCHAR},
+      </if>
+      <if test="productlineNumber != null" >
+        PRODUCTLINE_NUMBER = #{productlineNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="faultTypeCode != null" >
+        FAULT_TYPE_CODE = #{faultTypeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="faultReasonCode != null" >
+        FAULT_REASON_CODE = #{faultReasonCode,jdbcType=VARCHAR},
+      </if>
+      <if test="repairedCount != null" >
+        REPAIRED_COUNT = #{repairedCount,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isOver != null" >
+        IS_OVER = #{isOver,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  
+</mapper>

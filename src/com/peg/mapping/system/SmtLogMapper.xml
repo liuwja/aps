@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.peg.dao.system.SmtLogMapper">
+
+    <insert id="insertSmtLog">
+        insert into t_smt_log(type, object_name, failure_reason)
+        values(#{type}, #{objectName}, #{failureReason})
+    </insert>
+
+    <resultMap id="smtLogMap" type="com.peg.model.smt.SmtLog">
+        <result column="type" property="type" />
+        <result column="object_name" property="objectName" />
+        <result column="failure_reason" property="failureReason" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+    <select id="getAllByPage" resultMap="smtLogMap">
+        SELECT type, object_name, failure_reason, create_time FROM t_smt_log
+        <trim prefix="where" prefixOverrides="and">
+            <if test="smtLog.type != null and smtLog.type != '' ">
+                type = #{smtLog.type}
+            </if>
+            <if test="smtLog.objectName != null and smtLog.objectName != '' ">
+                AND object_name = #{smtLog.objectName}
+            </if>
+            <if test="smtLog.createStartTime != null and smtLog.createStartTime != '' ">
+                AND create_time >= to_date(#{smtLog.createStartTime}, 'yyyy/mm/dd hh24:mi:ss')
+            </if>
+            <if test="smtLog.createEndTime != null and smtLog.createEndTime != '' ">
+                <![CDATA[ AND create_time <= to_date(#{smtLog.createEndTime}, 'yyyy/mm/dd hh24:mi:ss') ]]>
+            </if>
+        </trim>
+        ORDER BY create_time desc
+    </select>
+</mapper>

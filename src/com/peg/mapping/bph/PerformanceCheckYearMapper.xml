@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.PerformanceCheckYearMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.PerformanceCheckYear" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="CHECK_YEAR" property="checkYear" jdbcType="TIMESTAMP" />
+    <result column="FACTORY" property="factory" jdbcType="VARCHAR" />
+    <result column="CHECK_INDEX_NAME" property="checkIndexName" jdbcType="VARCHAR" />
+    <result column="BASE_VALUE_YEAR" property="baseValueYear" jdbcType="DECIMAL" />
+    <result column="TARGET_VALUE_YEAR" property="targetValueYear" jdbcType="DECIMAL" />
+    <result column="TARGET_VALUE_HALFYEAR" property="targetValueHalfyear" jdbcType="DECIMAL" />
+    <result column="DEPRESS_RATE_YEAR" property="depressRateYear" jdbcType="DECIMAL" />
+    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_UPDATE_USER" property="lastUpdateUser" jdbcType="VARCHAR" />
+    <result column="LAST_UPDATE_TIME" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, CHECK_YEAR, FACTORY, CHECK_INDEX_NAME, BASE_VALUE_YEAR, TARGET_VALUE_YEAR, TARGET_VALUE_HALFYEAR, 
+    DEPRESS_RATE_YEAR, CREATE_USER, CREATE_TIME, LAST_UPDATE_USER, LAST_UPDATE_TIME
+  </sql>
+  
+   <select id="getAllByPage" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_PERFORMANCE_CHECKYEAR
+    <where>
+        <if test="hashMap.factory != null">
+            FACTORY like '%${hashMap.factory}%'
+        </if>
+        <if test="hashMap.checkIndexName != null">
+           and CHECK_INDEX_NAME like '%${hashMap.checkIndexName}%'
+        </if>
+        <if test="hashMap.queryYear != null">
+           and to_char(CHECK_YEAR,'YYYY') = ${hashMap.checkYear}
+        </if>
+    </where>
+       order by CREATE_TIME desc
+  </select> 
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_PERFORMANCE_CHECKYEAR
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from T_PERFORMANCE_CHECKYEAR
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.bph.PerformanceCheckYear" >
+    <selectKey resultType="long" order="BEFORE" keyProperty="id">
+      select seq_t_performance_checkyear.nextval as id from dual
+    </selectKey>  
+    insert into T_PERFORMANCE_CHECKYEAR (ID, CHECK_YEAR, FACTORY, 
+      CHECK_INDEX_NAME, BASE_VALUE_YEAR, TARGET_VALUE_YEAR, 
+      TARGET_VALUE_HALFYEAR, DEPRESS_RATE_YEAR, CREATE_USER, 
+       LAST_UPDATE_USER, LAST_UPDATE_TIME
+      )
+    values (#{id,jdbcType=DECIMAL}, #{checkYear,jdbcType=TIMESTAMP}, #{factory,jdbcType=VARCHAR}, 
+      #{checkIndexName,jdbcType=VARCHAR}, #{baseValueYear,jdbcType=DECIMAL}, #{targetValueYear,jdbcType=DECIMAL}, 
+      #{targetValueHalfyear,jdbcType=DECIMAL}, #{depressRateYear,jdbcType=DECIMAL}, #{createUser,jdbcType=VARCHAR}, 
+       #{lastUpdateUser,jdbcType=VARCHAR}, #{lastUpdateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.bph.PerformanceCheckYear" >
+    insert into T_PERFORMANCE_CHECKYEAR
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="checkYear != null" >
+        CHECK_YEAR,
+      </if>
+      <if test="factory != null" >
+        FACTORY,
+      </if>
+      <if test="checkIndexName != null" >
+        CHECK_INDEX_NAME,
+      </if>
+      <if test="baseValueYear != null" >
+        BASE_VALUE_YEAR,
+      </if>
+      <if test="targetValueYear != null" >
+        TARGET_VALUE_YEAR,
+      </if>
+      <if test="targetValueHalfyear != null" >
+        TARGET_VALUE_HALFYEAR,
+      </if>
+      <if test="depressRateYear != null" >
+        DEPRESS_RATE_YEAR,
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="lastUpdateUser != null" >
+        LAST_UPDATE_USER,
+      </if>
+      <if test="lastUpdateTime != null" >
+        LAST_UPDATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="checkYear != null" >
+        #{checkYear,jdbcType=TIMESTAMP},
+      </if>
+      <if test="factory != null" >
+        #{factory,jdbcType=VARCHAR},
+      </if>
+      <if test="checkIndexName != null" >
+        #{checkIndexName,jdbcType=VARCHAR},
+      </if>
+      <if test="baseValueYear != null" >
+        #{baseValueYear,jdbcType=DECIMAL},
+      </if>
+      <if test="targetValueYear != null" >
+        #{targetValueYear,jdbcType=DECIMAL},
+      </if>
+      <if test="targetValueHalfyear != null" >
+        #{targetValueHalfyear,jdbcType=DECIMAL},
+      </if>
+      <if test="depressRateYear != null" >
+        #{depressRateYear,jdbcType=DECIMAL},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateUser != null" >
+        #{lastUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateTime != null" >
+        #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.bph.PerformanceCheckYear" >
+    update T_PERFORMANCE_CHECKYEAR
+    <set >
+      <if test="checkYear != null" >
+        CHECK_YEAR = #{checkYear,jdbcType=TIMESTAMP},
+      </if>
+      <if test="factory != null" >
+        FACTORY = #{factory,jdbcType=VARCHAR},
+      </if>
+      <if test="checkIndexName != null" >
+        CHECK_INDEX_NAME = #{checkIndexName,jdbcType=VARCHAR},
+      </if>
+      <if test="baseValueYear != null" >
+        BASE_VALUE_YEAR = #{baseValueYear,jdbcType=DECIMAL},
+      </if>
+      <if test="targetValueYear != null" >
+        TARGET_VALUE_YEAR = #{targetValueYear,jdbcType=DECIMAL},
+      </if>
+      <if test="targetValueHalfyear != null" >
+        TARGET_VALUE_HALFYEAR = #{targetValueHalfyear,jdbcType=DECIMAL},
+      </if>
+      <if test="depressRateYear != null" >
+        DEPRESS_RATE_YEAR = #{depressRateYear,jdbcType=DECIMAL},
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateUser != null" >
+        LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateTime != null" >
+        LAST_UPDATE_TIME = #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.bph.PerformanceCheckYear" >
+    update T_PERFORMANCE_CHECKYEAR
+    set CHECK_YEAR = #{checkYear,jdbcType=TIMESTAMP},
+      FACTORY = #{factory,jdbcType=VARCHAR},
+      CHECK_INDEX_NAME = #{checkIndexName,jdbcType=VARCHAR},
+      BASE_VALUE_YEAR = #{baseValueYear,jdbcType=DECIMAL},
+      TARGET_VALUE_YEAR = #{targetValueYear,jdbcType=DECIMAL},
+      TARGET_VALUE_HALFYEAR = #{targetValueHalfyear,jdbcType=DECIMAL},
+      DEPRESS_RATE_YEAR = #{depressRateYear,jdbcType=DECIMAL},
+      CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=VARCHAR},
+      LAST_UPDATE_TIME = #{lastUpdateTime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+</mapper>

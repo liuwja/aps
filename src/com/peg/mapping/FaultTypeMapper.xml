@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.FaultTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.FaultType" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="CODE" property="code" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+    <result column="LAST_UPDATE_TIME" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_UPDATE_USER" property="lastUpdateUser" jdbcType="VARCHAR" />
+    <result column="PRODUCT_TYPE" property="productType" jdbcType="VARCHAR" />
+    
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, CODE, NAME, CREATE_TIME, CREATE_USER, LAST_UPDATE_TIME, LAST_UPDATE_USER,PRODUCT_TYPE
+  </sql>
+  <select id="getfaultbykey"  resultMap="BaseResultMap" parameterType="java.lang.Long">
+  	select 
+    <include refid="Base_Column_List" />
+    from T_FAULT_TYPE
+    where ID = #{id,jdbcType=DECIMAL}
+    order by code,name
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_FAULT_TYPE
+    where ID = #{id,jdbcType=DECIMAL}
+    order by code,name
+  </select>
+  <select id="findAllByPage" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from T_FAULT_TYPE
+    <where>
+      <if test="faultType.code != null and faultType.code !=''" >
+        CODE like '%${faultType.code}%'
+      </if>
+      <if test="faultType.name != null and faultType.name !=''" >
+        and NAME like '%${faultType.name}%'
+      </if>
+        <if test="faultType.productType != null and faultType.productType !=''" >
+        and PRODUCT_TYPE like '%${faultType.productType}%'
+      </if>
+    </where>
+    order by code,name
+  </select>
+    <select id="findAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from T_FAULT_TYPE
+    <where>
+      <if test="faultType.code != null and faultType.code !=''" >
+        CODE like '%${faultType.code}%'
+      </if>
+      <if test="faultType.name != null and faultType.name !=''" >
+        and NAME like '%${faultType.name}%'
+      </if>
+        <if test="faultType.productType != null and faultType.productType !=''" >
+        and PRODUCT_TYPE like '%${faultType.productType}%'
+      </if>
+    </where>
+    order by code,name
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from T_FAULT_TYPE
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.FaultType" >
+  <selectKey resultType="long" order="BEFORE" keyProperty="id">
+      select seq_t_fault_type.nextval as ID from dual
+    </selectKey>
+    insert into T_FAULT_TYPE (ID, CODE, NAME, 
+      CREATE_TIME, CREATE_USER, LAST_UPDATE_TIME, 
+      LAST_UPDATE_USER,PRODUCT_TYPE)
+    values (#{id,jdbcType=DECIMAL}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      SYSDATE, #{createUser,jdbcType=VARCHAR}, #{lastUpdateTime,jdbcType=TIMESTAMP}, 
+      #{lastUpdateUser,jdbcType=VARCHAR},#{productType,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.FaultType" >
+    insert into T_FAULT_TYPE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="code != null" >
+        CODE,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER,
+      </if>
+      <if test="lastUpdateTime != null" >
+        LAST_UPDATE_TIME,
+      </if>
+      <if test="lastUpdateUser != null" >
+        LAST_UPDATE_USER,
+      </if>
+      <if test="productType != null" >
+        PRODUCT_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateTime != null" >
+        #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateUser != null" >
+        #{lastUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="productType != null" >
+        #{productType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.FaultType" >
+    update T_FAULT_TYPE
+    <set >
+      <if test="code != null" >
+        CODE = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      </if>
+      
+        LAST_UPDATE_TIME = SYSDATE,
+      
+      <if test="lastUpdateUser != null" >
+        LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="productType != null" >
+        PRODUCT_TYPE = #{productType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.FaultType" >
+    update T_FAULT_TYPE
+    set CODE = #{code,jdbcType=VARCHAR},
+      NAME = #{name,jdbcType=VARCHAR},
+      LAST_UPDATE_TIME = SYSDATE,
+      LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+</mapper>

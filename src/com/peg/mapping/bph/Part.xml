@@ -1,0 +1,1028 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.OnlinelookupMapper">
+	<resultMap type="com.peg.model.bph.Onlinelookup" id="onlinelookup">
+		<result column="category" property="factoryS" jdbcType="VARCHAR" />
+		<result column="UDA_2" property="uda_2" jdbcType="VARCHAR" />
+		<result column="UDA_1" property="uda_1" jdbcType="VARCHAR" />
+		<result column="UDA_3" property="uda_3" jdbcType="VARCHAR" />
+		<result column="UDA_4" property="uda_4" jdbcType="VARCHAR" />
+		<result column="PART_NUMBER" property="partnumber" jdbcType="VARCHAR"/>
+		<result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
+		<result column="factoryS" property="factoryS" jdbcType="VARCHAR"/>
+		<result column="productionLine" property="productionLine" jdbcType="VARCHAR"/>
+		<result column="numbers" property="numbers" jdbcType="VARCHAR"/>
+		<result column="name" property="name" jdbcType="VARCHAR"/>
+		<result column="badcount" property="badcount" jdbcType="DECIMAL"/>
+		<result column="countnum" property="count" jdbcType="DECIMAL"/>
+		<result column="count" property="count" jdbcType="DECIMAL"/>
+		<result column="supplier" property="supplier" jdbcType="VARCHAR"/>
+		<result column="arrival" property="arrival" jdbcType="VARCHAR" />
+		<result column="partnumber" property="partnumber" jdbcType="VARCHAR" />
+		<result column="partname" property="partname" jdbcType="VARCHAR"/>
+		<result column="supcode" property="supcode" jdbcType="VARCHAR"/>	
+		<result column="supname" property="supname" jdbcType="VARCHAR"/>
+		<result column="tonum" property="tonum" jdbcType="VARCHAR"/>	
+		<result column="location" property="location" jdbcType="VARCHAR"/>	
+		<result column="moldtype" property="moldtype" jdbcType="VARCHAR"/>
+		<result column="partclass" property="partclass" jdbcType="DECIMAL"/>
+		<result column="partrevision" property="partrevision" jdbcType="DECIMAL"/>
+		<result column="category" property="category" jdbcType="VARCHAR"/>
+		<result column="record_date_t" property="record_date_t" jdbcType="TIMESTAMP"/>
+		<result column="line_s" property="line_s" jdbcType="VARCHAR"/>
+		<result column="part_number" property="part_number" jdbcType="VARCHAR"/>
+		<result column="product_maturity_s" property="product_maturity_s" jdbcType="VARCHAR"/>
+		<result column="account_name" property="account_name" jdbcType="VARCHAR"/>
+		<result column="description_2" property="description_2" jdbcType="VARCHAR"/>
+		<result column="defect_s" property="defect_s" jdbcType="VARCHAR"/>
+		<result column="defect_qty_i" property="defect_qty_i" jdbcType="DECIMAL"/>
+		<result column="total_qty_i" property="total_qty_i" jdbcType="DECIMAL"/>
+		<result column="date_t" property="date_t" jdbcType="VARCHAR"/>
+		<result column="date_TT" property="date_TT" jdbcType="TIMESTAMP"/>
+		<result column="return_date" property="return_date" jdbcType="TIMESTAMP"/>
+		<result column="part_name" property="part_name" jdbcType="VARCHAR"/>
+		<result column="supplier_number" property="supplier_number" jdbcType="VARCHAR"/>
+		<result column="supplier_name" property="supplier_name" jdbcType="VARCHAR"/>
+		<result column="return_number" property="return_number" jdbcType="NUMERIC"/>
+		<result column="ware_house" property="ware_house" jdbcType="VARCHAR"/>
+		<result column="account_key" property="account_key" jdbcType="VARCHAR"/>
+		<result column="part_key" property="part_key" jdbcType="VARCHAR"/>
+	</resultMap>
+	<select id="getpartPage" resultMap="onlinelookup">
+		select t.category,t.uda_2,t.uda_1,t.uda_3,t.uda_4 from part_class@mes_test_link t where 1=1
+		<if test="hashMap.factoryS!=null and hashMap.factoryS!=''">
+			and t.category like '%${hashMap.factoryS}%'
+		</if>
+		<if test="hashMap.uda_2!=null and hashMap.uda_2!=''">
+		 	and t.uda_2=#{hashMap.uda_2}
+		</if>
+	</select>
+	<select id="getparttwoPage" resultMap="onlinelookup">
+		select t.part_number as PART_NUMBER,t.description as DESCRIPTION,t.uda_3 as UDA_3,t.uda_2 as UDA_2 from part t where 1=1
+		<if test="hashMap.uda_3!=null and hashMap.uda_3!=''">
+			and t.uda_3=#{hashMap.uda_3}
+		</if>
+		<if test="hashMap.partnumber!=null and hashMap.partnumber!=''">
+			and t.part_number like '%${hashMap.partnumber}%'
+		</if>
+		<if test="hashMap.description!=null and hashMap.description!=''">
+			and t.description like '%${hashMap.description}%'
+		</if>
+	</select>
+	<select id="getAccountPage" resultMap="onlinelookup">
+		select t.ca0_addr_name as factoryS,t.ca0_person_position as productionLine,t.account_name as numbers,t.description as name,t.uda_3 as abbreviation from account t where 1=1
+		<if test="hashMap.factoryS!=null and hashMap.factoryS!=''">
+			and t.ca0_addr_name like '%${hashMap.factoryS}%'
+		</if>
+		<if test="hashMap.numbers!=null and hashMap.numbers!=''">
+			and t.account_name like '%${hashMap.numbers}%'
+		</if>
+		<if test="hashMap.name!=null and hashMap.name=''">
+			and t.description like '%${hashMap.name}%'
+		</if>
+	</select>
+	<select id="getFactoryDao" resultType="String">
+		select distinct uda_1 from app_group where uda_1 is not null
+	</select>
+	<select id="getTypeDao" resultType="String">
+		select name_s from at_partline@mes_test_link where 1=1
+		<if test="factory!=null and factory!=''">
+			and factory_s like'%${factory}%'
+		</if>
+	</select>
+	<!-- 批次供应商排列图   d.uda_3供应商简称-->
+	<select id="getAccountChar" resultMap="onlinelookup">
+		    select * from (select account_key,supplier,numbers,count(1) as badcount from (
+			select d.account_key,d.description as supplier,d.account_name as numbers,a.defect_qty_i as badnum,a.total_qty_i as num from  At_Batchdefectrecord a left join part b on a.part_number_s=b.part_number 
+			left join uda_part c on b.part_key=c.object_key left join account d on a.supplier_number_s=d.account_name where 1=1  and a.me_s='料'
+			<if test="entity.type!=null and entity.type!=''">
+				and c.mold_type_s = #{entity.type}
+			</if>
+			<if test="entity.startdate!=null and entity.startdate!=''">
+				and a.record_date_t &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.enddate!=null and entity.enddate!=''">
+				and a.record_date_t &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.suplist!=null and entity.suplist.size()>0">
+				and a.supplier_number_s in 
+				<foreach collection="entity.suplist" item="sup" index="index" open="(" separator="," close=")">
+					#{sup}
+				</foreach>
+			</if>
+			<if test="entity.partlist!=null and entity.partlist.size()>0">
+				 and a.part_number_s in 
+				<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+					#{part}
+				</foreach>
+			</if>
+			<if test="entity.level!=null and entity.level!=''">
+				and c.part_level_s=#{entity.level}
+			</if>
+			<if test="entity.maturity!=null and entity.maturity!=''">
+				and a.product_maturity_s=#{entity.maturity}
+			</if>
+			<!-- <if test="entity.isEdition!=null and entity.isEdition!=''">
+				and c.part_revision=#{entity.isEdition}
+			</if> -->
+			) m group by account_key,numbers,supplier order by count(badnum) desc)
+			<if test="(entity.suplist==null or entity.suplist.size()==0) and entity.charNumber!=null and entity.charNumber!=''">
+				where rownum &lt;= #{entity.charNumber} 
+			</if>
+	</select>
+	<!-- 批次供应商趋势图 -->
+	<select id="getAccountChar2" resultMap="onlinelookup">
+		    select * from (select to_char(record_date_t,<![CDATA['${entity.date_type}']]>) as date_t,count(1) as badcount from (select a.record_date_t as record_date_t from At_Batchdefectrecord a left join part b on a.part_number_s=b.part_number 
+			left join uda_part c on b.part_key=c.object_key left join account d on a.supplier_number_s=d.account_name where 1=1  and a.me_s='料'
+			<if test="entity.type!=null and entity.type!=''">
+				and c.mold_type_s = '${entity.type}'
+			</if>
+			<if test="entity.startdate!=null and entity.startdate!=''">
+				and a.record_date_t &gt;= <![CDATA[TO_DATE('${entity.startdate}','YYYY-MM-DD')]]>
+			</if> 
+			<if test="entity.enddate!=null and entity.enddate!=''">
+				and a.record_date_t &lt; <![CDATA[TO_DATE('${entity.enddate}','YYYY-MM-DD')]]>
+			</if> 
+			<if test="entity.suplist!=null and entity.suplist.size()>0">
+				and a.supplier_number_s in 
+				<foreach collection="entity.suplist" item="sup" index="index" open="(" separator="," close=")">
+					'${sup}'
+				</foreach>
+			</if>
+			<if test="entity.partlist!=null and entity.partlist.size()>0">
+				 and a.part_number_s in 
+				<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+					'${part}'
+				</foreach>
+			</if>
+			<if test="entity.level!=null and entity.level!=''">
+				and c.part_level_s='${entity.level}'
+			</if>
+			<if test="entity.maturity!=null and entity.maturity!=''">
+				and a.product_maturity_s='${entity.maturity}'
+			</if>
+			<!-- <if test="entity.isEdition!=null and entity.isEdition!=''">
+				and c.part_revision=#{entity.isEdition}
+			</if> -->
+			) group by to_char(record_date_t,<![CDATA['${entity.date_type}']]>))
+			<if test="(entity.suplist==null or entity.suplist.size()==0) and entity.charNumber!=null and entity.charNumber!=''">
+				where rownum &lt;= ${entity.charNumber} 
+			</if>
+	</select>
+	<!-- 批次零部件排列图 -->
+	<select id="getSpareChar" resultMap="onlinelookup">
+		    select * from (select part_key,productname,product_number_s as productnumber,count(1) as badcount from (
+			select b.part_key,a.part_number_s as product_number_s,b.description as productname,a.defect_qty_i as badnum,a.total_qty_i as num from At_Batchdefectrecord a left join part b on a.part_number_s=b.part_number 
+			left join uda_part c on b.part_key=c.object_key left join account d on a.supplier_number_s=d.account_name where 1=1  and a.me_s='料'
+			<if test="entity.type!=null and entity.type!=''">
+				and c.mold_type_s = #{entity.type}
+			</if>
+			<if test="entity.startdate!=null and entity.startdate!=''">
+				and a.record_date_t &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.enddate!=null and entity.enddate!=''">
+				and a.record_date_t &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.suplist!=null and entity.suplist.size()>0">
+				and a.supplier_number_s in 
+				<foreach collection="entity.suplist" item="sup" index="index" open="(" separator="," close=")">
+					#{sup}
+				</foreach>
+			</if>
+			<if test="entity.partlist!=null and entity.partlist.size()>0">
+				 and a.part_number_s in 
+				<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+					#{part}
+				</foreach>
+			</if>
+			<if test="entity.level!=null and entity.level!=''">
+				and c.part_level_s=#{entity.level}
+			</if>
+			<if test="entity.maturity!=null and entity.maturity!=''">
+				and a.product_maturity_s=#{entity.maturity}
+			</if>
+			<!-- <if test="entity.isEdition!=null and entity.isEdition!=''">
+				and c.part_revision=#{entity.isEdition}
+			</if> -->
+			) m group by part_key,productname,product_number_s order by count(badnum) desc)
+			<if test="(entity.suplist==null or entity.suplist.size()==0) and entity.charNumber!=null and entity.charNumber!=''">
+				where rownum &lt;= #{entity.charNumber} 
+			</if>
+	</select>
+	<!-- 批次零部件排趋势图 -->
+	<select id="getSpareChar2" resultMap="onlinelookup">
+		 select * from (select to_char(record_date_t,<![CDATA['${entity.date_type}']]>) as date_t,count(1) as badcount from (select a.record_date_t as record_date_t from At_Batchdefectrecord a left join part b on a.part_number_s=b.part_number 
+			left join uda_part c on b.part_key=c.object_key left join account d on a.supplier_number_s=d.account_name where 1=1  and a.me_s='料'
+			<if test="entity.type!=null and entity.type!=''">
+				and c.mold_type_s = '${entity.type}'
+			</if>
+			<if test="entity.startdate!=null and entity.startdate!=''">
+				and a.record_date_t &gt;= <![CDATA[TO_DATE('${entity.startdate}','YYYY-MM-DD')]]>
+			</if> 
+			<if test="entity.enddate!=null and entity.enddate!=''">
+				and a.record_date_t &lt; <![CDATA[TO_DATE('${entity.enddate}','YYYY-MM-DD')]]>
+			</if> 
+			<if test="entity.suplist!=null and entity.suplist.size()>0">
+				and a.supplier_number_s in 
+				<foreach collection="entity.suplist" item="sup" index="index" open="(" separator="," close=")">
+					'${sup}'
+				</foreach>
+			</if>
+			<if test="entity.partlist!=null and entity.partlist.size()>0">
+				 and a.part_number_s in 
+				<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+					'${part}'
+				</foreach>
+			</if>
+			<if test="entity.level!=null and entity.level!=''">
+				and c.part_level_s='${entity.level}'
+			</if>
+			<if test="entity.maturity!=null and entity.maturity!=''">
+				and a.product_maturity_s='${entity.maturity}'
+			</if>
+			<!-- <if test="entity.isEdition!=null and entity.isEdition!=''">
+				and c.part_revision=#{entity.isEdition}
+			</if> -->
+			) group by to_char(record_date_t,<![CDATA['${entity.date_type}']]>))
+			<if test="(entity.suplist==null or entity.suplist.size()==0) and entity.charNumber!=null and entity.charNumber!=''">
+				where rownum &lt;= ${entity.charNumber} 
+			</if>
+	</select>
+	<!-- 批次不良现象排列图 -->
+	<select id="getBadChar" resultMap="onlinelookup">
+		    select * from (select defect_s,count(1) as badcount from (
+			select a.defect_s,a.defect_qty_i as badnum,a.total_qty_i as num from At_Batchdefectrecord a left join part b on a.part_number_s=b.part_number 
+			left join uda_part c on b.part_key=c.object_key left join account d on a.supplier_number_s=d.account_name where 1=1  and a.me_s='料'
+			<if test="entity.type!=null and entity.type!=''">
+				and c.mold_type_s = #{entity.type}
+			</if>
+			<if test="entity.startdate!=null and entity.startdate!=''">
+				and a.record_date_t &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.enddate!=null and entity.enddate!=''">
+				and a.record_date_t &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.suplist!=null and entity.suplist.size()>0">
+				and a.supplier_number_s in 
+				<foreach collection="entity.suplist" item="sup" index="index" open="(" separator="," close=")">
+					#{sup}
+				</foreach>
+			</if>
+			<if test="entity.partlist!=null and entity.partlist.size()>0">
+				 and a.part_number_s in 
+				<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+					#{part}
+				</foreach>
+			</if>
+			<if test="entity.level!=null and entity.level!=''">
+				and c.part_level_s=#{entity.level}
+			</if>
+			<if test="entity.maturity!=null and entity.maturity!=''">
+				and a.product_maturity_s=#{entity.maturity}
+			</if>
+			<!-- <if test="entity.isEdition!=null and entity.isEdition!=''">
+				and c.part_revision=#{entity.isEdition}
+			</if> -->
+			) m group by defect_s order by count(badnum) desc)
+			<if test="(entity.suplist==null or entity.suplist.size()==0) and entity.charNumber!=null and entity.charNumber!=''">
+				where rownum &lt;= #{entity.charNumber} 
+			</if>
+	</select>
+	<!-- 在线批次不良 -->
+	<select id="getOnlineshowPage" resultMap="onlinelookup">
+		select a.record_date_t as record_date_t,c.mold_type_s as line_s,b.part_number as part_number,b.description,a.product_maturity_s as product_maturity_s,d.account_name as account_name,d.description as description_2,a.defect_s as defect_s,a.defect_qty_i as defect_qty_i,a.total_qty_i as total_qty_i from  At_Batchdefectrecord a left join part b on a.part_number_s=b.part_number 
+			left join uda_part c on b.part_key=c.object_key left join account d on a.supplier_number_s=d.account_name where 1=1  and a.me_s='料'
+			<if test="hashMap.type!=null and hashMap.type!=''">
+				and c.mold_type_s = #{hashMap.type}
+			</if>
+			<if test="hashMap.startdate!=null and hashMap.startdate!=''">
+				and a.record_date_t &gt;= TO_DATE(#{hashMap.startdate},'YYYY-MM-DD')
+			</if> 
+			<if test="hashMap.enddate!=null and hashMap.enddate!=''">
+				and a.record_date_t &lt; TO_DATE(#{hashMap.enddate},'YYYY-MM-DD')
+			</if> 
+			<if test="hashMap.partlevel!=null and hashMap.partlevel!=''">
+				and c.part_level_s=#{hashMap.partlevel}
+			</if> 
+			<include refid="sql_fragment"></include>
+			<if test="hashMap.maturity!=null and hashMap.maturity!=''">
+				and a.product_maturity_s=#{hashMap.maturity}
+			</if>
+			<!-- <if test="hashMap.spareparts!=null and hashMap.spareparts!=''">
+				and a.product_number_s like '${hashMap.spareparts}%'
+			</if> -->
+			<if test="hashMap.badphenomenon!=null and hashMap.badphenomenon!=''">
+				and a.defect_s=#{hashMap.badphenomenon}
+			</if>
+	</select>
+	<sql id="sql_fragment"><!-- 在线批次明细使用 -->
+		<if test="hashMap.suplist!=null and hashMap.suplist.size()>0">
+			and d.account_name in 
+			<foreach collection="hashMap.suplist" item="sup" index="index" open="(" separator="," close=")">
+				'${sup}'
+			</foreach>
+		</if>
+		<!-- <if test="list2!=null and list2.size()>0">
+			and c.uda_0 in 
+			<foreach collection="list2" item="class" index="index" open="(" separator="," close=")">
+				'${class}'
+			</foreach>
+		</if> -->
+		<if test="hashMap.partlist!=null and hashMap.partlist.size()>0">
+			 and b.part_number in 
+			<foreach collection="hashMap.partlist" item="part" index="index" open="(" separator="," close=")">
+				'${part}'
+			</foreach>
+		</if>
+	</sql>
+	<!-- 来料入库 -->
+	<select id="getOnlineshowupPage" resultMap="onlinelookup">
+		<!-- select to_char(a.creation_time,'yyyy-mm-dd hh24:mi:ss') as arrival,e.part_number as partnumber,e.description as partname,a.supplier_code_s as supcode,a.supplier_name_s as supname,a.quantity_d as tonum,a.location_s as location,f.mold_type_s as moldtype,e.uda_0 as partclass,e.part_revision as partrevision,e.Category as category from at_MaterialStorageInOrder@mes_test_link a inner join at_StorageInOrderDetail@mes_test_link b on a.atr_key=b.parent_key inner join lot@mes_test_link c on b.lot_name_s=c.lot_name inner join at_PurchaseOrder@mes_test_link d on c.uda_0=d.purcase_order_number_s inner join part e on a.part_number_s=e.part_number inner join uda_part f on e.part_key=f.object_key where a.storage_type_s='采购入库'
+		<if test="hashMap.type!=null and hashMap.type!=''">
+			and f.mold_type_s = #{hashMap.type}
+		</if>
+		<if test="hashMap.startdate!=null and hashMap.startdate!=''">
+			and a.creation_time &gt;= TO_DATE(#{hashMap.startdate},'YYYY-MM-DD')
+		</if> 
+		<if test="hashMap.enddate!=null and hashMap.enddate!=''">
+			and a.creation_time &lt; TO_DATE(#{hashMap.enddate},'YYYY-MM-DD')
+		</if> 
+		<include refid="sql_fragmentTwo"></include>
+		<if test="hashMap.isEdition!=null and hashMap.isEdition!=''">
+			and e.part_revision=#{hashMap.isEdition}
+		</if>
+		 -->
+		 select b.udt_2 as arrival,b.part_number as partnumber,c.description as partname,a.supplier_number_s as supcode,a.supplier_s as supname,b.uda_6 as tonum,a.ware_house_s as location
+		 from uda_lot@mes_test_link a inner join lot@mes_test_link b on b.lot_key=a.object_key inner join part c on b.part_number=c.part_number inner join uda_part d on c. part_key=d.object_key where 1=1
+		<if test="hashMap.type!=null and hashMap.type!=''">
+			and d.mold_type_s = #{hashMap.type}
+		</if>
+		<if test="hashMap.suplist!=null and hashMap.suplist.size()>0">
+			and a.supplier_number_s in 
+			<foreach collection="hashMap.suplist" item="sup" index="index" open="(" separator="," close=")">
+				'${sup}'
+			</foreach>
+		</if>
+		<if test="hashMap.partlevel!=null and hashMap.partlevel!=''">
+			and d.part_level_s=#{hashMap.partlevel}
+		</if> 
+		<if test="hashMap.partlist!=null and hashMap.partlist.size()>0">
+			 and b.part_number in 
+			<foreach collection="hashMap.partlist" item="part" index="index" open="(" separator="," close=")">
+				'${part}'
+			</foreach>
+		</if>
+		<if test="hashMap.maturity!=null and hashMap.maturity!=''">
+			and d.is_new_s=#{hashMap.maturity}
+		</if>
+		<if test="hashMap.startdate!=null and hashMap.startdate!=''">
+			and b.udt_2 &gt;= TO_DATE(#{hashMap.startdate},'YYYY-MM-DD')
+		</if> 
+		<if test="hashMap.enddate!=null and hashMap.enddate!=''">
+			and b.udt_2 &lt; TO_DATE(#{hashMap.enddate},'YYYY-MM-DD')
+		</if> 
+	</select>
+	<sql id="sql_fragmentTwo"><!-- 原料入库 -->
+		<if test="list!=null and list.size()>0">
+			and a.supplier_code_s in 
+			<foreach collection="list" item="sup" index="index" open="(" separator="," close=")">
+				'${sup}'
+			</foreach>
+		</if>
+		<if test="list2!=null and list2.size()>0">
+			and e.Category in 
+			<foreach collection="list2" item="class" index="index" open="(" separator="," close=")">
+				'${class}'
+			</foreach>
+		</if>
+		<if test="list3!=null and list3.size()>0">
+			 and e.part_number in 
+			<foreach collection="list3" item="part" index="index" open="(" separator="," close=")">
+				'${part}'
+			</foreach>
+		</if>
+	</sql>
+	<!-- 供应商排列图（不良数/率，关键件）  b.uda_3供应商简称-->
+	<select id="getAccountCharsl" resultMap="onlinelookup">
+		    select * from ( select t.account_key,t.accountnumber as numbers,t.accountname as abbreviation,sum(badnum) as badcount,
+		    (select count(1) from t_ship_part_record k where 1=1
+				<if test="entity.startdate!=null and entity.startdate!=''">
+					and k.create_date &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+				</if> 
+				<if test="entity.enddate!=null and entity.enddate!=''">
+					and k.create_date &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+				</if> 
+				<if test="entity.suplist!=null and entity.suplist.size()>0">
+					and k.supplier_number in 
+					<foreach collection="entity.suplist" item="sup" index="index" open="(" separator="," close=")">
+						#{sup}
+					</foreach>
+				</if>
+				<!-- and k.supplier_number=t.accountnumber -->
+		    ) as count from (select a.production_type as modeltype,b.account_key,a.supplier_number as accountnumber,a.supplier_name as accountname,d.part_level_s as partlevel,a.part_number as partnumber,a.return_date as replacetime,a.product_maturity,a.return_number as badnum
+			from ERP_ASSEMBLE_PRODUCT_RETURN a left join account b on a.supplier_number=b.account_name left join part c on a.part_number=c.part_number left join uda_part d on c.part_key=d.object_key where c.consumption_type='SerialNumber') t where 1=1		
+		<if test="entity.type!=null and entity.type!=''">
+			and t.modeltype = #{entity.type}
+		</if>
+		<if test="entity.startdate!=null and entity.startdate!=''">
+			and t.replacetime &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+		</if> 
+		<if test="entity.enddate!=null and entity.enddate!=''">
+			and t.replacetime &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+		</if> 
+		<if test="entity.suplist!=null and entity.suplist.size()>0">
+			and t.accountnumber in 
+			<foreach collection="entity.suplist" item="sup" index="index" open="(" separator="," close=")">
+				#{sup}
+			</foreach>
+		</if>
+		<if test="entity.partlist!=null and entity.partlist.size()>0">
+			 and t.partnumber in 
+			<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+				#{part}
+			</foreach>
+		</if>
+		<if test="entity.maturity!=null and entity.maturity!=''">
+			and t.product_maturity=#{entity.maturity}
+		</if>
+		<if test="entity.level!=null and entity.level!=''">
+			and t.partlevel=#{entity.level}
+		</if>
+		group by t.account_key,t.accountnumber,t.accountname order by sum(badnum) desc) 
+		<if test="entity.charNumber!=null and entity.charNumber!=''">
+			where rownum &lt;= #{entity.charNumber} 
+		</if>
+	</select>
+	<!-- 供应商排列图（不良数/率，非关键件）  b.uda_3供应商简称-->
+	<select id="getAccountCharsl2" resultMap="onlinelookup">
+		    select * from ( select t.account_key,t.accountnumber as numbers,t.accountname as abbreviation,sum(badnum) as badcount,(select sum(k.uda_6) from uda_lot@mes_test_link j inner join lot@mes_test_link k on k.lot_key=j.object_key where 1=1
+		 	<if test="entity.startdate!=null and entity.startdate!=''">
+				and k.udt_2 &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.enddate!=null and entity.enddate!=''">
+				and k.udt_2 &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.suplist!=null and entity.suplist.size()>0">
+				 and j.supplier_number_s in 
+				<foreach collection="entity.suplist" item="sup" index="index" open="(" separator="," close=")">
+					#{sup}
+				</foreach>
+			</if>
+			<!-- and t.accountnumber=k.supplier_number_s group by k.supplier_number_s -->
+		 ) as count from (
+			select a.production_type as modeltype,b.account_key,a.supplier_number as accountnumber,a.supplier_name as accountname,d.part_level_s as partlevel,a.part_number as partnumber,a.return_date as replacetime,a.product_maturity,a.return_number as badnum
+			from ERP_ASSEMBLE_PRODUCT_RETURN a left join account b on a.supplier_number=b.account_name left join part c on a.part_number=c.part_number left join uda_part d on c.part_key=d.object_key where c.consumption_type&lt;&gt;'SerialNumber') t where 1=1		
+		<if test="entity.type!=null and entity.type!=''">
+			and t.modeltype = #{entity.type}
+		</if>
+		<if test="entity.startdate!=null and entity.startdate!=''">
+			and t.replacetime &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+		</if> 
+		<if test="entity.enddate!=null and entity.enddate!=''">
+			and t.replacetime &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+		</if> 
+		<if test="entity.suplist!=null and entity.suplist.size()>0">
+			and t.accountnumber in 
+			<foreach collection="entity.suplist" item="sup" index="index" open="(" separator="," close=")">
+				#{sup}
+			</foreach>
+		</if>
+		<if test="entity.partlist!=null and entity.partlist.size()>0">
+			 and t.partnumber in 
+			<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+				#{part}
+			</foreach>
+		</if>
+		<if test="entity.level!=null and entity.level!=''">
+			and t.partlevel=#{entity.level}
+		</if>
+		<if test="entity.maturity!=null and entity.maturity!=''">
+			and t.product_maturity=#{entity.maturity}
+		</if>
+		group by t.account_key,t.accountname,t.accountnumber order by sum(badnum) desc) 
+		<if test="entity.charNumber!=null and entity.charNumber!=''">
+			where rownum &lt;= #{entity.charNumber} 
+		</if>
+	</select>
+	<!-- 零部件不良排列图（不良数/率 关键件） -->
+	<select id="getSpareCharsl" resultMap="onlinelookup">
+		select * from (select t.part_key,t.partnumber,t.productname,sum(badnum) as badcount,
+			<!-- (select count(1) from t_ship_part_record k where 1=1
+				<if test="entity.startdate!=null and entity.startdate!=''">
+					and k.create_date &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+				</if> 
+				<if test="entity.enddate!=null and entity.enddate!=''">
+					and k.create_date &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+				</if> 
+				<if test="entity.partlist!=null and entity.partlist.size()>0">
+					 and k.part_number in 
+					<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+						#{part}
+					</foreach>
+				</if> -->
+				<!-- and k.part_number=t.partnumber 
+		    ) -->
+		    (select count(1) from consumed_part@mes_test_link k where 1=1
+		    	<if test="entity.startdate!=null and entity.startdate!=''">
+					and k.creation_time &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+				</if> 
+				<if test="entity.enddate!=null and entity.enddate!=''">
+					and k.creation_time &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+				</if> 
+				<!-- and k.part_number=t.partnumber-->
+				<if test="entity.partlist!=null and entity.partlist.size()>0">
+					 and k.part_number in 
+					<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+						#{part}
+					</foreach>
+				</if> 
+		    )
+		    as count from (select a.production_type as modeltype,a.supplier_number as accountnumber,b.description as accountname,d.part_level_s as partlevel,c.part_key as part_key,a.part_number as partnumber,a.part_name as productname,a.return_date as replacetime,a.product_maturity,a.return_number as badnum
+			from ERP_ASSEMBLE_PRODUCT_RETURN a left join account b on a.supplier_number=b.account_name left join part c on a.part_number=c.part_number left join uda_part d on c.part_key=d.object_key where c.consumption_type='SerialNumber'
+			) t where 1=1		
+		<if test="entity.type!=null and entity.type!=''">
+			and t.modeltype = #{entity.type}
+		</if>
+		<if test="entity.startdate!=null and entity.startdate!=''">
+			and t.replacetime &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+		</if> 
+		<if test="entity.enddate!=null and entity.enddate!=''">
+			and t.replacetime &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+		</if> 
+		<if test="entity.suplist!=null and entity.suplist.size()>0">
+			and t.accountnumber in 
+			<foreach collection="entity.suplist" item="sup" index="index" open="(" separator="," close=")">
+				#{sup}
+			</foreach>
+		</if>
+		<if test="entity.partlist!=null and entity.partlist.size()>0">
+			 and t.partnumber in 
+			<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+				#{part}
+			</foreach>
+		</if>
+		<if test="entity.level!=null and entity.level!=''">
+			and t.partlevel=#{entity.level}
+		</if>
+		<if test="entity.maturity!=null and entity.maturity!=''">
+			and t.product_maturity=#{entity.maturity}
+		</if>
+		group by t.part_key,t.partnumber,t.productname order by sum(badnum) desc)
+		<if test="entity.charNumber!=null and entity.charNumber!=''">
+			where rownum &lt;= #{entity.charNumber} 
+		</if>
+	</select>
+	<!-- 零部件不良排列图（不良数/率 非关键件） -->
+	<select id="getSpareCharsl2" resultMap="onlinelookup">
+		    select * from (select t.part_key,t.partnumber,t.productname,sum(badnum) as badcount,
+		    (select sum(k.uda_6) from uda_lot@mes_test_link j inner join lot@mes_test_link k on k.lot_key=j.object_key where 1=1
+		 	<if test="entity.startdate!=null and entity.startdate!=''">
+				and k.udt_2 &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.enddate!=null and entity.enddate!=''">
+				and k.udt_2 &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.partlist!=null and entity.partlist.size()>0">
+				 and k.part_number in 
+				<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+					#{part}
+				</foreach>
+			</if>
+			<!-- and t.partnumber=k.part_number group by k.part_number -->
+			) as count from (select a.production_type as modeltype,a.supplier_number as accountnumber,b.description as accountname,d.part_level_s as partlevel,c.part_key as part_key,a.part_number as partnumber,a.part_name as productname,a.return_date as replacetime,a.product_maturity,a.return_number as badnum
+			from ERP_ASSEMBLE_PRODUCT_RETURN a left join account b on a.supplier_number=b.account_name left join part c on a.part_number=c.part_number left join uda_part d on c.part_key=d.object_key where c.consumption_type&lt;&gt;'SerialNumber'
+			) t where 1=1		
+		<if test="entity.type!=null and entity.type!=''">
+			and t.modeltype = #{entity.type}
+		</if>
+		<if test="entity.startdate!=null and entity.startdate!=''">
+			and t.replacetime &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+		</if> 
+		<if test="entity.enddate!=null and entity.enddate!=''">
+			and t.replacetime &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+		</if> 
+		<if test="entity.suplist!=null and entity.suplist.size()>0">
+			and t.accountnumber in 
+			<foreach collection="entity.suplist" item="sup" index="index" open="(" separator="," close=")">
+				#{sup}
+			</foreach>
+		</if>
+		<if test="entity.partlist!=null and entity.partlist.size()>0">
+			 and t.partnumber in 
+			<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+				#{part}
+			</foreach>
+		</if>
+		<if test="entity.level!=null and entity.level!=''">
+			and t.partlevel=#{entity.level}
+		</if>
+		<if test="entity.maturity!=null and entity.maturity!=''">
+			and t.product_maturity=#{entity.maturity}
+		</if>
+		group by t.part_key,t.partnumber,t.productname order by sum(badnum) desc)
+		<if test="entity.charNumber!=null and entity.charNumber!=''">
+			where rownum &lt;= #{entity.charNumber} 
+		</if>
+	</select>
+	<!-- 不良现象排列图（不良数/率 关键件和非关键件） -->
+	<select id="getBadcharsl" resultMap="onlinelookup">
+		select * from (select t.defect_s,sum(badnum) as badcount,
+		 (select sum(k.uda_6) from uda_lot@mes_test_link j inner join lot@mes_test_link k on k.lot_key=j.object_key where 1=1
+		 	<if test="entity.startdate!=null and entity.startdate!=''">
+				and k.udt_2 &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.enddate!=null and entity.enddate!=''">
+				and k.udt_2 &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.partlist!=null and entity.partlist.size()>0">
+				 and k.part_number in 
+				<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+					#{part}
+				</foreach>
+			</if>
+			<!-- and t.partnumber=k.part_number group by k.part_number -->
+		 ) as count
+		 from (
+			<!-- select z.modeltype as modeltype,z.account_number as accountnumber,z.account_Abbreviation as accountname,z.part_level as partlevel,z.part_number as partnumber,z.replacetime,z.defect_name as defect_s,1 as badnum,z.maturity from t_replace_part z
+			union all -->
+			select d.mold_type_s as modeltype,a.supplier_number_s as accountnumber,b.uda_3 as accountname,d.part_level_s as partlevel,a.item_number_s as partnumber,a.date_t as replacetime,a.defect_s as defect_s,a.defect_qty_i as badnum,d.is_new_s as maturity,c.consumption_type
+			from at_assemblyproductback a left join account b on a.supplier_number_s=b.account_name left join part c on a.item_number_s=c.part_number left join uda_part d on c.part_key=d.object_key
+		) t where 1=1		
+		<if test="entity.type!=null and entity.type!=''">
+			and t.modeltype = #{entity.type}
+		</if>
+		<if test="entity.startdate!=null and entity.startdate!=''">
+			and t.replacetime &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+		</if> 
+		<if test="entity.enddate!=null and entity.enddate!=''">
+			and t.replacetime &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+		</if> 
+		<if test="entity.suplist!=null and entity.suplist.size()>0">
+			and t.accountnumber in 
+			<foreach collection="entity.suplist" item="sup" index="index" open="(" separator="," close=")">
+				#{sup}
+			</foreach>
+		</if>
+		<if test="entity.partlist!=null and entity.partlist.size()>0">
+			 and t.partnumber in 
+			<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+				#{part}
+			</foreach>
+		</if>
+		<if test="entity.level!=null and entity.level!=''">
+			and t.partlevel=#{entity.level}
+		</if>
+		<if test="entity.maturity!=null and entity.maturity!=''">
+			and t.maturity='${entity.maturity}'
+		</if>
+		<if test="entity.iscrux!=null and entity.iscrux!='' and entity.iscrux=='否'.toString()">
+			and t.consumption_type &lt;&gt;'SerialNumber'
+		</if>
+		<if test="entity.iscrux!=null and entity.iscrux!='' and entity.iscrux=='是'.toString()">
+			and t.consumption_type ='SerialNumber'
+		</if>
+		group by t.defect_s order by sum(badnum) desc)
+		<if test="entity.charNumber!=null and entity.charNumber!=''">
+			where rownum &lt;= #{entity.charNumber} 
+		</if>
+	</select>
+	<!-- ERP组装生产退次 -->
+	<select id="getERPshowPage" resultMap="onlinelookup">
+		<!-- select t.return_date,t.part_number,t.part_name,t.supplier_number,t.supplier_name,t.return_number,t.ware_house from ERP_ASSEMBLE_PRODUCT_RETURN t where 1=1 -->
+		select a.return_date,a.part_number,a.part_name,a.supplier_number,a.supplier_name,a.return_number,a.ware_house  from ERP_ASSEMBLE_PRODUCT_RETURN a left join account b on a.supplier_number=b.account_name 
+		left join part c on a.part_number=c.part_number 
+		left join uda_part d on c.part_key=d.object_key where 1=1
+		<if test="hashMap.type!=null and hashMap.type!=''">
+			and a.production_type = '${hashMap.type}'
+		</if>
+		<if test="hashMap.startdate!=null and hashMap.startdate!=''">
+			and a.return_date &gt;= TO_DATE('${hashMap.startdate}','YYYY-MM-DD')
+		</if> 
+		<if test="hashMap.enddate!=null and hashMap.enddate!=''">
+			and a.return_date &lt; TO_DATE('${hashMap.enddate}','YYYY-MM-DD')
+		</if> 
+		<include refid="sql_fragment_ERPshow"></include>
+		<if test="hashMap.partlevel!=null and hashMap.partlevel!=''">
+			and a.part_class='${hashMap.partlevel}'
+		</if>
+		<if test="hashMap.maturity!=null and hashMap.maturity!=''">
+			and a.product_maturity='${hashMap.maturity}'
+		</if>
+		<if test="hashMap.iscrux!=null and hashMap.iscrux!='' and hashMap.iscrux=='否'.toString()">
+			and c.consumption_type &lt;&gt;'SerialNumber'
+		</if>
+		<if test="hashMap.iscrux!=null and hashMap.iscrux!='' and hashMap.iscrux=='是'.toString()">
+			and c.consumption_type ='SerialNumber'
+		</if>
+	</select>
+	<!-- sql片段 -ERP组装生产退次-->
+	<sql id="sql_fragment_ERPshow">
+		<if test="hashMap.suplist!=null and hashMap.suplist.size()>0">
+			and a.supplier_number in 
+			<foreach collection="hashMap.suplist" item="sup" index="index" open="(" separator="," close=")">
+				'${sup}'
+			</foreach>
+		</if>
+		<if test="hashMap.partlist!=null and hashMap.partlist.size()>0">
+			 and a.part_number in 
+			<foreach collection="hashMap.partlist" item="part" index="index" open="(" separator="," close=")">
+				'${part}'
+			</foreach>
+		</if>
+	</sql>
+	<!-- 供应商不良趋势图（不良数/率 关键件） -->
+	<select id="getAccountRend" resultMap="onlinelookup">
+		select * from (select to_char(t.replacetime,<![CDATA['${entity.date_type}']]>) as date_t,sum(badnum) as badcount,
+			(select count(1) from t_ship_part_record k where 1=1
+				<if test="entity.startdate!=null and entity.startdate!=''">
+					and k.create_date &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+				</if> 
+				<if test="entity.enddate!=null and entity.enddate!=''">
+					and k.create_date &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+				</if> 
+				<if test="entity.suplist!=null and entity.suplist.size()>0">
+					and k.supplier_number in 
+					<foreach collection="entity.suplist" item="sup" index="index" open="(" separator="," close=")">
+						#{sup}
+					</foreach>
+				</if>
+				<!-- and to_char(k.create_date,<![CDATA['${entity.date_type}']]>)=to_char(t.replacetime,<![CDATA['${entity.date_type}']]>) -->
+		    ) as count from (select a.production_type as modeltype,a.supplier_number as accountnumber,b.uda_3 as accountname,d.part_level_s as partlevel,a.part_number as partnumber,a.return_date as replacetime,a.product_maturity,a.return_number as badnum
+			from ERP_ASSEMBLE_PRODUCT_RETURN a left join account b on a.supplier_number=b.account_name left join part c on a.part_number=c.part_number left join uda_part d on c.part_key=d.object_key where c.consumption_type='SerialNumber'
+		) t where 1=1		
+		<if test="entity.type!=null and entity.type!=''">
+			and t.modeltype = #{entity.type}
+		</if>
+		<if test="entity.startdate!=null and entity.startdate!=''">
+			and t.replacetime &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+		</if> 
+		<if test="entity.enddate!=null and entity.enddate!=''">
+			and t.replacetime &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+		</if> 
+		<if test="entity.suplist!=null and entity.suplist.size()>0">
+			and t.accountnumber in 
+			<foreach collection="entity.suplist" item="sup" index="index" open="(" separator="," close=")">
+				#{sup}
+			</foreach>
+		</if>
+		<if test="entity.partlist!=null and entity.partlist.size()>0">
+			 and t.partnumber in 
+			<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+				#{part}
+			</foreach>
+		</if>
+		<if test="entity.level!=null and entity.level!=''">
+			and t.partlevel=#{entity.level}
+		</if>
+		<if test="entity.maturity!=null and entity.maturity!=''">
+			and t.product_maturity=#{entity.maturity}
+		</if>
+		group by to_char(t.replacetime,<![CDATA['${entity.date_type}']]>))
+		<if test="entity.charNumber!=null and entity.charNumber!=''">
+			where rownum &lt;= #{entity.charNumber} 
+		</if>
+	</select>
+	<!-- 零部件不良趋势图（不良数/率 关键件） -->
+	<select id="getSpareRend" resultMap="onlinelookup">
+		select * from (select to_char(t.replacetime,<![CDATA['${entity.date_type}']]>) as date_t,sum(badnum) as badcount,
+		<!-- (select count(1) from t_ship_part_record k where 1=1
+			<if test="entity.startdate!=null and entity.startdate!=''">
+				and k.create_date &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.enddate!=null and entity.enddate!=''">
+				and k.create_date &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.partlist!=null and entity.partlist.size()>0">
+				 and k.part_number in 
+				<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+					#{part}
+				</foreach>
+			</if>-->
+			<!-- and to_char(k.create_date,<![CDATA['${entity.date_type}']]>)=to_char(t.replacetime,<![CDATA['${entity.date_type}']]>)
+	    ) -->
+     (select count(1) from consumed_part@mes_test_link k where 1=1
+	    	<if test="entity.startdate!=null and entity.startdate!=''">
+				and k.creation_time &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.enddate!=null and entity.enddate!=''">
+				and k.creation_time &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.partlist!=null and entity.partlist.size()>0">
+				 and k.part_number in 
+				<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+					#{part}
+				</foreach>
+			</if>
+	    )
+	    as count from (select a.production_type as modeltype,a.supplier_number as accountnumber,b.uda_3 as accountname,a.product_name as productname,a.product_number as productnumber, d.part_level_s as partlevel,a.part_number as partnumber,a.return_date as replacetime,a.product_maturity,a.return_number as badnum
+		from ERP_ASSEMBLE_PRODUCT_RETURN a left join account b on a.supplier_number=b.account_name left join part c on a.part_number=c.part_number left join uda_part d on c.part_key=d.object_key where c.consumption_type='SerialNumber'
+		) t where 1=1		
+		<if test="entity.type!=null and entity.type!=''">
+			and t.modeltype = #{entity.type}
+		</if>
+		<if test="entity.startdate!=null and entity.startdate!=''">
+			and t.replacetime &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+		</if> 
+		<if test="entity.enddate!=null and entity.enddate!=''">
+			and t.replacetime &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+		</if> 
+		<if test="entity.suplist!=null and entity.suplist.size()>0">
+			and t.accountnumber in 
+			<foreach collection="entity.suplist" item="sup" index="index" open="(" separator="," close=")">
+				#{sup}
+			</foreach>
+		</if>
+		<if test="entity.partlist!=null and entity.partlist.size()>0">
+			 and t.partnumber in 
+			<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+				#{part}
+			</foreach>
+		</if>
+		<if test="entity.level!=null and entity.level!=''">
+			and t.partlevel=#{entity.level}
+		</if>
+		<if test="entity.maturity!=null and entity.maturity!=''">
+			and t.product_maturity=#{entity.maturity}
+		</if>
+		group by to_char(t.replacetime,<![CDATA['${entity.date_type}']]>))
+		<if test="entity.charNumber!=null and entity.charNumber!=''">
+			where rownum &lt;= #{entity.charNumber} 
+		</if>
+	</select>
+	<!-- 在线不良明细数据mes -->
+	<select id="getshowPage" resultMap="onlinelookup">
+		select t.date_TT,t.moldtype,t.part_number,t.description,t.supcode,t.supname,t.defect_s,t.badnum from (
+		select z.modeltype as moldtype,z.account_number as supcode,z.account_Abbreviation as supname,z.part_level as category,z.part_number as part_number,z.part_name as description,z.defect_name as defect_s,z.line_s,z.replacetime as date_TT,z.maturity,1 as badnum,c.consumption_type from t_replace_part z left join part c on z.part_number=c.part_number
+		union all 
+		select d.mold_type_s as moldtype,a.supplier_number_s as supcode,b.uda_3 as supname,d.part_level_s as category,a.item_number_s as part_number,c.description as description,a.defect_s as defect_s,a.line_s,a.date_t as date_TT,d.is_new_s as maturity,a.defect_qty_i as badnum,c.consumption_type
+		from at_assemblyproductback a left join account b on a.supplier_number_s=b.account_name left join part c on a.item_number_s=c.part_number left join uda_part d on c.part_key=d.object_key
+		) t where 1=1
+		<if test="hashMap.type!=null and hashMap.type!=''">
+			and t.moldtype = '${hashMap.type}'
+		</if>
+		<if test="hashMap.startdate!=null and hashMap.startdate!=''">
+			and t.date_TT &gt;= TO_DATE('${hashMap.startdate}','YYYY-MM-DD')
+		</if> 
+		<if test="hashMap.enddate!=null and hashMap.enddate!=''">
+			and t.date_TT &lt; TO_DATE('${hashMap.enddate}','YYYY-MM-DD')
+		</if> 
+		<include refid="sql_fragment_messhow"></include>
+		<if test="hashMap.partlevel!=null and hashMap.partlevel!=''">
+			and t.category='${hashMap.partlevel}'
+		</if>
+		<if test="hashMap.badphenomenon!=null and hashMap.badphenomenon!=''">
+			and t.defect_s='${hashMap.badphenomenon}'
+		</if>
+		<if test="hashMap.maturity!=null and hashMap.maturity!=''">
+			and t.maturity=#{hashMap.maturity}
+		</if>
+		<if test="hashMap.iscrux!=null and hashMap.iscrux!='' and hashMap.iscrux=='否'.toString()">
+			and t.consumption_type &lt;&gt;'SerialNumber'
+		</if>
+		<if test="hashMap.iscrux!=null and hashMap.iscrux!='' and hashMap.iscrux=='是'.toString()">
+			and t.consumption_type ='SerialNumber'
+		</if>
+	</select>
+	<sql id="sql_fragment_messhow">
+		<if test="hashMap.suplist!=null and hashMap.suplist.size()>0">
+			and t.supcode in 
+			<foreach collection="hashMap.suplist" item="sup" index="index" open="(" separator="," close=")">
+				'${sup}'
+			</foreach>
+		</if>
+		<if test="hashMap.partlist!=null and hashMap.partlist.size()>0">
+			 and t.part_number in 
+			<foreach collection="hashMap.partlist" item="part" index="index" open="(" separator="," close=")">
+				'${part}'
+			</foreach>
+		</if>
+	</sql>
+	<!-- 供应商不良趋势图（不良数/率 非关键件） -->
+	<select id="getAccountRend2" resultMap="onlinelookup">
+		select * from (select to_char(t.replacetime,<![CDATA['${entity.date_type}']]>) as date_t,sum(badnum) as badcount,(select sum(k.uda_6) from uda_lot@mes_test_link j inner join lot@mes_test_link k on k.lot_key=j.object_key where 1=1
+		 	<if test="entity.startdate!=null and entity.startdate!=''">
+				and k.udt_2 &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.enddate!=null and entity.enddate!=''">
+				and k.udt_2 &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.suplist!=null and entity.suplist.size()>0">
+				and j.supplier_number_s in 
+				<foreach collection="entity.suplist" item="sup" index="index" open="(" separator="," close=")">
+					#{sup}
+				</foreach>
+			</if>
+		 ) as count from (select a.production_type as modeltype,a.supplier_number as accountnumber,b.uda_3 as accountname,d.part_level_s as partlevel,a.part_number as partnumber,a.return_date as replacetime,a.product_maturity,a.return_number as badnum
+			from ERP_ASSEMBLE_PRODUCT_RETURN a left join account b on a.supplier_number=b.account_name left join part c on a.part_number=c.part_number left join uda_part d on c.part_key=d.object_key where c.consumption_type&lt;&gt;'SerialNumber'
+		) t where 1=1		
+		<if test="entity.type!=null and entity.type!=''">
+			and t.modeltype = #{entity.type}
+		</if>
+		<if test="entity.startdate!=null and entity.startdate!=''">
+			and t.replacetime &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+		</if> 
+		<if test="entity.enddate!=null and entity.enddate!=''">
+			and t.replacetime &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+		</if> 
+		<if test="entity.suplist!=null and entity.suplist.size()>0">
+			and t.accountnumber in 
+			<foreach collection="entity.suplist" item="sup" index="index" open="(" separator="," close=")">
+				#{sup}
+			</foreach>
+		</if>
+		<if test="entity.partlist!=null and entity.partlist.size()>0">
+			 and t.partnumber in 
+			<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+				#{part}
+			</foreach>
+		</if>
+		<if test="entity.level!=null and entity.level!=''">
+			and t.partlevel=#{entity.level}
+		</if>
+		<if test="entity.maturity!=null and entity.maturity!=''">
+			and t.product_maturity=#{entity.maturity}
+		</if>
+		group by to_char(t.replacetime,<![CDATA['${entity.date_type}']]>))
+		<if test="entity.charNumber!=null and entity.charNumber!=''">
+			where rownum &lt;= #{entity.charNumber} 
+		</if>
+	</select>
+	<!-- 零部件不良趋势图（不良数/率 非关键件） -->
+	<select id="getSpareRend2" resultMap="onlinelookup">
+		select * from (select to_char(t.replacetime,<![CDATA['${entity.date_type}']]>) as date_t,sum(badnum) as badcount,(select sum(k.uda_6) from uda_lot@mes_test_link j inner join lot@mes_test_link k on k.lot_key=j.object_key where 1=1
+		 	<if test="entity.startdate!=null and entity.startdate!=''">
+				and k.udt_2 &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.enddate!=null and entity.enddate!=''">
+				and k.udt_2 &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+			</if> 
+			<if test="entity.partlist!=null and entity.partlist.size()>0">
+				 and k.part_number in 
+				<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+					#{part}
+				</foreach>
+			</if>
+		 ) as count from (select a.production_type as modeltype,a.supplier_number as accountnumber,b.uda_3 as accountname,a.product_name as productname,a.product_number as productnumber, d.part_level_s as partlevel,a.part_number as partnumber,a.return_date as replacetime,a.product_maturity,a.return_number as badnum
+			from ERP_ASSEMBLE_PRODUCT_RETURN a left join account b on a.supplier_number=b.account_name left join part c on a.part_number=c.part_number left join uda_part d on c.part_key=d.object_key where c.consumption_type&lt;&gt;'SerialNumber'
+		) t where 1=1		
+		<if test="entity.type!=null and entity.type!=''">
+			and t.modeltype = #{entity.type}
+		</if>
+		<if test="entity.startdate!=null and entity.startdate!=''">
+			and t.replacetime &gt;= TO_DATE(#{entity.startdate},'YYYY-MM-DD')
+		</if> 
+		<if test="entity.enddate!=null and entity.enddate!=''">
+			and t.replacetime &lt; TO_DATE(#{entity.enddate},'YYYY-MM-DD')
+		</if> 
+		<if test="entity.suplist!=null and entity.suplist.size()>0">
+			and t.accountnumber in 
+			<foreach collection="entity.suplist" item="sup" index="index" open="(" separator="," close=")">
+				#{sup}
+			</foreach>
+		</if>
+		<if test="entity.partlist!=null and entity.partlist.size()>0">
+			 and t.partnumber in 
+			<foreach collection="entity.partlist" item="part" index="index" open="(" separator="," close=")">
+				#{part}
+			</foreach>
+		</if>
+		<if test="entity.level!=null and entity.level!=''">
+			and t.partlevel=#{entity.level}
+		</if>
+		<if test="entity.maturity!=null and entity.maturity!=''">
+			and t.product_maturity=#{entity.maturity}
+		</if>
+		group by to_char(t.replacetime,<![CDATA['${entity.date_type}']]>))
+		<if test="entity.charNumber!=null and entity.charNumber!=''">
+			where rownum &lt;= #{entity.charNumber} 
+		</if>
+	</select>
+	<!-- 30个月的总生产退次 -->
+	<select id="getTotal" resultType="java.lang.Integer">
+		select count(1) from ERP_ASSEMBLE_PRODUCT_RETURN where return_date between 
+		TO_DATE('${entity.startdate}',<![CDATA['${entity.date_type}']]>) and TO_DATE('${entity.enddate}',<![CDATA['${entity.date_type}']]>)
+	</select>
+	<!-- 30个月的总入库数 -->
+	<select id="getStorageTotal" resultType="java.lang.Integer">
+		select sum(k.uda_6) from uda_lot@mes_test_link j inner join lot@mes_test_link k on k.lot_key=j.object_key where k.udt_2 between 
+		TO_DATE('${entity.startdate}',<![CDATA['${entity.date_type}']]>) and TO_DATE('${entity.enddate}',<![CDATA['${entity.date_type}']]>)
+	</select>
+	<insert id="dateTransfer">
+		<!-- insert into t_replace_part (ModelType,replaceTime,account_number,account_name,account_Abbreviation,part_number,part_level,Maturity,defect_name,part_name)
+		select h.mold_type_s,a.creation_time_u,e.account_name,e.description as accountname,e.uda_3,g.part_number,h.part_level_s,h.is_new_s,f.test_name_s,g.description as partname from at_unitchangematerialrecord a inner join unit b on a.serial_number_s=b.serial_number inner join (select * from test_instance where test_valid='1' and location='在线检验') c on b.unit_key=c.object_key
+        inner join defect_repair_entry d on c.test_instance_key=d.test_instance_key inner join account e on e.account_name=d.uda_4 inner join at_testcodedefinition f on f.test_code_s=d.defect_code
+        inner join part g on g.part_number=b.part_number inner join uda_part h on h.object_key=g.part_key where to_char(a.creation_time_u,'yyyy-MM-dd')=to_char(sysdate-1,'yyyy-MM-dd')  -->
+       insert into t_replace_part(modeltype,account_number,account_name,account_Abbreviation,part_number,part_name,ware_house,
+		part_class,part_level,Maturity,bindingtime,defect_name,replaceTime,consumption_type,account_number_n,new_part_number) 
+		select ud.mold_type_s,ac.account_name,ac.description,ac.uda_3,p.part_number,p.description,p.uda_2,p.uda_0,ud.part_level_s,
+		ud.is_new_s ,cp.creation_time,dr.defect_comment,dr.creation_time,p.control_Number_s,NVL(ac.supplier_number_n,ac.account_name),
+		NVL(p.new_part_number,p.part_number) from (select a.account_name,a.description,a.uda_3,b.supplier_number_n from account a 
+		left join t_supplier_ref b on a.account_name=b.supplier_number) ac, defect_repair_entry dr, (select pp.part_key,pp.part_number,
+		pp.description,pp.uda_2,pp.uda_0,nn.new_part_number,up.control_Number_s from part pp left join new_part_ref nn on 
+		pp.part_number=nn.old_part_number left join uda_part up on pp.part_key = up.object_key) p,uda_part ud, unit u,consumed_part@mes_test_link cp,test_instance t where 
+		u.unit_key = cp.tobj_key and cp.part_number = p.part_number and p.part_key = ud.object_key and t.object_key = 
+		u.unit_key and t.test_instance_key = dr.test_instance_key and dr.uda_4 = ac.account_name and dr.defect_user_name = '供应商' 
+		and t.test_valid='1' and t.location='在线检验'
+		and to_char(cp.creation_time,'yyyy-MM-dd')=to_char(sysdate-1,'yyyy-MM-dd')
+	</insert>
+</mapper>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.UserGroupMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.UserGroup" >
+    <id column="USER_GROUP_KEY" property="userGroupKey" jdbcType="DECIMAL" />
+    <result column="GROUP_KEY" property="groupKey" jdbcType="DECIMAL" />
+    <result column="USER_KEY" property="userKey" jdbcType="DECIMAL" />
+    <result column="CREATION_TIME" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+    <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="userDescription" jdbcType="VARCHAR" />
+    <result column="GROUP_CODE" property="groupCode" jdbcType="VARCHAR" />
+    <result column="GROUP_NAME" property="groupName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    USER_GROUP_KEY, GROUP_KEY, USER_KEY, CREATION_TIME, LAST_MODIFIED_TIME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from SYS_USER_GROUP
+    where USER_GROUP_KEY = #{userGroupKey,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="findUsersByGroupKey" resultMap="BaseResultMap" flushCache="true">
+	select ug.*,u.USER_NAME,u.DESCRIPTION  from SYS_USER_GROUP ug ,APP_USER u
+	where ug.USER_KEY = u.USER_KEY and ug.GROUP_KEY in
+	<foreach item="item" index="index" collection="groups" open="(" separator="," close=")">#{item.groupKey}</foreach>
+  </select>  
+  
+  <select id="findGroupsByuserKey" resultMap="BaseResultMap" flushCache="true">
+  	select ug.*,g.GROUP_CODE,g.GROUP_NAME  from SYS_USER_GROUP ug ,SYS_GROUP g
+	where ug.GROUP_KEY = g.GROUP_KEY and ug.USER_KEY in
+	<foreach item="item" index="index" collection="users" open="(" separator="," close=")">#{item.userKey}</foreach>
+  </select>    
+
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from SYS_USER_GROUP
+    where USER_GROUP_KEY = #{userGroupKey,jdbcType=DECIMAL}
+  </delete>
+  
+  <!-- add by lin -->
+  <delete id="delUserGroup" parameterType="com.peg.model.UserGroup" >
+    delete from SYS_USER_GROUP
+    where GROUP_KEY = #{groupKey,jdbcType=DECIMAL} and USER_KEY = #{userKey,jdbcType=DECIMAL}
+  </delete>
+    
+  <insert id="insert" parameterType="com.peg.model.UserGroup" >
+    insert into SYS_USER_GROUP (USER_GROUP_KEY, GROUP_KEY, USER_KEY, 
+      CREATION_TIME, LAST_MODIFIED_TIME)
+    values (#{userGroupKey,jdbcType=DECIMAL}, #{groupKey,jdbcType=DECIMAL}, #{userKey,jdbcType=DECIMAL}, 
+      #{creationTime,jdbcType=TIMESTAMP}, #{lastModifiedTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.UserGroup" >
+    insert into SYS_USER_GROUP
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userGroupKey != null" >
+        USER_GROUP_KEY,
+      </if>
+      <if test="groupKey != null" >
+        GROUP_KEY,
+      </if>
+      <if test="userKey != null" >
+        USER_KEY,
+      </if>
+      <if test="creationTime != null" >
+        CREATION_TIME,
+      </if>
+      <if test="lastModifiedTime != null" >
+        LAST_MODIFIED_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userGroupKey != null" >
+        #{userGroupKey,jdbcType=DECIMAL},
+      </if>
+      <if test="groupKey != null" >
+        #{groupKey,jdbcType=DECIMAL},
+      </if>
+      <if test="userKey != null" >
+        #{userKey,jdbcType=DECIMAL},
+      </if>
+      <if test="creationTime != null" >
+        #{creationTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastModifiedTime != null" >
+        #{lastModifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.UserGroup" >
+    update SYS_USER_GROUP
+    <set >
+      <if test="groupKey != null" >
+        GROUP_KEY = #{groupKey,jdbcType=DECIMAL},
+      </if>
+      <if test="userKey != null" >
+        USER_KEY = #{userKey,jdbcType=DECIMAL},
+      </if>
+      <if test="creationTime != null" >
+        CREATION_TIME = #{creationTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastModifiedTime != null" >
+        LAST_MODIFIED_TIME = #{lastModifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where USER_GROUP_KEY = #{userGroupKey,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.UserGroup" >
+    update SYS_USER_GROUP
+    set GROUP_KEY = #{groupKey,jdbcType=DECIMAL},
+      USER_KEY = #{userKey,jdbcType=DECIMAL},
+      CREATION_TIME = #{creationTime,jdbcType=TIMESTAMP},
+      LAST_MODIFIED_TIME = #{lastModifiedTime,jdbcType=TIMESTAMP}
+    where USER_GROUP_KEY = #{userGroupKey,jdbcType=DECIMAL}
+  </update>
+</mapper>

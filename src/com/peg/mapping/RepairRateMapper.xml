@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.RepairRateMapper" >
+<resultMap id="BaseResultMap" type="com.peg.model.RepairRate" >
+	<id column="ID" property="id" jdbcType="DECIMAL" />
+	<result column="MACHINE_TYPE" property="machineType" jdbcType="VARCHAR" />
+	<result column="YEAR_MON" property="yearMon" jdbcType="VARCHAR" />
+	<result column="HUNDRED_REPAIR_RATE" property="hundredRepairRate" jdbcType="FLOAT" />
+	<result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+	<result column="ENTRY_TIME" property="entryTime" jdbcType="TIMESTAMP" />
+</resultMap>
+<sql id="Base_Column_List" >
+	ID, MACHINE_TYPE, YEAR_MON, HUNDRED_REPAIR_RATE, USER_NAME, ENTRY_TIME
+</sql>
+
+<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+	select 
+	<include refid="Base_Column_List" />
+	from T_REPAIR_RATE where ID = #{id,jdbcType=DECIMAL} order by machine_type,year_mon
+</select>
+
+<select id="getAllByPage" resultMap="BaseResultMap"  >
+	select 
+	<include refid="Base_Column_List" />from T_REPAIR_RATE
+	<where>
+		<if test="hashMap.machineType != null" >
+			MACHINE_TYPE like '%${hashMap.machineType}%'
+		</if>
+		<if test="hashMap.yearMon != null" >
+			and YEAR_MON &lt;= '${hashMap.yearMon}'
+		</if>
+	</where>
+	order by machine_type,year_mon
+</select>
+
+<select id="findByDateRange" resultMap="BaseResultMap"  >
+	select 
+	<include refid="Base_Column_List" />from T_REPAIR_RATE
+	<where>
+		<if test="hashMap.prodType!= null" >
+			and MACHINE_TYPE = '${hashMap.prodType}'
+		</if>
+		<if test="hashMap.startMon != null and hashMap.endMon!= null" >
+			and YEAR_MON BETWEEN '${hashMap.startMon}' and '${hashMap.endMon}'
+		</if>
+	</where>
+	order by machine_type,year_mon
+</select>  
+  
+<delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+	delete from T_REPAIR_RATE where ID = #{id,jdbcType=DECIMAL}
+</delete>
+
+<insert id="insert" parameterType="com.peg.model.RepairRate" >
+	<selectKey resultType="long" order="BEFORE" keyProperty="id">
+		select seq_t_repair_rate.nextval as ID from dual
+	</selectKey>
+	insert into T_REPAIR_RATE (ID, MACHINE_TYPE, YEAR_MON, HUNDRED_REPAIR_RATE, USER_NAME, ENTRY_TIME)
+	values (#{id,jdbcType=DECIMAL}, #{machineType,jdbcType=VARCHAR}, #{yearMon,jdbcType=VARCHAR}, 
+		#{hundredRepairRate,jdbcType=FLOAT}, #{userName,jdbcType=VARCHAR}, SYSDATE)
+</insert>
+
+<insert id="insertSelective" parameterType="com.peg.model.RepairRate" >
+	insert into T_REPAIR_RATE
+	<trim prefix="(" suffix=")" suffixOverrides="," >
+		<if test="id != null" >ID,</if>
+		<if test="machineType != null" >MACHINE_TYPE,</if>
+		<if test="yearMon != null" >YEAR_MON,</if>
+		<if test="hundredRepairRate != null" >HUNDRED_REPAIR_RATE,</if>
+		<if test="userName != null" >USER_NAME,</if>
+		<if test="entryTime != null" >ENTRY_TIME,</if>
+	</trim>
+	
+	<trim prefix="values (" suffix=")" suffixOverrides="," >
+		<if test="id != null" >#{id,jdbcType=DECIMAL},</if>
+      	<if test="machineType != null" >#{machineType,jdbcType=VARCHAR},</if>
+		<if test="yearMon != null" >#{yearMon,jdbcType=VARCHAR},</if>
+		<if test="hundredRepairRate != null" >#{hundredRepairRate,jdbcType=FLOAT},</if>
+		<if test="userName != null" >#{userName,jdbcType=VARCHAR},</if>
+		<if test="entryTime != null" >#{entryTime,jdbcType=TIMESTAMP},</if>
+	</trim>
+</insert>
+
+<update id="updateByPrimaryKeySelective" parameterType="com.peg.model.RepairRate" >
+	update T_REPAIR_RATE
+	<set>
+		<if test="machineType != null" >MACHINE_TYPE = #{machineType,jdbcType=VARCHAR},</if>
+		<if test="yearMon != null" >YEAR_MON = #{yearMon,jdbcType=VARCHAR},</if>
+		<if test="hundredRepairRate != null" >HUNDRED_REPAIR_RATE = #{hundredRepairRate,jdbcType=FLOAT},</if>
+		<if test="userName != null" >USER_NAME = #{userName,jdbcType=VARCHAR},</if>
+		<if test="entryTime != null" >ENTRY_TIME = #{entryTime,jdbcType=TIMESTAMP},</if>
+	</set>
+	where ID = #{id,jdbcType=DECIMAL}
+</update>
+
+<update id="updateByPrimaryKey" parameterType="com.peg.model.RepairRate" >
+	update T_REPAIR_RATE
+	set MACHINE_TYPE = #{machineType,jdbcType=VARCHAR},
+		YEAR_MON = #{yearMon,jdbcType=VARCHAR},
+		HUNDRED_REPAIR_RATE = #{hundredRepairRate,jdbcType=FLOAT},
+		USER_NAME = #{userName,jdbcType=VARCHAR},
+		ENTRY_TIME = #{entryTime,jdbcType=TIMESTAMP}
+	where ID = #{id,jdbcType=DECIMAL}
+</update>
+  
+<select id="getAll" resultMap="BaseResultMap">
+	select 
+	<include refid="Base_Column_List" />
+	from T_REPAIR_RATE where 1=1
+	<if test="startTime != null and endTime != null">
+		and YEAR_MON between #{startTime} and #{endTime}
+	</if>
+</select>
+</mapper>

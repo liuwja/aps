@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.ShipTotalMapper">
+	<resultMap id="BaseResultMap" type="com.peg.model.ShipTotal">
+		<id column="ID" property="id" jdbcType="DECIMAL" />
+		<result column="PRODUCT_TYPE" property="productType" jdbcType="VARCHAR" />
+		<result column="STATISTICS_MONTH" property="statisticsMonth" jdbcType="VARCHAR" />
+		<result column="PART_TYPE" property="partType" jdbcType="VARCHAR" />
+		<result column="REGION" property="region" jdbcType="VARCHAR" />
+		<result column="PRODUCTLINE_NUMBER" property="productlineNumber" jdbcType="VARCHAR" />
+		<result column="SHIP_COUNT" property="shipCount" jdbcType="DECIMAL" />
+		<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="product_family" property="productFamily" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, PRODUCT_TYPE, STATISTICS_MONTH, PART_TYPE, REGION,
+		PRODUCTLINE_NUMBER, SHIP_COUNT,product_family,
+		CREATE_TIME
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from T_SHIP_TOTAL_RECORD
+		where ID = #{id,jdbcType=DECIMAL}
+	</select>
+	<!-- 分页查询 -->
+	<select id="findAllByPage" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" /> from T_SHIP_TOTAL_RECORD
+		<if test="shipTotal != null">
+			<where>
+				<if test="shipTotal.productType != null and shipTotal.productType!=''" >
+					product_type like '%${shipTotal.productType}%'
+				</if>
+				<if test="shipTotal.region != null and shipTotal.region!=''" >
+					and region like '%${shipTotal.region}%'
+				</if>
+				<if test="shipTotal.partType != null and shipTotal.partType!=''" >
+					and part_type like '%${shipTotal.partType}%'
+				</if>
+				<if test="shipTotal.startTime != null and shipTotal.startTime!='' and shipTotal.endTime != null and shipTotal.endTime != ''"  >
+					and statistics_month BETWEEN #{shipTotal.startTime,jdbcType=VARCHAR} and  #{shipTotal.endTime,jdbcType=VARCHAR}
+				</if>
+				<if test="shipTotal.productlineNumber != null and shipTotal.productlineNumber != ''" >
+					and productline_number like '%${shipTotal.productlineNumber}%'
+				</if>
+		  	</where>
+		</if>
+		order by create_time desc
+	</select>
+	<!-- 查询所有不分页（导出excel） -->
+	<select id="findAll" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" /> from T_SHIP_TOTAL_RECORD
+		<if test="shipTotal != null">
+			<where>
+				<if test="shipTotal.productType != null and shipTotal.productType!=''" >
+					product_type like '%${shipTotal.productType}%'
+				</if>
+				<if test="shipTotal.region != null and shipTotal.region!=''" >
+					and region like '%${shipTotal.region}%'
+				</if>
+				<if test="shipTotal.partType != null and shipTotal.partType!=''" >
+					and part_type like '%${shipTotal.partType}%'
+				</if>
+				<if test="shipTotal.startTime != null and shipTotal.startTime!='' and shipTotal.endTime != null and shipTotal.endTime != ''"  >
+					and statistics_month BETWEEN #{shipTotal.startTime,jdbcType=VARCHAR} and  #{shipTotal.endTime,jdbcType=VARCHAR}
+				</if>
+				<if test="shipTotal.productlineNumber != null and shipTotal.productlineNumber != ''" >
+					and productline_number like '%${shipTotal.productlineNumber}%'
+				</if>
+		  	</where>
+		</if>
+		order by create_time desc
+	</select>
+	<!-- 查询发货总量 -->
+	 <select id="sumship" resultType="java.lang.Integer">
+	   select nvl(sum(ship_count),0)  from T_SHIP_TOTAL_RECORD 
+	   <if test="shipTotal != null">
+			<where>
+				<if test="shipTotal.productType != null and shipTotal.productType!=''" >
+					product_type like '%${shipTotal.productType}%'
+				</if>
+				<if test="shipTotal.region != null and shipTotal.region!=''" >
+					and region like '%${shipTotal.region}%'
+				</if>
+				<if test="shipTotal.partType != null and shipTotal.partType!=''" >
+					and part_type like '%${shipTotal.partType}%'
+				</if>
+				<if test="shipTotal.startTime != null and shipTotal.startTime!='' and shipTotal.endTime != null and shipTotal.endTime != ''"  >
+					and statistics_month BETWEEN #{shipTotal.startTime,jdbcType=VARCHAR} and  #{shipTotal.endTime,jdbcType=VARCHAR}
+				</if>
+				<if test="shipTotal.productlineNumber != null and shipTotal.productlineNumber != ''" >
+					and productline_number like '%${shipTotal.productlineNumber}%'
+				</if>
+		  	</where>
+		</if>
+   </select>
+</mapper>

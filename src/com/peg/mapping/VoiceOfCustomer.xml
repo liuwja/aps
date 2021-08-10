@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd " >
+<mapper namespace="com.peg.dao.VoiceOfCustomerMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.VoiceOfCustomer" >
+   	<id column="ID" property="id" jdbcType="DECIMAL" />
+ 	<result column="TYPE_APPEAL" property="typeAppeal" jdbcType="VARCHAR" />
+    <result column="CUSTOMER" property="customer" jdbcType="VARCHAR" />
+    <result column="PROVINCE" property="province" jdbcType="VARCHAR" />
+    <result column="CITY" property="city" jdbcType="VARCHAR" />
+    <result column="COUNTY" property="county" jdbcType="VARCHAR" />
+    <result column="SERVICE_CENTER" property="serviceCenter" jdbcType="VARCHAR" />
+    <result column="NAME_PRODUCT" property="nameProduct" jdbcType="VARCHAR" />
+    <result column="MODEL_PRODUCT" property="modelProduct" jdbcType="VARCHAR" />
+    <result column="TYPE_PRODUCT" property="typeProduct" jdbcType="VARCHAR" />
+    <result column="SERIAL_NUMBER" property="serialNumber" jdbcType="VARCHAR" />
+    <result column="TYPE1" property="type1" jdbcType="VARCHAR" />
+    <result column="TYPE2" property="type2" jdbcType="VARCHAR" />
+    <result column="NUMBER_APPEAL" property="numberAppeal" jdbcType="VARCHAR" />
+    <result column="DETAIL" property="detail" jdbcType="VARCHAR" />
+    <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+    <result column="SERVICE_LOCATION" property="serviceLocation" jdbcType="VARCHAR" />
+    <result column="TECHNICIAN" property="technician" jdbcType="VARCHAR" />
+    <result column="SERVICE_PROJECT" property="serviceProject" jdbcType="VARCHAR" />
+    <result column="BFAULT_CLASS" property="bfaultClass" jdbcType="VARCHAR" />
+    <result column="SFAULT_CLASS" property="sfaultClass" jdbcType="VARCHAR" />
+    <result column="CREATION_TIME" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="DATE_TIME" property="dateTime" jdbcType="VARCHAR" />
+    <result column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID,TYPE_APPEAL, CUSTOMER, PROVINCE, CITY, COUNTY, SERVICE_CENTER, NAME_PRODUCT, 
+    MODEL_PRODUCT, TYPE_PRODUCT, SERIAL_NUMBER, TYPE1, TYPE2, NUMBER_APPEAL, 
+    DETAIL, ORDER_NUMBER, SERVICE_LOCATION, TECHNICIAN, SERVICE_PROJECT, BFAULT_CLASS,SFAULT_CLASS,CREATION_TIME
+  </sql>
+  <select id="findALL" resultMap="BaseResultMap">
+  	select 
+  	ID,TYPE_APPEAL, CUSTOMER,PROVINCE,CITY, COUNTY, SERVICE_CENTER, NAME_PRODUCT, MODEL_PRODUCT, 
+    TYPE_PRODUCT, SERIAL_NUMBER, TYPE1, TYPE2, NUMBER_APPEAL, DETAIL, 
+    ORDER_NUMBER, SERVICE_LOCATION, TECHNICIAN, SERVICE_PROJECT, BFAULT_CLASS, SFAULT_CLASS ,to_char(DATE_TIME,'YYYY-MM-DD') DATE_TIME
+    from VOICE_CUSTOMER
+	where 1=1 
+   <include refid="sql_ops"></include>
+  
+  </select>
+  
+  
+  <select id="findALLByPage" resultMap="BaseResultMap">
+  	select 
+  	ID,TYPE_APPEAL, CUSTOMER,PROVINCE,CITY, COUNTY, SERVICE_CENTER, NAME_PRODUCT, MODEL_PRODUCT, 
+    TYPE_PRODUCT, SERIAL_NUMBER, TYPE1, TYPE2, NUMBER_APPEAL, DETAIL, 
+    ORDER_NUMBER, SERVICE_LOCATION, TECHNICIAN, SERVICE_PROJECT, BFAULT_CLASS, SFAULT_CLASS ,to_char(DATE_TIME,'YYYY-MM-DD') DATE_TIME
+    from VOICE_CUSTOMER
+	where 1=1 
+   <include refid="sql_ops"></include>
+  </select>
+   <sql id="sql_ops">
+  		 <if test="hashMap.typeAppeal!=null and hashMap.typeAppeal !=''">
+			and TYPE_APPEAL like '%${hashMap.typeAppeal}%'
+	</if>
+  	<if test="hashMap.serviceCenter!=null and hashMap.serviceCenter !=''">
+       		and SERVICE_CENTER like '%${hashMap.serviceCenter}%'
+    </if>
+    <if test="hashMap.serialNumber != null and hashMap.serialNumber !=''" >
+       		and SERIAL_NUMBER like '%${hashMap.serialNumber}%'
+    </if>
+    <if test="hashMap.nameProduct != null and hashMap.nameProduct !=''" >
+       		and NAME_PRODUCT like '%${hashMap.nameProduct}%'
+    </if>
+    <if test="hashMap.numberAppeal != null and hashMap.numberAppeal !=''" >
+       		and NUMBER_APPEAL like '%${hashMap.numberAppeal}%'
+    </if>
+    <if test="hashMap.orderNumber != null and hashMap.orderNumber !=''" >
+       		and ORDER_NUMBER like '%${hashMap.orderNumber}%'
+    </if>
+    <if test="hashMap.bfaultClass != null and hashMap.bfaultClass !=''">
+     		and BFAULT_CLASS like '%${hashMap.bfaultClass}%'
+    </if>
+    <if test="hashMap.sfaultClass != null and hashMap.sfaultClass !=''">
+     		and SFAULT_CLASS like '%${hashMap.sfaultClass}%'
+    </if>
+    <if test="hashMap.startTime != null and hashMap.startTime !=''">
+     	<![CDATA[ 	and TO_CHAR(DATE_TIME,'YYYY-MM-DD') >= '${hashMap.startTime}' ]]>
+    </if>
+    <if test="hashMap.endTime != null and hashMap.endTime !=''">
+     	<![CDATA[ 	and TO_CHAR(DATE_TIME,'YYYY-MM-DD') <= '${hashMap.endTime}' ]]>
+    </if>
+    order by CREATION_TIME desc 
+  </sql>
+</mapper> 

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.TimeMatrxMapper" >
+<resultMap id="BaseResultMap" type="com.peg.model.TimeMatrx" >
+	<id column="ID" property="id" jdbcType="DECIMAL" />
+  	<result column="MACHINE_TYPE" property="machineType" jdbcType="VARCHAR" />
+  	<result column="PRODUCTION_MONTH" property="productionMonth" jdbcType="TIMESTAMP" />
+  	<result column="LNVALID_FLAGS" property="lnvalidFlags" jdbcType="VARCHAR" />
+  	<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+  	<result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+  	<result column="STATIS_TYPE" property="statisType" jdbcType="VARCHAR" />
+</resultMap>
+  
+<sql id="Base_Column_List" >
+	ID, MACHINE_TYPE, PRODUCTION_MONTH, LNVALID_FLAGS, CREATE_TIME, CREATE_USER, STATIS_TYPE
+</sql>
+
+<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+	select 
+  	<include refid="Base_Column_List" />
+  	from T_TIME_MATRX
+  	where ID = #{id,jdbcType=DECIMAL}
+</select>
+
+<select id="getAllByMachineType" resultMap="BaseResultMap"  parameterType="com.peg.model.TimeMatrx">
+	select 
+ 	<include refid="Base_Column_List" />
+ 	from T_TIME_MATRX WHERE 1 = 1
+   	<if test="machineType != null">
+		AND MACHINE_TYPE = #{machineType,jdbcType=DECIMAL}
+   	</if>
+   	<if test="statisType != null">
+   		AND STATIS_TYPE = #{statisType, jdbcType=VARCHAR}
+   	</if>
+</select>
+
+<delete id="deleteByPrimaryKey" parameterType="com.peg.model.TimeMatrx" >
+	delete from T_TIME_MATRX
+    where MACHINE_TYPE = #{machineType,jdbcType=VARCHAR} and PRODUCTION_MONTH = #{productionMonth,jdbcType=DECIMAL} 
+	and STATIS_TYPE = #{statisType,jdbcType=VARCHAR}
+</delete>
+  
+<insert id="insert" parameterType="com.peg.model.TimeMatrx" >
+	<selectKey resultType="long" order="BEFORE" keyProperty="id">
+    	select seq_t_time_matrx.nextval as ID from dual
+  	</selectKey>
+  		insert into T_TIME_MATRX (ID, MACHINE_TYPE, PRODUCTION_MONTH, LNVALID_FLAGS, CREATE_TIME, STATIS_TYPE)
+  		values (#{id,jdbcType=DECIMAL}, #{machineType,jdbcType=VARCHAR}, #{productionMonth,jdbcType=TIMESTAMP}, 
+    		#{lnvalidFlags,jdbcType=VARCHAR}, sysDate, #{statisType,jdbcType=VARCHAR})
+</insert>
+
+<insert id="insertSelective" parameterType="com.peg.model.TimeMatrx" >
+	insert into T_TIME_MATRX
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+		<if test="id != null" >
+        	ID,
+      	</if>
+      	<if test="machineType != null" >
+        	MACHINE_TYPE,
+      	</if>
+      	<if test="productionMonth != null" >
+        	PRODUCTION_MONTH,
+      	</if>
+      	<if test="lnvalidFlags != null" >
+        	LNVALID_FLAGS,
+      	</if>
+      	<if test="createTime != null" >
+			CREATE_TIME,
+      	</if>
+      	<if test="createUser != null" >
+        	CREATE_USER,
+      	</if>
+	</trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      	<if test="id != null" >
+        	#{id,jdbcType=DECIMAL},
+      	</if>
+      	<if test="machineType != null" >
+        	#{machineType,jdbcType=VARCHAR},
+      	</if>
+      	<if test="productionMonth != null" >
+        	#{productionMonth,jdbcType=TIMESTAMP},
+      	</if>
+      	<if test="lnvalidFlags != null" >
+        	#{lnvalidFlags,jdbcType=VARCHAR},
+      	</if>
+      	<if test="createTime != null" >
+        	#{createTime,jdbcType=TIMESTAMP},
+      	</if>
+      	<if test="createUser != null" >
+        	#{createUser,jdbcType=VARCHAR},
+      	</if>
+	</trim>
+</insert>
+
+<update id="updateByPrimaryKeySelective" parameterType="com.peg.model.TimeMatrx" >
+	update T_TIME_MATRX
+    <set>
+		<if test="machineType != null" >
+        	MACHINE_TYPE = #{machineType,jdbcType=VARCHAR},
+      	</if>
+      	<if test="productionMonth != null" >
+        	PRODUCTION_MONTH = #{productionMonth,jdbcType=TIMESTAMP},
+      	</if>
+      	<if test="lnvalidFlags != null" >
+        	LNVALID_FLAGS = #{lnvalidFlags,jdbcType=VARCHAR},
+      	</if>
+      	<if test="createTime != null" >
+        	CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      	</if>
+      	<if test="createUser != null" >
+        	CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      	</if>
+	</set>
+    where ID = #{id,jdbcType=DECIMAL}
+</update>
+
+<update id="updateByPrimaryKey" parameterType="com.peg.model.TimeMatrx" >
+	update T_TIME_MATRX
+    set MACHINE_TYPE = #{machineType,jdbcType=VARCHAR},
+		PRODUCTION_MONTH = #{productionMonth,jdbcType=TIMESTAMP},
+      	LNVALID_FLAGS = #{lnvalidFlags,jdbcType=VARCHAR},
+      	CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      	CREATE_USER = #{createUser,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=DECIMAL}
+</update>
+</mapper>

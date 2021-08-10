@@ -1,0 +1,53 @@
+.tzCheckBox{
+	background:url('./background.png') no-repeat right bottom;
+	display:inline-block;
+	min-width:60px;
+	height:33px;
+	white-space:nowrap;
+	position:relative;
+	cursor:pointer;
+	margin-left:14px;
+}
+
+.tzCheckBox.checked{
+	background-position:top left;
+	margin:0 14px 0 0;
+}
+
+.tzCheckBox .tzCBContent{
+	color: white;
+	line-height: 31px;
+	padding-right: 38px;
+	text-align: right;
+}
+
+.tzCheckBox.checked .tzCBContent{
+	text-align:left;
+	padding:0 0 0 38px;
+}
+
+.tzCBPart{
+	background:url('./background.png') no-repeat left bottom;
+	width:14px;
+	position:absolute;
+	top:0;
+	left:-14px;
+	height:33px;
+	overflow: hidden;
+}
+
+.tzCheckBox.checked .tzCBPart{
+	background-position:top right;
+	left:auto;
+	right:-14px;
+}
+
+#lean_overlay { position: fixed; z-index: 100; top: 0px; left: 0px; height: 100%; width: 100%; background: #000; display: none; }
+#OpenWindow { background: none repeat scroll 0 0 #FFFFFF; border-radius: 5px 5px 5px 5px; box-shadow: 0 0 4px rgba(0, 0, 0, 0.7); display: none; padding-bottom: 2px; width: 504px;height: 299px; z-index: 11000; left: 50%; margin-left: -202px; opacity: 1; position: fixed; top: 200px; }
+#OpenWindow-header { background: url("Image/hd-bg.png") repeat scroll 0 0 transparent; border-bottom: 1px solid #CCCCCC; border-top-left-radius: 5px; border-top-right-radius: 5px; padding: 18px 18px 14px; }
+.modal_close { background: url("Image/modal_close.png") repeat scroll 0 0 transparent; display: block; height: 14px; position: absolute; right: 12px; top: 12px; width: 14px; z-index: 2; }
+#OpenWindow .txt-fld{ background: none repeat scroll 0 0 transparent; border-bottom: 1px solid #EEEEEE;    border-top-left-radius: 5px; border-top-right-radius: 5px; padding: 20px 20px; }
+#OpenWindow .txt-fld input { background: none repeat scroll 0 0 #F7F7F7; border-color: #CCCCCC #E7E6E6 #E7E6E6 #CCCCCC; border-radius: 4px 4px 4px 4px; border-style: solid; border-width: 1px; color: #222222; font-family: "Helvetica Neue"; font-size: 2.2em; outline: medium none; padding: 2px; width: 460px; }
+#OpenWindow .txt-fld input.good_input { background: url("Image/good.png") no-repeat scroll 445px center #DEF5E1;height: 80px; font-weight: bold;}  
+#OpenWindow .btn-fld { overflow: hidden; padding: 15px 20px 3px 130px; width: 354px; }
+.button {background: none repeat scroll 0 0 #3F9D4A; border: medium none; border-radius: 4px 4px 4px 4px; color: #FFFFFF; float: right; font-family: Verdana; font-size: 23px; font-weight: bold; overflow: visible; padding: 7px 10px; text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4); width: auto; margin-right: 5px;}

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.LocationRegionMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.LocationRegion" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="LOCATION_CODE" property="locationCode" jdbcType="VARCHAR" />
+    <result column="LOCATION" property="location" jdbcType="VARCHAR" />
+    <result column="REGION" property="region" jdbcType="VARCHAR" />
+    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_UPDATE_USER" property="lastUpdateUser" jdbcType="VARCHAR" />
+    <result column="LAST_UPDATE_TIME" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="PROVINCE" property="province" jdbcType="VARCHAR" />
+    <result column="MERGE_REGION" property="mergeRegion" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, LOCATION_CODE, LOCATION, REGION, CREATE_USER, CREATE_TIME, LAST_UPDATE_USER, 
+    LAST_UPDATE_TIME, PROVINCE, MERGE_REGION
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_LOCATION_REGION
+    where ID = #{id,jdbcType=DECIMAL}
+    order by create_time DESC
+  </select>
+  <select id="getAllByPage" resultMap="BaseResultMap"  >
+    select 
+    <include refid="Base_Column_List" />
+    from T_LOCATION_REGION
+     <where>
+      <if test="hashMap.locationCode != null" >
+        LOCATION_CODE like '%${hashMap.locationCode}%'
+      </if>
+      <if test="hashMap.location != null" >
+        and LOCATION like '%${hashMap.location}%'
+      </if>
+      <if test="hashMap.region != null" >
+        and REGION like '%${hashMap.region}%'
+      </if>
+      <if test="hashMap.province != null" >
+      	and PROVINCE like '%${hashMap.province}%'
+      </if>
+      <if test="hashMap.mergeRegion != null" >
+      	and MERGE_REGION like '%${hashMap.mergeRegion}%'
+      </if>
+    </where>
+    order by create_time DESC
+  </select>
+  
+  <select id="findAllByPage" resultMap="BaseResultMap"  >
+    select 
+    <include refid="Base_Column_List" />
+    from T_LOCATION_REGION t1
+    where rowid in (select max(rowid) from t_location_region t2 where t1.region=t2.region)
+      <if test="locationRegion.locationCode != null and locationRegion.locationCode != ''" >
+        and LOCATION_CODE like '%${locationRegion.locationCode}%'
+      </if>
+      <if test="locationRegion.location != null and locationRegion.location != ''" >
+        and LOCATION like '%${locationRegion.location}%'
+      </if>
+      <if test="locationRegion.region != null and locationRegion.region != ''" >
+        and REGION like '%${locationRegion.region}%'
+      </if>
+      <if test="locationRegion.province != null and locationRegion.province != ''" >
+      	and PROVINCE like '%${locationRegion.province}%'
+      </if>
+      <if test="locationRegion.mergeRegion != null and locationRegion.mergeRegion != ''" >
+      	and MERGE_REGION like '%${locationRegion.mergeRegion}%'
+      </if>
+    order by MERGE_REGION DESC
+  </select>
+  
+  <update id="saveMesh">
+	update T_LOCATION_REGION
+	set merge_region = #{mergeRegion,jdbcType=VARCHAR}
+	where region in
+	<foreach item="item" index="index" collection="regionList" open="(" separator="," close=")">
+		#{item}
+	</foreach>
+  </update>
+  
+	<update id="breakMesh">
+		update T_LOCATION_REGION
+		set merge_region = region
+		where region in
+	<foreach item="item" index="index" collection="regionList" open="(" separator="," close=")">
+		#{item}
+	</foreach>
+	</update>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from T_LOCATION_REGION
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.LocationRegion" >
+  <selectKey resultType="long" order="BEFORE" keyProperty="id">
+      select seq_t_location_region.nextval as ID from dual
+    </selectKey>
+    insert into T_LOCATION_REGION (ID, LOCATION_CODE, LOCATION, 
+      REGION, CREATE_USER, CREATE_TIME, PROVINCE, MERGE_REGION )
+    values (#{id,jdbcType=DECIMAL}, #{locationCode,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR}, 
+      #{region,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, SYSDATE, #{province, jdbcType=VARCHAR}, #{mergeRegion, jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.LocationRegion" >
+      <selectKey resultType="long" order="BEFORE" keyProperty="id">
+      select seq_t_location_region.nextval as ID from dual
+    </selectKey>
+    insert into T_LOCATION_REGION
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="locationCode != null" >
+        LOCATION_CODE,
+      </if>
+      <if test="location != null" >
+        LOCATION,
+      </if>
+      <if test="region != null" >
+        REGION,
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER,
+      </if>
+      <if test="province != null" >
+      	PROVINCE,
+      </if>
+      <if test="mergeRegion != null" >
+      	MERGE_REGION,
+      </if>
+      CREATE_TIME
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="locationCode != null" >
+        #{locationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="location != null" >
+        #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="region != null" >
+        #{region,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null">
+      	#{province,jdbcType=VARCHAR},
+      </if>
+      <if test="mergeRegion != null">
+      	#{mergeRegion,jdbcType=VARCHAR},
+      </if>
+      SYSDATE
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.LocationRegion" >
+    update T_LOCATION_REGION
+    <set >
+      <if test="locationCode != null" >
+        LOCATION_CODE = #{locationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="location != null" >
+        LOCATION = #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="region != null" >
+        REGION = #{region,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateUser != null" >
+        LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null">
+      	PROVINCE = #{province, jdbcType=VARCHAR},
+      </if>
+      <if test="mergeRegion != null">
+      	MERGE_REGION = #{mergeRegion, jdbcType=VARCHAR},
+      </if>
+        LAST_UPDATE_TIME = SYSDATE,
+      
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.LocationRegion" >
+    update T_LOCATION_REGION
+    set LOCATION_CODE = #{locationCode,jdbcType=VARCHAR},
+      LOCATION = #{location,jdbcType=VARCHAR},
+      REGION = #{region,jdbcType=VARCHAR},
+      CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=VARCHAR},
+      PROVINCE = #{province,jdbcType=VARCHAR},
+      MERGE_REGION = #{mergeRegion,jdbcType=VARCHAR},
+      LAST_UPDATE_TIME = SYSDATE,
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  
+  <select id="getAllLocation" resultMap="BaseResultMap">
+		select l.location as locationCode,l.description as location from location l
+  </select>
+  
+  <select id="getAll" resultMap="BaseResultMap">
+	select 
+    <include refid="Base_Column_List" />
+    from T_LOCATION_REGION  order by create_time DESC
+  </select>
+  <insert id="insertlocation" parameterType="com.peg.model.LocationRegion" >
+ 	<selectKey resultType="long" order="BEFORE" keyProperty="id">
+      select seq_t_location_region.nextval as ID from dual
+    </selectKey>
+    insert into T_LOCATION_REGION (ID, LOCATION_CODE, LOCATION, 
+      REGION, CREATE_USER, CREATE_TIME ) 
+    values (#{id,jdbcType=DECIMAL}, locationCode, l.location, 
+      #{region,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, SYSDATE
+      ) select * from LOCATION l
+  </insert>
+</mapper>

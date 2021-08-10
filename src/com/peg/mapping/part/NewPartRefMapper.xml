@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.part.NewPartRefMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.part.NewPartRef" >
+    <result column="PART_REF_KEY" property="partRefKey" jdbcType="DECIMAL" />
+    <result column="OLD_PART_NUMBER" property="oldPartNumber" jdbcType="VARCHAR" />
+    <result column="NEW_PART_NUMBER" property="newPartNumber" jdbcType="VARCHAR" />
+    <result column="PART_NAME" property="partName" jdbcType="VARCHAR" />
+    <result column="CREATION_TIME" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFY_TIME" property="lastModifyTime" jdbcType="TIMESTAMP" />
+    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+  </resultMap>
+   <sql id="Base_Column_List" >
+    PART_REF_KEY, OLD_PART_NUMBER, NEW_PART_NUMBER, PART_NAME, CREATION_TIME, LAST_MODIFY_TIME, CREATE_USER 
+  </sql>
+  <insert id="insert" parameterType="com.peg.model.part.NewPartRef" >
+    insert into NEW_PART_REF (PART_REF_KEY, OLD_PART_NUMBER, NEW_PART_NUMBER, 
+      PART_NAME, CREATION_TIME, LAST_MODIFY_TIME, 
+      CREATE_USER)
+    values (#{partRefKey,jdbcType=DECIMAL}, #{oldPartNumber,jdbcType=VARCHAR}, #{newPartNumber,jdbcType=VARCHAR}, 
+      #{partName,jdbcType=VARCHAR}, #{creationTime,jdbcType=TIMESTAMP}, #{lastModifyTime,jdbcType=TIMESTAMP}, 
+      #{createUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.part.NewPartRef" >
+    insert into NEW_PART_REF
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="partRefKey != null" >
+        PART_REF_KEY,
+      </if>
+      <if test="oldPartNumber != null" >
+        OLD_PART_NUMBER,
+      </if>
+      <if test="newPartNumber != null" >
+        NEW_PART_NUMBER,
+      </if>
+      <if test="partName != null" >
+        PART_NAME,
+      </if>
+      <if test="creationTime != null" >
+        CREATION_TIME,
+      </if>
+      <if test="lastModifyTime != null" >
+        LAST_MODIFY_TIME,
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="partRefKey != null" >
+        #{partRefKey,jdbcType=DECIMAL},
+      </if>
+      <if test="oldPartNumber != null" >
+        #{oldPartNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="newPartNumber != null" >
+        #{newPartNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="partName != null" >
+        #{partName,jdbcType=VARCHAR},
+      </if>
+      <if test="creationTime != null" >
+        #{creationTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastModifyTime != null" >
+        #{lastModifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from NEW_PART_REF
+    where PART_REF_KEY = #{partRefKey,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from NEW_PART_REF
+    where PART_REF_KEY = #{partRefKey,jdbcType=DECIMAL}
+  </delete>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.part.NewPartRef" >
+    update NEW_PART_REF
+    <set >
+      <if test="oldPartNumber != null" >
+        old_part_number = #{oldPartNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="newPartNumber != null" >
+        new_part_number = #{newPartNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="partName != null" >
+        PART_NAME = #{partName,jdbcType=VARCHAR},
+      </if>
+      <if test="creationTime != null" >
+        CREATION_TIME = #{creationTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where part_ref_key = #{partRefKey,jdbcType=DECIMAL}
+  </update>
+  
+   <update id="updateByPrimaryKey" parameterType="com.peg.model.part.NewPartRef" >
+    update NEW_PART_REF
+    set old_part_number = #{oldPartNumber,jdbcType=VARCHAR},
+      new_part_number = #{newPartNumber,jdbcType=VARCHAR},
+      PART_NAME = #{partName,jdbcType=VARCHAR},
+      CREATION_TIME = #{creationTime,jdbcType=TIMESTAMP}
+    where part_ref_key = #{partRefKey,jdbcType=DECIMAL}
+  </update>
+  
+  <select id="findAllByPage" resultMap="BaseResultMap">
+  select T.* from NEW_PART_REF t where 1=1 
+       <if test="hashMap.oldPartNumber !=null">
+         and t.old_part_number like '%${hashMap.oldPartNumber}%'
+       </if>
+       <if test="hashMap.newPartNumber !=null">
+         and t.new_part_number like '%${hashMap.newPartNumber}%'
+       </if>
+       order by t.CREATION_TIME
+  </select>
+</mapper>

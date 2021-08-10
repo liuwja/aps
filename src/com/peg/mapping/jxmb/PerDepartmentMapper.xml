@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.jxmb.PerDepartmentMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.jxmb.PerDeparment" >
+    <result column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="FACTORY_NUMBER" property="factoryNumber" jdbcType="VARCHAR" />
+    <result column="FACTORY_NAME" property="factoryName" jdbcType="VARCHAR" />
+    <result column="DEPARTMENT_NUMBER" property="departmentNumber" jdbcType="VARCHAR" />
+    <result column="DEPARTMENT_NAME" property="departmentName" jdbcType="VARCHAR" />
+    <result column="CREATION_TIME" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="CREATION_NAME" property="creationName" jdbcType="VARCHAR" />
+    <collection property="dtpartment" resultMap="com.peg.dao.jxmb.PerformanceCheckMapper.BaseResultMap" columnPrefix="dt_"></collection>
+  </resultMap>
+  
+	<select id="getAllByPage" resultMap="BaseResultMap">
+ 		SELECT D.ID, FACTORY_NUMBER, S.DESCRIPTION FACTORY_NAME, DEPARTMENT_NUMBER, DEPARTMENT_NAME, D.CREATION_TIME, D.CREATION_NAME FROM DEPARTMENT D, SITE S WHERE D.FACTORY_NUMBER = S.SITE_NAME
+		<if test="hashMap.factoryNumber != null and hashMap.factoryNumber != ''">
+			and D.factory_number like '%${hashMap.factoryNumber}%'
+		</if>
+		<if test="hashMap.departmentNumber != null and hashMap.departmentNumber != ''">
+			and D.DEPARTMENT_NUMBER like '%${hashMap.departmentNumber}%'
+		</if>
+		order by D.FACTORY_NUMBER , D.DEPARTMENT_NUMBER
+  	</select>
+  
+	<select id="getAll" resultMap="BaseResultMap">
+ 		SELECT D.ID, FACTORY_NUMBER, S.DESCRIPTION FACTORY_NAME, DEPARTMENT_NUMBER, DEPARTMENT_NAME, D.CREATION_TIME, D.CREATION_NAME FROM DEPARTMENT D, SITE S WHERE D.FACTORY_NUMBER = S.SITE_NAME
+		<if test="hashMap.factoryNumber != null and hashMap.factoryNumber != ''">
+			and D.factory_number like '%${hashMap.factoryNumber}%'
+		</if>
+		<if test="hashMap.departmentNumber != null and hashMap.departmentNumber != ''">
+			and D.DEPARTMENT_NUMBER like '%${hashMap.departmentNumber}%'
+		</if>
+		order by D.FACTORY_NUMBER , D.DEPARTMENT_NUMBER
+  	</select>
+  
+	<insert id="insert" parameterType="com.peg.model.jxmb.PerDeparment" >
+		insert into DEPARTMENT (FACTORY_NUMBER, FACTORY_NAME, DEPARTMENT_NUMBER, DEPARTMENT_NAME, CREATION_NAME)
+		values (#{factoryNumber,jdbcType=VARCHAR}, #{factoryName,jdbcType=VARCHAR}, #{departmentNumber,jdbcType=VARCHAR}, #{departmentName,jdbcType=VARCHAR}, #{creationName,jdbcType=VARCHAR})
+  	</insert>
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		SELECT D.ID, FACTORY_NUMBER, FACTORY_NAME, DEPARTMENT_NUMBER, DEPARTMENT_NAME, D.CREATION_TIME, D.CREATION_NAME FROM DEPARTMENT D, SITE S WHERE D.FACTORY_NUMBER = S.SITE_NAME
+		AND D.ID = #{id,jdbcType=DECIMAL}
+	</select>  
+	
+	<!-- 根据部门编号查询部门记录 -->
+	<select id="selectByDepartmentNumber" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT D.ID, FACTORY_NUMBER, FACTORY_NAME, DEPARTMENT_NUMBER, DEPARTMENT_NAME, D.CREATION_TIME, D.CREATION_NAME FROM DEPARTMENT D, SITE S WHERE D.FACTORY_NUMBER = S.SITE_NAME
+		AND D.DEPARTMENT_NUMBER = #{departmentNumber,jdbcType=VARCHAR}
+	</select>  
+	
+	<!-- 根据部门名称查询部门记录 -->
+	<select id="selectByDepartmentName" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT D.ID, FACTORY_NUMBER, FACTORY_NAME, DEPARTMENT_NUMBER, DEPARTMENT_NAME, D.CREATION_TIME, D.CREATION_NAME FROM DEPARTMENT D, SITE S WHERE D.FACTORY_NUMBER = S.SITE_NAME
+		AND D.DEPARTMENT_NAME = #{departmentName,jdbcType=VARCHAR}
+	</select> 
+
+	<update id="update" parameterType="com.peg.model.jxmb.PerDeparment">
+		UPDATE DEPARTMENT SET 
+		FACTORY_NUMBER = #{factoryNumber, jdbcType=VARCHAR},
+		FACTORY_NAME = #{factoryName, jdbcType=VARCHAR},
+		DEPARTMENT_NUMBER = #{departmentNumber, jdbcType=VARCHAR},
+		DEPARTMENT_NAME = #{departmentName, jdbcType=VARCHAR}
+		WHERE ID = #{id, jdbcType=DECIMAL}
+	</update>
+  
+   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from DEPARTMENT
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+</mapper>

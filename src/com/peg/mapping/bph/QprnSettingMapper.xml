@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.QprnSettingMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.QprnSetting" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="QPRN" property="qprn" jdbcType="VARCHAR" />
+    <result column="SCORE_TYPE" property="scoreType" jdbcType="DECIMAL" />
+    <result column="WEIGHT" property="weight" jdbcType="DECIMAL" />
+    <result column="SCORE" property="score" jdbcType="DECIMAL" />
+    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_UPDATE_USER" property="lastUpdateUser" jdbcType="VARCHAR" />
+    <result column="LAST_UPDATE_TIME" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, QPRN, SCORE_TYPE, WEIGHT, SCORE, CREATE_USER, CREATE_TIME, LAST_UPDATE_USER, 
+    LAST_UPDATE_TIME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_QPRN_SETTING
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from T_QPRN_SETTING
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.bph.QprnSetting" >
+  <selectKey resultType="long" order="BEFORE" keyProperty="id">
+      select SEQ_T_QPRN_SETTING.nextval as id from dual
+    </selectKey>   
+    insert into T_QPRN_SETTING (ID, QPRN, SCORE_TYPE, 
+      WEIGHT, SCORE, CREATE_USER, 
+      CREATE_TIME, LAST_UPDATE_USER, LAST_UPDATE_TIME
+      )
+    values (#{id,jdbcType=DECIMAL}, #{qprn,jdbcType=VARCHAR}, #{scoreType,jdbcType=DECIMAL}, 
+      #{weight,jdbcType=DECIMAL}, #{score,jdbcType=DECIMAL}, #{createUser,jdbcType=VARCHAR}, 
+      SYSDATE, #{lastUpdateUser,jdbcType=VARCHAR}, #{lastUpdateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.bph.QprnSetting" >
+    insert into T_QPRN_SETTING
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="qprn != null" >
+        QPRN,
+      </if>
+      <if test="scoreType != null" >
+        SCORE_TYPE,
+      </if>
+      <if test="weight != null" >
+        WEIGHT,
+      </if>
+      <if test="score != null" >
+        SCORE,
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER,
+      </if>
+      <if test="lastUpdateUser != null" >
+        LAST_UPDATE_USER,
+      </if>
+      <if test="lastUpdateTime != null" >
+        LAST_UPDATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="qprn != null" >
+        #{qprn,jdbcType=VARCHAR},
+      </if>
+      <if test="scoreType != null" >
+        #{scoreType,jdbcType=DECIMAL},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=DECIMAL},
+      </if>
+      <if test="score != null" >
+        #{score,jdbcType=DECIMAL},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateUser != null" >
+        #{lastUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateTime != null" >
+        #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.bph.QprnSetting" >
+    update T_QPRN_SETTING
+    <set >
+      <if test="qprn != null" >
+        QPRN = #{qprn,jdbcType=VARCHAR},
+      </if>
+      <if test="scoreType != null" >
+        SCORE_TYPE = #{scoreType,jdbcType=DECIMAL},
+      </if>
+      <if test="weight != null" >
+        WEIGHT = #{weight,jdbcType=DECIMAL},
+      </if>
+      <if test="score != null" >
+        SCORE = #{score,jdbcType=DECIMAL},
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateUser != null" >
+        LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateTime != null" >
+        LAST_UPDATE_TIME = #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.bph.QprnSetting" >
+    update T_QPRN_SETTING
+    set QPRN = #{qprn,jdbcType=VARCHAR},
+      SCORE_TYPE = #{scoreType,jdbcType=DECIMAL},
+      WEIGHT = #{weight,jdbcType=DECIMAL},
+      SCORE = #{score,jdbcType=DECIMAL},
+      CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=VARCHAR},
+      LAST_UPDATE_TIME = #{lastUpdateTime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <select id="getAllByPage" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_QPRN_SETTING
+    <where>
+        <if test="hashMap.scoreType != null">
+            SCORE_TYPE like '%${hashMap.scoreType }%'
+        </if>
+        <if test="hashMap.qprn != null">
+           and  QPRN like '%${hashMap.qprn }%'
+        </if>
+    </where>
+       order by create_time DESC
+  </select> 
+   <select id="getAll" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_QPRN_SETTING
+   
+    order by create_time DESC
+  </select> 
+</mapper>

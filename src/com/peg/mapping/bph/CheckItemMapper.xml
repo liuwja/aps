@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.CheckItemMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.CheckItem" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="FACTORY" property="factory" jdbcType="VARCHAR" />
+    <result column="SHIFTGROUP_CATEGORY" property="shiftGroupCategory" jdbcType="VARCHAR" />
+    <result column="ITEM" property="item" jdbcType="VARCHAR" />
+    <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR" />
+    <result column="SCALE" property="scale" jdbcType="DECIMAL" />
+    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_UPDATE_TIME" property="lastUpdateTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, FACTORY,SHIFTGROUP_CATEGORY,ITEM,ITEM_CODE,SCALE,CREATE_USER,CREATE_TIME,
+    LAST_UPDATE_TIME,LAST_UPDATE_USER
+  </sql>
+
+   <select id="getAllByPage" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_CHECK_ITEM
+    <where>
+        <if test="hashMap.shiftGroupCategory != null">
+            SHIFTGROUP_CATEGORY like '%${hashMap.shiftGroupCategory}%'
+        </if>
+        <if test="hashMap.factory != null">
+           and FACTORY like '%${hashMap.factory}%'
+        </if>
+    </where>
+       order by FACTORY DESC ,  SHIFTGROUP_CATEGORY DESC
+  </select> 
+   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_CHECK_ITEM
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from T_CHECK_ITEM
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.bph.CheckItem" >
+    <selectKey resultType="long" order="BEFORE" keyProperty="id">
+      select seq_t_check_item.nextval as id from dual
+    </selectKey>   
+    insert into T_CHECK_ITEM (ID, FACTORY,SHIFTGROUP_CATEGORY,ITEM,ITEM_CODE,SCALE,CREATE_USER,CREATE_TIME,
+    LAST_UPDATE_TIME,LAST_UPDATE_USER )
+    values (#{id,jdbcType=DECIMAL},#{factory,jdbcType=VARCHAR}, #{shiftGroupCategory,jdbcType=VARCHAR}, 
+    #{item,jdbcType=VARCHAR},#{itemCode,jdbcType=VARCHAR},#{scale,jdbcType=DECIMAL},#{createUser,jdbcType=VARCHAR},SYSDATE,
+     #{lastUpdateTime,jdbcType=TIMESTAMP},#{lastUpdateUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.bph.CheckItem" >
+    insert into T_CHECK_ITEM
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="factory != null" >
+       FACTORY,
+      </if>
+      <if test="shiftGroupCategory != null" >
+        SHIFTGROUP_CATEGORY,
+      </if>
+      <if test="item != null" >
+        ITEM,
+      </if>
+       <if test="itemCode != null" >
+        ITEM_CODE,
+      </if>
+      <if test="scale!= null" >
+        SCALE,
+      </if>
+      
+      <if test="createUser != null" >
+        CREATE_USER,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="lastUpdateTime != null" >
+        LAST_UPDATE_TIME,
+      </if>
+       <if test="LastUpdateUser != null" >
+        LAST_UPDATE_USER,
+      </if>
+      
+    </trim>
+
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.bph.CheckItem" >
+    update T_CHECK_ITEM
+    <set >
+      <if test="factory != null" >
+      FACTORY = #{factory,jdbcType=VARCHAR},
+      </if>
+      <if test="shiftGroupCategory != null" >
+        SHIFTGROUP_CATEGORY=#{shiftGroupCategory ,jdbcType=VARCHAR},
+      </if>
+      <if test="item != null" >
+        ITEM=#{item ,jdbcType=VARCHAR},
+      </if>
+      <if test="itemCode != null" >
+        ITEM_CODE=#{itemCode ,jdbcType=VARCHAR},
+      </if>
+      <if test="scale!= null" >
+        SCALE=#{scale,jdbcType=DECIMAL},
+      </if>
+      <if test="lastUpdateTime != null" >
+        LAST_UPDATE_TIME=#{lastUpdateTime  ,jdbcType=TIMESTAMP},
+      </if>
+       <if test="lastUpdateUser != null" >
+        LAST_UPDATE_USER=#{lastUpdateUser ,jdbcType=VARCHAR},
+      </if>
+      
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.bph.CheckItem" >
+    update T_CHECK_ITEM
+    set FACTORY = #{factory,jdbcType=VARCHAR},
+      SHIFTGROUP_CATEGORY = #{shiftGroupCategory,jdbcType=VARCHAR},
+      ITEM = #{item,jdbcType=VARCHAR},
+      ITEM_CODE = #{itemCode,jdbcType=VARCHAR},
+      SCALE = #{scale,jdbcType=VARCHAR},
+      CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      LAST_UPDATE_TIME = #{lastUpdateTime,jdbcType=VARCHAR},
+      LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=VARCHAR},
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <select id="getItemAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from T_CHECK_ITEM
+  </select>
+  
+    <select id="getCategory" resultMap="BaseResultMap" parameterType="com.peg.model.bph.CheckItem">
+    select distinct 
+    UDA_4 as SHIFTGROUP_CATEGORY from  app_group where category = 'SHIFT' 
+    and uda_4 is not null
+    and  UDA_1 = #{factory} 
+  </select>
+  
+   <select id="getCheckItem" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_CHECK_ITEM
+    where 1=1
+    <if test="factory != null">
+     and FACTORY  = #{factory}
+    </if>
+    <if test="category != null">
+     and SHIFTGROUP_CATEGORY = #{category}
+    </if>
+  </select>
+ </mapper>

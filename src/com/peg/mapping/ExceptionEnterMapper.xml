@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.ExceptionEnterMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.ExceptionEnter" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="FACTORY" property="factory" jdbcType="VARCHAR" />
+    <result column="AREA" property="area" jdbcType="VARCHAR" />
+    <result column="GROUP_NAME" property="groupName" jdbcType="VARCHAR" />
+    <result column="EXCEPTION_TYPE" property="exceptionType" jdbcType="VARCHAR" />
+    <result column="EXCEPTION_NAME" property="exceptionName" jdbcType="VARCHAR" />
+    <result column="OCCUR_TIME" property="occurTime" jdbcType="TIMESTAMP" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+    <result column="LAST_UPDATE_TIME" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_UPDATE_USER" property="lastUpdateUser" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, FACTORY, AREA, GROUP_NAME, EXCEPTION_TYPE, EXCEPTION_NAME, OCCUR_TIME, CREATE_TIME, 
+    CREATE_USER, LAST_UPDATE_TIME, LAST_UPDATE_USER
+  </sql>
+   <select id="getAllByPage" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_EXCEPTION_ENTER
+    <where>
+        <if test="hashMap.factory != null">
+           and FACTORY like '%${hashMap.factory}%'
+        </if>
+         <if test="hashMap.area != null">
+           and area like '%${hashMap.area}%'
+        </if>
+         <if test="hashMap.groupName != null">
+           and GROUP_NAME like '%${hashMap.groupName}%'
+        </if>
+        <if test="hashMap.exceptionType != null">
+           and EXCEPTION_TYPE like '%${hashMap.exceptionType}%'
+        </if>
+         <if test="hashMap.startTime != null and hashMap.endTime != null">
+           and OCCUR_TIME between '${hashMap.startTime}'  and '${hashMap.endTime}'
+        </if>
+    </where>
+       order by create_time desc
+  </select> 
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_EXCEPTION_ENTER
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from T_EXCEPTION_ENTER
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.ExceptionEnter" >
+    <selectKey resultType="long" order="BEFORE" keyProperty="id">
+      select seq_t_exception_enter.nextval as id from dual
+    </selectKey>  
+    insert into T_EXCEPTION_ENTER (ID, FACTORY, AREA, 
+      GROUP_NAME, EXCEPTION_TYPE, EXCEPTION_NAME, 
+      OCCUR_TIME,  CREATE_USER, 
+      LAST_UPDATE_TIME, LAST_UPDATE_USER)
+    values (#{id,jdbcType=DECIMAL}, #{factory,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, 
+      #{groupName,jdbcType=VARCHAR}, #{exceptionType,jdbcType=VARCHAR}, #{exceptionName,jdbcType=VARCHAR}, 
+      #{occurTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, 
+      #{lastUpdateTime,jdbcType=TIMESTAMP}, #{lastUpdateUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.ExceptionEnter" >
+    insert into T_EXCEPTION_ENTER
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="factory != null" >
+        FACTORY,
+      </if>
+      <if test="area != null" >
+        AREA,
+      </if>
+      <if test="groupName != null" >
+        GROUP_NAME,
+      </if>
+      <if test="exceptionType != null" >
+        EXCEPTION_TYPE,
+      </if>
+      <if test="exceptionName != null" >
+        EXCEPTION_NAME,
+      </if>
+      <if test="occurTime != null" >
+        OCCUR_TIME,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER,
+      </if>
+      <if test="lastUpdateTime != null" >
+        LAST_UPDATE_TIME,
+      </if>
+      <if test="lastUpdateUser != null" >
+        LAST_UPDATE_USER,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="factory != null" >
+        #{factory,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="groupName != null" >
+        #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="exceptionType != null" >
+        #{exceptionType,jdbcType=VARCHAR},
+      </if>
+      <if test="exceptionName != null" >
+        #{exceptionName,jdbcType=VARCHAR},
+      </if>
+      <if test="occurTime != null" >
+        #{occurTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateTime != null" >
+        #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateUser != null" >
+        #{lastUpdateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.ExceptionEnter" >
+    update T_EXCEPTION_ENTER
+    <set >
+      <if test="factory != null" >
+        FACTORY = #{factory,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        AREA = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="groupName != null" >
+        GROUP_NAME = #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="exceptionType != null" >
+        EXCEPTION_TYPE = #{exceptionType,jdbcType=VARCHAR},
+      </if>
+      <if test="exceptionName != null" >
+        EXCEPTION_NAME = #{exceptionName,jdbcType=VARCHAR},
+      </if>
+      <if test="occurTime != null" >
+        OCCUR_TIME = #{occurTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateTime != null" >
+        LAST_UPDATE_TIME = #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateUser != null" >
+        LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.ExceptionEnter" >
+    update T_EXCEPTION_ENTER
+    set FACTORY = #{factory,jdbcType=VARCHAR},
+      AREA = #{area,jdbcType=VARCHAR},
+      GROUP_NAME = #{groupName,jdbcType=VARCHAR},
+      EXCEPTION_TYPE = #{exceptionType,jdbcType=VARCHAR},
+      EXCEPTION_NAME = #{exceptionName,jdbcType=VARCHAR},
+      OCCUR_TIME = #{occurTime,jdbcType=TIMESTAMP},
+      CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      LAST_UPDATE_TIME = #{lastUpdateTime,jdbcType=TIMESTAMP},
+      LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  
+  <select id="getExceptionByMonth" resultMap="BaseResultMap">
+   select 
+    <include refid="Base_Column_List" />
+    from T_EXCEPTION_ENTER
+    <where>
+         <if test="hashMap.startTime != null ">
+           and to_char(OCCUR_TIME,'YYYY-MM') = '${hashMap.startTime}'  
+        </if>
+    </where>
+       order by create_time desc
+  </select>
+</mapper>

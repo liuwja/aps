@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.peg.dao.bph.IpqcInspectsMapper">
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.IpqcInspects">
+    <id column="ATR_KEY" jdbcType="DECIMAL" property="atrKey" />
+    <id column="SITE_NUM" jdbcType="DECIMAL" property="siteNum" />
+    <result column="ATR_NAME" jdbcType="VARCHAR" property="atrName" />
+    <result column="PURGE_STATUS" jdbcType="DECIMAL" property="purgeStatus" />
+    <result column="CREATION_TIME" jdbcType="TIMESTAMP" property="creationTime" />
+    <result column="CREATION_TIME_U" jdbcType="TIMESTAMP" property="creationTimeU" />
+    <result column="CREATION_TIME_Z" jdbcType="VARCHAR" property="creationTimeZ" />
+    <result column="LAST_MODIFIED_TIME" jdbcType="TIMESTAMP" property="lastModifiedTime" />
+    <result column="LAST_MODIFIED_TIME_U" jdbcType="TIMESTAMP" property="lastModifiedTimeU" />
+    <result column="LAST_MODIFIED_TIME_Z" jdbcType="VARCHAR" property="lastModifiedTimeZ" />
+    <result column="XFR_INSERT_PID" jdbcType="DECIMAL" property="xfrInsertPid" />
+    <result column="XFR_UPDATE_PID" jdbcType="DECIMAL" property="xfrUpdatePid" />
+    <result column="TRX_ID" jdbcType="CHAR" property="trxId" />
+    <result column="PARENT_KEY" jdbcType="DECIMAL" property="parentKey" />
+    <result column="DUTY_MAN_S" jdbcType="VARCHAR" property="dutyManS" />
+    <result column="MEASURE_S" jdbcType="VARCHAR" property="measureS" />
+    <result column="INSPECT_MAN_S" jdbcType="VARCHAR" property="inspectManS" />
+    <result column="FINDER_S" jdbcType="VARCHAR" property="finderS" />
+    <result column="FIND_TIME_S" jdbcType="VARCHAR" property="findTimeS" />
+    <result column="IMAGE_S" jdbcType="VARCHAR" property="imageS" />
+    <result column="NOTICE_MEN_S" jdbcType="VARCHAR" property="noticeMenS" />
+    <result column="FEEDING_QTY_I" jdbcType="DECIMAL" property="feedingQtyI" />
+    <result column="DEFECT_QTY_I" jdbcType="DECIMAL" property="defectQtyI" />
+    <result column="DEFECT_RATE_S" jdbcType="VARCHAR" property="defectRateS" />
+    <result column="EQUIPMENT_NO_S" jdbcType="VARCHAR" property="equipmentNoS" />
+    <result column="STEP_NAME_S" jdbcType="VARCHAR" property="stepNameS" />
+    <result column="DEFECT_TYPE_S" jdbcType="VARCHAR" property="defectTypeS" />
+    <result column="UNIT_BARCODE_S" jdbcType="VARCHAR" property="unitBarcodeS" />
+    <result column="INSPECT_RESULT_S" jdbcType="VARCHAR" property="inspectResultS" />
+    <result column="DEFECT_LEVEL_S" jdbcType="VARCHAR" property="defectLevelS" />
+    <result column="DEFECT_MATERIAL_S" jdbcType="VARCHAR" property="defectMaterialS" />
+    <result column="UNQUALIFIED_APPEARANCE_S" jdbcType="VARCHAR" property="unqualifiedAppearanceS" />
+    <result column="INSPECT_TYPE_S" jdbcType="VARCHAR" property="inspectTypeS" />
+    <result column="WORKCENTER_S" jdbcType="VARCHAR" property="workcenterS" />
+    <result column="INSPECT_DATE_T" jdbcType="TIMESTAMP" property="inspectDateT" />
+    <result column="INSPECT_DATE_U" jdbcType="TIMESTAMP" property="inspectDateU" />
+    <result column="INSPECT_DATE_Z" jdbcType="VARCHAR" property="inspectDateZ" />
+    <result column="FACTORY_S" jdbcType="VARCHAR" property="factoryS" />
+    <result column="ORDER_NUMBER_S" jdbcType="VARCHAR" property="orderNumberS" />
+    <result column="PRODUCTION_LINE_S" jdbcType="VARCHAR" property="productionLineS" />
+    <result column="GROUP_NAME_S" jdbcType="VARCHAR" property="groupNameS" />
+    <result column="SHIFT_NAME_S" jdbcType="VARCHAR" property="shiftNameS" />
+    <result column="PRODUCT_NAME_S" jdbcType="VARCHAR" property="productNameS" />
+    <result column="STANDARD_SIZE_S" jdbcType="VARCHAR" property="standardSizeS" />
+    <result column="TRULY_SIZE_S" jdbcType="VARCHAR" property="trulySizeS" />
+    <result column="ORDER_ITEM_NUMBER_S" jdbcType="VARCHAR" property="orderItemNumberS" />
+    <result column="UNQUANTITY_QTY_I" jdbcType="DECIMAL" property="unquantityQtyI" />
+    <result column="TRACE_QTY_I" jdbcType="DECIMAL" property="traceQtyI" />
+    <result column="CHECKQTY_I" jdbcType="DECIMAL" property="checkQtyI" />
+    <result column="DEFECTQTY_I" jdbcType="DECIMAL" property="defectNum" />
+    <result column="GROUP1_S" jdbcType="VARCHAR" property="group1S" />
+    <result column="GROUP2_S" jdbcType="VARCHAR" property="group2S" />
+    <result column="GROUP3_S" jdbcType="VARCHAR" property="group3S" />
+    <result column="PROCESS_NODE_S" jdbcType="VARCHAR" property="processNode" />
+    <result column="BATCH_S" jdbcType="VARCHAR" property="batch" />
+    <result column="RISK_SCORE_F" jdbcType="DECIMAL" property="riskScore" />
+    <result column="RESULT_S" jdbcType="VARCHAR" property="result" />
+  </resultMap>
+  
+  <resultMap id="CommonResultMap" type="com.peg.model.CommonVo" >
+	<id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="region" property="region" jdbcType="VARCHAR" />
+    <result column="product_type" property="productType" jdbcType="VARCHAR" />
+    <result column="part_type" property="partType" jdbcType="VARCHAR" />
+    <result column="productline_number" property="productLineNumber" jdbcType="VARCHAR" />
+    <result column="productline_name" property="productLineName" jdbcType="VARCHAR" />
+    <result column="repair_month" property="repairMonth" jdbcType="VARCHAR" />
+    <result column="ship_month" property="shipMonth" jdbcType="VARCHAR" />
+    <result column="base_month" property="baseMonth" jdbcType="VARCHAR" />
+    <result column="downline_month" property="downLineMonth" jdbcType="VARCHAR" />
+    <result column="fault_type_code" property="faultTypeCode" jdbcType="VARCHAR" />
+    <result column="fault_type_name" property="faultTypeName" jdbcType="VARCHAR" />
+    <result column="fault_reason_code" property="faultReasonCode" jdbcType="VARCHAR" />
+    <result column="fault_reason_name" property="faultReasonName" jdbcType="VARCHAR" />
+    <result column="is_over" property="over" jdbcType="VARCHAR" />
+    <result column="repair_count" property="repairCount" jdbcType="DECIMAL" />
+    <result column="faultCode_Count" property="faultCodeCount" jdbcType="DECIMAL" />
+    
+    <result column="ship_count" property="shipCount" jdbcType="DECIMAL" />
+    <result column="downline_count" property="downlineCount" jdbcType="DECIMAL" />
+    <result column="factory" property="factory" jdbcType="VARCHAR" />
+    <result column="shift_group_name" property="shiftGroupTxt" jdbcType="VARCHAR" />
+    <result column="shift_group_code" property="shiftGroupCode" jdbcType="VARCHAR" />
+    <result column="shift_group_score" property="shiftGroupScore" jdbcType="DECIMAL" />
+    
+    <result column="install_month" property="installMonth" jdbcType="VARCHAR" />
+    <result column="install_count" property="installCount" jdbcType="DECIMAL" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="row_id" property="rowId" jdbcType="DECIMAL" />
+    <result column="factory_S" property="factory" jdbcType="VARCHAR" />
+    <result column="workcenter_S" property="area" jdbcType="VARCHAR" />
+    <result column="group_Name_S" property="shiftGroupTxt" jdbcType="VARCHAR" />
+    <result column="defect_Type_S" property="faultTypeName" jdbcType="VARCHAR" />
+    <result column="defectNum" property="defectNum" jdbcType="DECIMAL" />
+    <result column="index_act_value" property="indexActValue" jdbcType="DECIMAL" />
+    
+</resultMap>
+  <sql id="Base_Column_List">
+    ATR_KEY, SITE_NUM, ATR_NAME, PURGE_STATUS, CREATION_TIME, CREATION_TIME_U, CREATION_TIME_Z, 
+    LAST_MODIFIED_TIME, LAST_MODIFIED_TIME_U, LAST_MODIFIED_TIME_Z, XFR_INSERT_PID, XFR_UPDATE_PID, 
+    TRX_ID, PARENT_KEY, DUTY_MAN_S, MEASURE_S, INSPECT_MAN_S, FINDER_S, FIND_TIME_S, 
+    IMAGE_S, NOTICE_MEN_S, FEEDING_QTY_I, DEFECT_QTY_I, DEFECT_RATE_S, EQUIPMENT_NO_S, 
+    STEP_NAME_S, DEFECT_TYPE_S, UNIT_BARCODE_S, INSPECT_RESULT_S, DEFECT_LEVEL_S, DEFECT_MATERIAL_S, 
+    UNQUALIFIED_APPEARANCE_S, INSPECT_TYPE_S, WORKCENTER_S, INSPECT_DATE_T, INSPECT_DATE_U, 
+    INSPECT_DATE_Z, FACTORY_S, ORDER_NUMBER_S, PRODUCTION_LINE_S, GROUP_NAME_S, SHIFT_NAME_S, 
+    PRODUCT_NAME_S, STANDARD_SIZE_S, TRULY_SIZE_S, ORDER_ITEM_NUMBER_S, UNQUANTITY_QTY_I, 
+    TRACE_QTY_I，CHECKQTY_I，DEFECTQTY_I，GROUP1_S，GROUP2_S，GROUP3_S,PROCESS_NODE_S,BATCH_S,RISK_SCORE_F,RESULT_S
+  </sql>
+  
+   <select id="getIpqcInspectsAllByPage" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from at_inspects
+    <where>
+       <if test="hashMap.factoryS != null">
+            FACTORY_S  like '%${hashMap.factoryS}%'
+       </if> 
+       <if test="hashMap.startTime != null and hashMap.endTime !=null">
+         
+            and substr(find_time_s,0,10) BETWEEN to_char(#{hashMap.startTime},'YYYY-MM-DD') and  to_char(#{hashMap.endTime},'YYYY-MM-DD')
+
+       </if>
+       <if test="hashMap.areaS != null">
+         and   WORKCENTER_S  like '%${hashMap.areaS}%'
+       </if> 
+       <if test="hashMap.groupS != null">
+         and   GROUP_NAME_S  like '%${hashMap.groupS}%' 
+       </if> 
+       <if test="hashMap.dutyGroup != null">
+         and   group1_S  like '%${hashMap.dutyGroup}%' or group2_S like '%${hashMap.dutyGroup}%' or group3_S like '%${hashMap.dutyGroup}%'
+       </if> 
+        <if test="hashMap.inspectResultS != null">
+         and   INSPECT_RESULT_S  like '%${hashMap.inspectResultS}%'
+       </if> 
+       <if test="hashMap.partName != null">
+         and   FINDER_S  like '%${hashMap.partName}%'
+       </if> 
+        and inspect_type_s='前工序'
+    </where>
+       
+    order by FIND_TIME_S DESC
+  </select>
+  
+  <select id="getIpqcInspects" resultMap="BaseResultMap" parameterType="com.peg.model.bph.IpqcInspects">
+    select 
+    <include refid="Base_Column_List" />
+    from at_inspects
+    <where>
+      <if test="factoryS != null and factoryS != ''">
+            FACTORY_S  like #{factoryS}
+       </if> 
+       <if test="startTime != null and endTime !=null">
+         
+            and substr(find_time_s,0,10) BETWEEN to_char(#{startTime},'YYYY-MM-DD') and  to_char(#{endTime},'YYYY-MM-DD')
+
+       </if>
+       <if test="workcenterS != null and workcenterS !=''">
+         and   WORKCENTER_S  like #{workcenterS}
+       </if> 
+       <if test="group != null and group !=''">
+         and   GROUP_NAME_S  like #{group} 
+       </if> 
+       <if test="dutyGroup != null and dutyGroup !=''">
+         and   group1_S  like #{dutyGroup} or group2_S like #{dutyGroup} or group3_S like #{dutyGroup}
+       </if> 
+        <if test="inspectResultS != null and inspectResultS !=''">
+         and   INSPECT_RESULT_S  like #{inspectResultS}
+       </if> 
+         and inspect_type_s='前工序'
+    </where>
+  </select>
+  <select id="getIpqcDefetctType" resultMap="CommonResultMap" parameterType="com.peg.model.CommonVo">
+ select factory_S,workcenter_S,group_Name_S,defect_Type_S as faultTypeName,sum(DEFECTQTY_I) as defectNum
+ from at_inspects where 1=1
+         and   find_Time_S  between #{startTime} and #{endTime}
+         and   factory_S  like #{factory}
+         and   defect_Type_S  is not null
+         and   group1_S  like #{shiftGroupTxt} or group2_S like #{shiftGroupTxt} or group3_S like #{shiftGroupTxt}
+         and inspect_type_s='前工序'
+ group by factory_S,workcenter_S,group_Name_S,defect_Type_S
+ 
+  </select>
+  
+  <select id="getIpqcScore" resultMap="CommonResultMap"  parameterType="com.peg.model.CommonVo">
+  select factory as factory_s , area as area_s , shift_group_name as group_Name_S ,
+  to_char(sum_date,'yyyy-mm') as base_month , index_act_value , index_score as shift_group_score from t_item_index_scroe_month 
+  where 1=1
+  and shift_group_name like #{shiftGroupTxt} 
+  and factory like #{factory}
+  and to_char(sum_date,'yyyy-mm') between #{startTime} and #{endTime}
+  and index_id =(
+  select distinct(index_id) from t_setting_monthly_assessment where col_2=#{shiftGroupTxt} and check_index =#{indexName} )
+  order by sum_date 
+  </select>
+  
+</mapper>

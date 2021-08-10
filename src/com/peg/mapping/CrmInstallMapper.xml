@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.CrmInstallMapper">
+	<resultMap id="BaseResultMap" type="com.peg.model.CrmInstall">
+		<result column="serial_number" property="serialNumber" jdbcType="VARCHAR" />
+		<result column="intall_date" property="intallDate" jdbcType="TIMESTAMP" />
+		<result column="service_order" property="serviceOrder" jdbcType="VARCHAR" />
+		<result column="product_type" property="productType" jdbcType="VARCHAR" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="region" property="region" jdbcType="VARCHAR" />
+		<result column="create_time" property="creationTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		serial_number, intall_date, service_order, product_type, description, region, create_time
+	</sql>
+	<select id="findRecordAllByPage" resultMap="BaseResultMap">
+		<![CDATA[
+			select serial_number, intall_date, service_order, product_type, description, region, create_time from crm_unit_install WHERE 1 = 1
+		]]>
+		<if test="ins.serialNumber != null and ins.serialNumber !=''">
+			and serial_number like '%${ins.serialNumber}%'
+		</if>
+	   	<if test="ins.serviceOrder != null and ins.serviceOrder!=''">
+			and service_order like '%${ins.serviceOrder}%'
+		</if>
+		<if test="ins.region != null and ins.region != ''">
+			and region in (${ins.region})
+		</if>
+		<if test="ins.installStartTime != null and ins.installStartTime != ''">
+			<![CDATA[ and to_char(intall_date,'yyyy-mm-dd') >= #{ins.installStartTime} ]]>
+		</if>
+		<if test="ins.installEndTime != null and ins.installEndTime != ''">
+		    <![CDATA[ and to_char(intall_date,'yyyy-mm-dd') <= #{ins.installEndTime} ]]>
+		</if>
+		<if test="ins.startTime != null and ins.startTime != ''">
+		    <![CDATA[ and to_char(create_time,'yyyy-mm-dd') >= #{ins.startTime} ]]>
+		</if>
+		<if test="ins.endTime != null and ins.endTime != ''">
+		    <![CDATA[ and to_char(create_time,'yyyy-mm-dd') <= #{ins.endTime} ]]>
+		</if>
+		order by intall_date
+	</select>
+	
+	<select id="findAllByPage" resultMap="BaseResultMap">
+		select  
+		<include refid="Base_Column_List" />
+		  from crm_unit_install 
+		    <where>
+			<if test="ins.serialNumber != null and ins.serialNumber !=''">
+				and serial_number like '%${ins.serialNumber}%'
+			</if>
+	   		<if test="ins.serviceOrder != null and ins.serviceOrder!=''">
+				and service_order like '%${ins.serviceOrder}%'
+			</if>
+			<if test="ins.region != null and ins.region != ''">
+				and region in (${ins.region})
+			</if>
+			<if test="ins.installStartTime != null and ins.installStartTime != ''">
+		    <![CDATA[ and to_char(intall_date,'yyyy-mm-dd') >= #{ins.installStartTime} ]]>
+			</if>
+			<if test="ins.installEndTime != null and ins.installEndTime != ''">
+		    <![CDATA[ and to_char(intall_date,'yyyy-mm-dd') <= #{ins.installEndTime} ]]>
+			</if>
+			<if test="ins.startTime != null and ins.startTime != ''">
+		    <![CDATA[ and to_char(create_time,'yyyy-mm-dd') >= #{ins.startTime} ]]>
+			</if>
+			<if test="ins.endTime != null and ins.endTime != ''">
+		    <![CDATA[ and to_char(create_time,'yyyy-mm-dd') <= #{ins.endTime} ]]>
+			</if>
+			</where>
+		order by intall_date 
+	</select>
+</mapper>

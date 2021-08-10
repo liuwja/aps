@@ -1,0 +1,1916 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.MesDataSumMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.MesDataSum" >
+    <result column="FACTORY" property="factory" jdbcType="VARCHAR" />
+    <result column="AREAS" property="areas" jdbcType="VARCHAR" />
+    <result column="SHIFT_GROUP" property="shiftGroup" jdbcType="VARCHAR" />
+    <result column="MONTHLY" property="monthly" jdbcType="VARCHAR" />
+    <result column="RETURN_NUM" property="returnNum" jdbcType="DECIMAL" />
+    <result column="COMMIT_NUM" property="commitNum" jdbcType="DECIMAL" />
+    <result column="DEFECT_QTY" property="defectQty" jdbcType="DECIMAL" />
+    <result column="TOTAL_QTY" property="totalQty" jdbcType="DECIMAL" />
+    <result column="SIMPLE_QTY" property="simplelQty" jdbcType="DECIMAL" />
+    <result column="QUALITY_QTY" property="qualityQty" jdbcType="DECIMAL" />
+    <result column="AUDIT_NUM" property="auditNum" jdbcType="DECIMAL" />
+    <result column="TOTAL_SCORE" property="totalScore" jdbcType="DECIMAL" />
+    <result column="DEFECT_SOURCE" property="defectSource" jdbcType="VARCHAR" />
+    <result column="DEFECT_NUM" property="defectNum" jdbcType="DECIMAL" />
+    <result column="SHIFT_GROUP_CODE" property="shiftGroupCode" jdbcType="DECIMAL" />
+    <result column="SHIFT_GROUP_NAME" property="shiftGroupName" jdbcType="VARCHAR" />
+    <result column="SUM_DATE" property="sumDate" jdbcType="TIMESTAMP" />
+    <result column="INSERT_TIME" property="insertTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_UPDATE_TIME" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="NEED_SUM" property="needSum" jdbcType="DECIMAL" />
+    <result column="GROUP_TYPE" property="groupType" jdbcType="VARCHAR" />
+    <result column="COL_1" property="col1" jdbcType="DECIMAL" />
+    <result column="COL_2" property="col2" jdbcType="DECIMAL" />
+    <result column="COL_3" property="col3" jdbcType="DECIMAL" />
+    <result column="COL_4" property="col4" jdbcType="DECIMAL" />
+    <result column="COL_5" property="col5" jdbcType="DECIMAL" />
+    <result column="COL_6" property="col6" jdbcType="DECIMAL" />
+    <result column="COL_7" property="col7" jdbcType="DECIMAL" />
+    <result column="COL_8" property="col8" jdbcType="DECIMAL" />
+    <result column="COL_9" property="col9" jdbcType="DECIMAL" />
+    <result column="COL_10" property="col10" jdbcType="DECIMAL" />
+    <result column="COL_11" property="col11" jdbcType="DECIMAL" />
+    <result column="COL_12" property="col12" jdbcType="DECIMAL" />
+    <result column="COL_13" property="col13" jdbcType="DECIMAL" />
+    <result column="COL_14" property="col14" jdbcType="VARCHAR" />
+    <result column="COL_15" property="col15" jdbcType="DECIMAL" />
+    <result column="COL_16" property="col16" jdbcType="DECIMAL" />
+    <result column="COL_17" property="col17" jdbcType="DECIMAL" />
+    <result column="COL_18" property="col18" jdbcType="DECIMAL" />
+    <result column="COL_19" property="col19" jdbcType="DECIMAL" />
+    <result column="COL_20" property="col20" jdbcType="DECIMAL" />
+    <result column="COL_21" property="col21" jdbcType="DECIMAL" />
+    <result column="COL_22" property="col22" jdbcType="DECIMAL" />
+    <result column="COL_23" property="col23" jdbcType="DECIMAL" />
+    <result column="COL_24" property="col24" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+     FACTORY, AREAS, SHIFT_GROUP, MONTHLY, RETURN_NUM, COMMIT_NUM,DEFECT_QTY,TOTAL_QTY,SIMPLE_QTY,QUALITY_QTY,AUDIT_NUM,
+     TOTAL_SCORE,DEFECT_SOURCE,DEFECT_NUM,SHIFT_GROUP_CODE,SHIFT_GROUP_NAME,SUM_DATE,INSERT_TIME,LAST_UPDATE_TIME,NEED_SUM,GROUP_TYPE,
+     COL_1,COL_2,COL_3,COL_4,COL_5,COL_6,COL_7,COL_8,COL_9,COL_10,COL_11,COL_12,COL_13,COL_14,COL_15,COL_16,COL_17,
+     COL_18,COL_19,COL_20,COL_21,COL_22,COL_23,col_24
+  </sql>
+  
+<select id="findAllByPage" resultMap="BaseResultMap">
+  select 
+   FACTORY, AREA as areas,SHIFT_GROUP_CODE,SHIFT_GROUP_NAME,SUM_DATE,GROUP_TYPE,
+   COL_1,COL_2,COL_3,COL_4,COL_5,COL_6,COL_7,COL_8,COL_9,COL_10,COL_11,
+   COL_12,COL_13,COL_14,COL_15,COL_16,COL_17,
+   COL_18,COL_19,COL_20,COL_21,COL_22,COL_23,col_24
+  from t_mes_data_sum_month
+  where 1=1
+  <if test="hashMap.factory !=null">
+   and  FACTORY like '%${hashMap.factory}%'
+  </if>
+  <if test="hashMap.area != null">
+  and area like '%${hashMap.area}%'
+  </if>
+  <if test="hashMap.shiftGroup != null">
+  and SHIFT_GROUP_NAME like '%${hashMap.shiftGroup}%'
+  </if>
+  <if test="hashMap.monthly != null">
+  and to_char(SUM_DATE,'yyyy-mm') = #{hashMap.monthly}
+  </if>
+  order by factory,area,  SUM_DATE  desc
+</select> 
+  
+<!-- 插入组装生产退次总和表月份 -->
+  <insert id="insertAssemblyProductSum" parameterType="com.peg.model.bph.MesDataSum" >
+    insert into AT_ASSEMBLYPRODUCTBACK_SUM ( FACTORY,  
+      SHIFT_GROUP, MONTHLY, RETURN_NUM)
+   select FACTORY_S, group_s, stat_month ,sum(DEFECT_QTY) 
+   from (
+   select FACTORY_S,DUTY_GROUP1_S group_s,substr(#{param2},0,7) stat_month ,sum(DEFECT_QTY_I) DEFECT_QTY
+   from AT_ASSEMBLYPRODUCTBACK 
+   <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,DUTY_GROUP1_S,substr(#{param2},0,7)
+
+   union all
+
+   select FACTORY_S,DUTY_GROUP2_S group_s,substr(#{param2},0,7) stat_month ,sum(DEFECT_QTY_I) DEFECT_QTY
+   from AT_ASSEMBLYPRODUCTBACK 
+     <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+           DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,DUTY_GROUP2_S,substr(#{param2},0,7)
+
+   union all
+
+   select FACTORY_S,DUTY_GROUP3_S group_s,substr(#{param2},0,7) stat_month ,sum(DEFECT_QTY_I) DEFECT_QTY
+   from AT_ASSEMBLYPRODUCTBACK 
+     <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,DUTY_GROUP3_S,substr(#{param2},0,7)
+  ) where group_s is not null
+  group by FACTORY_S,group_s,stat_month
+  </insert>
+  <delete id="deleteAssemblyProductSum" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_ASSEMBLYPRODUCTBACK_SUM trd
+    where 1=1 
+    <if test="queryMonth != null" >
+    and trd.monthly = #{queryMonth} 
+    </if>
+  </delete>
+ <!-- 插入前工序FQC检查总和表月份 -->
+  <insert id="insertFormerProcessFqcCheckSum" parameterType="com.peg.model.bph.MesDataSum" >
+   insert into  AT_FORMERPROCESSFQCCHECK_SUM ( FACTORY, 
+      SHIFT_GROUP, MONTHLY, DEFECT_QTY,SIMPLE_QTY)
+   select FACTORY_S, group_s, stat_month,sum(DEFECT_QTY),sum(SIMPLE_QTY)
+   from (
+   select FACTORY_S,GROUP1_S group_s,substr(#{param2},0,7) stat_month ,sum(simple_qty_i) DEFECT_QTY,sum(total_qty_i) SIMPLE_QTY
+   from AT_FORMERPROCESSFQCCHECK
+     <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,GROUP1_S,substr(#{param2},0,7)
+
+   union all
+
+   select FACTORY_S,GROUP2_S group_s,substr(#{param2},0,7) stat_month ,sum(simple_qty_i) DEFECT_QTY,sum(total_qty_i) SIMPLE_QTY
+   from AT_FORMERPROCESSFQCCHECK 
+     <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,GROUP2_S,substr(#{param2},0,7)
+
+   union all
+
+   select FACTORY_S,GROUP3_S group_s,substr(#{param2},0,7) stat_month ,sum(simple_qty_i) DEFECT_QTY,sum(total_qty_i) SIMPLE_QTY
+   from AT_FORMERPROCESSFQCCHECK  
+    <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,GROUP3_S,substr(#{param2},0,7)
+   
+  ) where group_s is not null
+  group by FACTORY_S,group_s,stat_month
+  </insert>
+ 
+  
+  
+  <delete id="deleteFormerProcessFqcCheckSum" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_FORMERPROCESSFQCCHECK_SUM trd
+    where 1=1 
+    <if test="queryMonth != null" >
+    and trd.monthly = #{queryMonth} 
+    </if>
+  </delete>
+  
+   <!-- 插入过程批量不良记录总和表月份 -->
+  <insert id="insertBatchDefectRecordSum" parameterType="com.peg.model.bph.MesDataSum" >
+   insert into  AT_BATCHDEFECTRECORD_SUM ( FACTORY,  
+      SHIFT_GROUP, MONTHLY,PROCESS_NODE, RISK_SCORE)
+   select FACTORY_S, group_s, stat_month,process_node,sum(RISK_SCORE)
+   from (
+   select FACTORY_S,substr(group1_s,0,instr(group1_s,'_',1)-1) group_s,substr(#{param2},0,7) stat_month ,
+   decode(substr(process_node_s,1,1),'A',' ','B','A','C','A','D','D',' ')  process_node,sum(RISK_SCORE_F) RISK_SCORE
+   from  at_BatchDefectRecord
+    <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             RECORD_DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+             and substr(group1_s,0,instr(group1_s,'_',1)-1) in (
+             select a.description from app_group a where category ='SHIFT' 
+             and uda_4 in('冲压班组','点焊班组','喷涂班组','精加工班组')
+             )
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,substr(group1_s,0,instr(group1_s,'_',1)-1),substr(#{param2},0,7),decode(substr(process_node_s,1,1),'A',' ','B','A','C','A','D','D',' ') 
+
+   union all
+
+   select FACTORY_S,GROUP2_S group_s,substr(#{param2},0,7) stat_month ,
+   decode(substr(process_node_s,1,1),'A',' ','B','A','C','A','D','D',' ')  process_node,sum(RISK_SCORE_F) RISK_SCORE
+   from at_BatchDefectRecord
+    <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             RECORD_DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+             and GROUP2_S in (
+             select a.description from app_group a where category ='SHIFT' 
+             and uda_4 in('冲压班组','点焊班组','喷涂班组','精加工班组')
+             )
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,GROUP2_S,substr(#{param2},0,7),decode(substr(process_node_s,1,1),'A',' ','B','A','C','A','D','D',' ') 
+
+   union all
+
+   select FACTORY_S,GROUP3_S group_s,substr(#{param2},0,7) stat_month ,
+   decode(substr(process_node_s,1,1),'A',' ','B','A','C','A','D','D',' ')  process_node,sum(RISK_SCORE_F) RISK_SCORE
+   from at_BatchDefectRecord
+    <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             RECORD_DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+             and GROUP3_S in (
+             select a.description from app_group a where category ='SHIFT' 
+             and uda_4 in('冲压班组','点焊班组','喷涂班组','精加工班组')
+             )
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,GROUP3_S,substr(#{param2},0,7),decode(substr(process_node_s,1,1),'A',' ','B','A','C','A','D','D',' ') 
+  ) where group_s is not null
+  group by FACTORY_S,group_s,stat_month,process_node
+  </insert>
+  <delete id="deleteBatchDefectRecordSum" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_BATCHDEFECTRECORD_SUM trd
+    where 1=1 
+    <if test="queryMonth != null" >
+    and trd.monthly = #{queryMonth} 
+    </if>
+  </delete>
+  
+   <!-- 插入过程审核记录总和表月份 -->
+  <insert id="insertProcessAuditRecodeSum" parameterType="com.peg.model.bph.MesDataSum" >
+  insert into  AT_PROCESSAUDITRECORD_SUM( FACTORY,  
+      SHIFT_GROUP, MONTHLY,CHECK_CONTENT, AUDIT_NUM)
+   select FACTORY_S, group_s, stat_month,check_type_s,SEQUENCE_S
+   from (
+   select FACTORY_S,group_s,substr(#{param2},0,7) stat_month ,check_type_s,count( check_type_s)SEQUENCE_S
+   from  AT_PROCESSAUDITRECORD
+   <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             CHECK_DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+    group by FACTORY_S,GROUP_S,substr(#{param2},0,7),check_type_s
+   )where group_s is not null
+ group by FACTORY_S,GROUP_S,stat_month,check_type_s,SEQUENCE_S
+  </insert>
+  <delete id="deleteProcessAuditRecodeSum" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_PROCESSAUDITRECORD_SUM trd
+    where 1=1 
+    <if test="queryMonth != null" >
+    and trd.monthly = #{queryMonth} 
+    </if>
+  </delete>
+  
+    <!-- 插入质量改善课题申报总和表月份 -->
+  <insert id="insertQualityImprovementRfpSum" parameterType="com.peg.model.bph.MesDataSum" >
+   insert into   AT_QUALITYIMPROVEMENTRFP_SUM ( FACTORY,  
+      SHIFT_GROUP, MONTHLY, TOTAL_SCORE)
+   select FACTORY_S,duty_group_s, stat_month,sum(total_score)
+   from (
+   select FACTORY_S, duty_group_s,substr(#{param2},0,7) stat_month ,sum(total_score_I) total_score
+   from  AT_QUALITYIMPROVEMENTRFP
+     <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             RECORD_DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,duty_group_s,substr(#{param2},0,7)
+
+  )where duty_group_s is not null
+  group by FACTORY_S,duty_group_s,stat_month
+  </insert>
+  <delete id="deleteQualityImprovementRfpSum" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_QUALITYIMPROVEMENTRFP_SUM trd
+    where 1=1 
+    <if test="queryMonth != null" >
+    and trd.monthly = #{queryMonth} 
+    </if>
+  </delete>
+  
+      <!-- 插入冲压质量日报总和表月份 -->
+  <insert id="insertStampingDailyReportSum" parameterType="com.peg.model.bph.MesDataSum" >
+   insert into  AT_STAMPINGDAILYREPORT_SUM ( FACTORY, 
+      SHIFT_GROUP, MONTHLY, DEFECT_QTY)
+   select FACTORY_S,group_s, stat_month,sum(DEFECT_QTY)
+   from (
+   select FACTORY_S, group_s,substr(#{param2},0,7) stat_month ,sum(DEFECT_QTY_I) DEFECT_QTY
+   from  AT_STAMPINGDAILYREPORT
+     <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,group_s,substr(#{param2},0,7)
+
+  )where group_s is not null
+  group by FACTORY_S,group_s,stat_month
+  </insert>
+  <delete id="deleteStampingDailyReportSum" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_STAMPINGDAILYREPORT_SUM trd
+    where 1=1 
+    <if test="queryMonth != null" >
+    and trd.monthly = #{queryMonth} 
+    </if>
+  </delete>
+  
+  <!-- 插入喷涂质量日报总和表月份 -->
+  <insert id="insertPaintingDailyReportSum" parameterType="com.peg.model.bph.MesDataSum" >
+   insert into  AT_PAINTINGDAILYREPORT_SUM ( FACTORY, 
+      SHIFT_GROUP, MONTHLY,QUALITY_QTY)
+   select FACTORY_S,group_s, stat_month,sum(QUALITY_QTY)
+   from (
+   select FACTORY_S, group_s,substr(#{param2},0,7) stat_month ,sum(QUALITY_QTY_I) QUALITY_QTY
+   from  AT_PAINTINGDAILYREPORT
+     <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,group_s,substr(#{param2},0,7)
+
+  )where group_s is not null
+  group by FACTORY_S,group_s,stat_month
+  </insert>
+  <delete id="deletePaintingDailyReportSum" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_PAINTINGDAILYREPORT_SUM  trd
+    where 1=1 
+    <if test="queryMonth != null" >
+    and trd.monthly = #{queryMonth} 
+    </if>
+  </delete>
+  
+   <!-- 市场开箱不良记录总和表月份 -->
+  <insert id="insertBoxDefectRecordSum" parameterType="com.peg.model.bph.MesDataSum" >
+   insert into  AT_BOXDEFECTRECORD_SUM ( FACTORY, 
+      SHIFT_GROUP, MONTHLY,DEFECT_SOURCE,DEFECT_NUM)
+   select FACTORY_S,group_s, stat_month,DEFECT_SOURCE_S,sum(numbers)
+   from (
+   select FACTORY_S,substr(group1_s,0,instr(group1_s,'_',1)-1) group_s,substr(#{param2},0,7) stat_month ,DEFECT_SOURCE_S,count(DEFECT_SOURCE_S) numbers
+   from  AT_BOXDEFECTRECORD
+     <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             RECORD_DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,substr(group1_s,0,instr(group1_s,'_',1)-1),substr(#{param2},0,7),DEFECT_SOURCE_S
+   
+   union all
+   
+   select FACTORY_S,GROUP2_S group_s,substr(#{param2},0,7) stat_month ,DEFECT_SOURCE_S,count(DEFECT_SOURCE_S) numbers
+   from  AT_BOXDEFECTRECORD
+     <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             RECORD_DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,group2_s,substr(#{param2},0,7),DEFECT_SOURCE_S
+
+  union all
+  
+   select FACTORY_S,GROUP3_S group_s,substr(#{param2},0,7) stat_month ,DEFECT_SOURCE_S,count(DEFECT_SOURCE_S) numbers
+   from  AT_BOXDEFECTRECORD
+     <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             RECORD_DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,group3_s,substr(#{param2},0,7),DEFECT_SOURCE_S
+  )where group_s is not null
+  group by FACTORY_S,group_s,stat_month,DEFECT_SOURCE_S
+  </insert>
+  <delete id="deleteBoxDefectRecordSum" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_BOXDEFECTRECORD_SUM  trd
+    where 1=1 
+    <if test="queryMonth != null" >
+    and trd.monthly = #{queryMonth} 
+    </if>
+  </delete>
+  
+  
+  
+  
+  <!-- 插入组装生产退次总和表天 -->
+  <insert id="insertAssemblyProductSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+    insert into AT_ASSEMBLYPRODUCTBACK_SUMDAY ( FACTORY,  
+      SHIFT_GROUP, MONTHLY, RETURN_NUM)
+   select FACTORY_S, group_s, stat_month ,sum(DEFECT_QTY) 
+   from (
+   select FACTORY_S,DUTY_GROUP1_S group_s,TO_CHAR(DATE_T,'YYYY-MM-DD') stat_month ,sum(DEFECT_QTY_I) DEFECT_QTY
+   from AT_ASSEMBLYPRODUCTBACK 
+   <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and DATE_T < TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,DUTY_GROUP1_S,TO_CHAR(DATE_T,'YYYY-MM-DD')
+
+   union all
+
+   select FACTORY_S,DUTY_GROUP2_S group_s,TO_CHAR(DATE_T,'YYYY-MM-DD') stat_month ,sum(DEFECT_QTY_I) DEFECT_QTY
+   from AT_ASSEMBLYPRODUCTBACK 
+     <where>
+         <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and DATE_T < TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,DUTY_GROUP2_S,TO_CHAR(DATE_T,'YYYY-MM-DD')
+
+   union all
+
+   select FACTORY_S,DUTY_GROUP3_S group_s,TO_CHAR(DATE_T,'YYYY-MM-DD') stat_month ,sum(DEFECT_QTY_I) DEFECT_QTY
+   from AT_ASSEMBLYPRODUCTBACK 
+     <where>
+         <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and DATE_T < TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,DUTY_GROUP3_S,TO_CHAR(DATE_T,'YYYY-MM-DD')
+  )where group_s is not null
+  group by FACTORY_S,group_s,stat_month
+  </insert>
+  <delete id="deleteAssemblyProductSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_ASSEMBLYPRODUCTBACK_SUMDAY  trd
+    where 1=1 
+    <if test="queryDay != null" >
+    and trd.monthly = #{queryDay} 
+    </if>
+  </delete>
+  
+ <!-- 插入前工序FQC检查总和表天 -->
+  <insert id="insertFormerProcessSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+   insert into  AT_FORMERPROCESS_SUMDAY ( FACTORY,  
+      SHIFT_GROUP, MONTHLY, DEFECT_QTY,SIMPLE_QTY)
+   select FACTORY_S, group_s, stat_month,sum(DEFECT_QTY),sum(SIMPLE_QTY)
+   from (
+   select FACTORY_S,GROUP1_S group_s,TO_CHAR(DATE_T,'YYYY-MM-DD') stat_month ,sum(simple_qty_i) DEFECT_QTY,sum(total_qty_i) SIMPLE_QTY
+   from AT_FORMERPROCESSFQCCHECK
+     <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and  DATE_T < TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,GROUP1_S,TO_CHAR(DATE_T,'YYYY-MM-DD')
+
+   union all
+
+   select FACTORY_S,GROUP2_S group_s,TO_CHAR(DATE_T,'YYYY-MM-DD') stat_month ,sum(simple_qty_i) DEFECT_QTY,sum(total_qty_i) SIMPLE_QTY
+   from AT_FORMERPROCESSFQCCHECK 
+     <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+            DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and  DATE_T < TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,GROUP2_S,TO_CHAR(DATE_T,'YYYY-MM-DD')
+
+   union all
+
+   select FACTORY_S,GROUP3_S group_s,TO_CHAR(DATE_T,'YYYY-MM-DD') stat_month ,sum(simple_qty_i) DEFECT_QTY,sum(total_qty_i) SIMPLE_QTY
+   from AT_FORMERPROCESSFQCCHECK  
+    <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+            DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and  DATE_T < TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,GROUP3_S,TO_CHAR(DATE_T,'YYYY-MM-DD')
+  )where group_s is not null
+  group by FACTORY_S,group_s,stat_month
+  </insert>
+  <delete id="deleteFormerProcessSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_FORMERPROCESS_SUMDAY  trd
+    where 1=1 
+    <if test="queryDay != null" >
+    and trd.monthly = #{queryDay} 
+    </if>
+  </delete>
+  
+   <!-- 插入过程批量不良记录总和表天 -->
+  <insert id="insertBatchDefectSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+   insert into  AT_BATCHDEFECTRECORD_SUMDAY ( FACTORY,  
+      SHIFT_GROUP, MONTHLY,PROCESS_NODE, RISK_SCORE)
+   select FACTORY_S, group_s, stat_month,process_node,sum(RISK_SCORE)
+   from (
+   select FACTORY_S,substr(group1_s,0,instr(group1_s,'_',1)-1) group_s,TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD') stat_month ,
+   decode(substr(process_node_s,1,1),'A',' ','B','A','C','A','D','D',' ')  process_node,sum(RISK_SCORE_F) RISK_SCORE
+   from  at_BatchDefectRecord
+    <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             RECORD_DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and RECORD_DATE_T <  TO_Date(#{param2},'yyyy-MM-DD')
+             and substr(group1_s,0,instr(group1_s,'_',1)-1) in (
+             select a.description from app_group a where category ='SHIFT' 
+             and uda_4 in('冲压班组','点焊班组','喷涂班组','精加工班组')
+             )
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,substr(group1_s,0,instr(group1_s,'_',1)-1),TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD'),decode(substr(process_node_s,1,1),'A',' ','B','A','C','A','D','D',' ') 
+
+   union all
+
+   select FACTORY_S,GROUP2_S group_s,TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD') stat_month ,
+   decode(substr(process_node_s,1,1),'A',' ','B','A','C','A','D','D',' ')  process_node,sum(RISK_SCORE_F) RISK_SCORE
+   from at_BatchDefectRecord
+    <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+               RECORD_DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and RECORD_DATE_T <  TO_Date(#{param2},'yyyy-MM-DD')
+               and GROUP2_S in (
+               select a.description from app_group a where category ='SHIFT' 
+               and uda_4 in('冲压班组','点焊班组','喷涂班组','精加工班组')
+             )
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,GROUP2_S,TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD'),decode(substr(process_node_s,1,1),'A',' ','B','A','C','A','D','D',' ') 
+
+   union all
+
+   select FACTORY_S,GROUP3_S group_s,TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD') stat_month ,
+   decode(substr(process_node_s,1,1),'A',' ','B','A','C','A','D','D',' ')  process_node,sum(RISK_SCORE_F) RISK_SCORE
+   from at_BatchDefectRecord
+    <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             RECORD_DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and RECORD_DATE_T <  TO_Date(#{param2},'yyyy-MM-DD')
+             and GROUP3_S in (
+             select a.description from app_group a where category ='SHIFT' 
+             and uda_4 in('冲压班组','点焊班组','喷涂班组','精加工班组')
+             )
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,GROUP3_S,TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD'),decode(substr(process_node_s,1,1),'A',' ','B','A','C','A','D','D',' ') 
+  )where group_s is not null
+  group by FACTORY_S,group_s,stat_month,process_node
+  </insert>
+  <delete id="deleteBatchDefectSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_BATCHDEFECTRECORD_SUMDAY  trd
+    where 1=1 
+    <if test="queryDay != null" >
+    and trd.monthly = #{queryDay} 
+    </if>
+  </delete>
+  
+   <!-- 插入过程审核记录总和表天 -->
+  <insert id="insertProcessAuditSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+  insert into  AT_PROCESSAUDITRECORD_SUMDAY( FACTORY,  
+      SHIFT_GROUP, MONTHLY,CHECK_CONTENT, AUDIT_NUM)
+   select FACTORY_S, group_s, stat_month,check_type_s,SEQUENCE_S
+   from (
+   select FACTORY_S, group_s,TO_CHAR(CHECK_DATE_T,'YYYY-MM-DD') stat_month ,check_type_s,count( check_type_s)SEQUENCE_S
+   from  AT_PROCESSAUDITRECORD
+   <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             CHECK_DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and CHECK_DATE_T < TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+    group by FACTORY_S,GROUP_S,TO_CHAR(CHECK_DATE_T,'YYYY-MM-DD'),check_type_s
+   )where group_s is not null
+ group by FACTORY_S,GROUP_S,stat_month,check_type_s,SEQUENCE_S
+  </insert>
+  <delete id="deleteProcessAuditSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_PROCESSAUDITRECORD_SUMDAY  trd
+    where 1=1 
+    <if test="queryDay != null" >
+    and trd.monthly = #{queryDay} 
+    </if>
+  </delete>
+  
+    <!-- 插入质量改善课题申报总和表天 -->
+  <insert id="insertQualityImprovementSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+   insert into  AT_QUALITYIMPROVEMENT_SUMDAY ( FACTORY,  
+      SHIFT_GROUP, MONTHLY, TOTAL_SCORE)
+   select FACTORY_S,duty_group_s, stat_month,sum(total_score)
+   from (
+   select FACTORY_S, duty_group_s,TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD') stat_month ,sum(total_score_I) total_score
+   from  AT_QUALITYIMPROVEMENTRFP
+     <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             RECORD_DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and RECORD_DATE_T < TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,duty_group_s,TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD')
+
+  )where duty_group_s is not null
+  group by FACTORY_S,duty_group_s,stat_month
+  </insert>
+  <delete id="deleteQualityImprovementSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_QUALITYIMPROVEMENT_SUMDAY  trd
+    where 1=1 
+    <if test="queryDay != null" >
+    and trd.monthly = #{queryDay} 
+    </if>
+  </delete>
+  
+      <!-- 插入冲压质量日报总和表天 -->
+  <insert id="insertStampingDailyReportSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+   insert into  AT_STAMPINGDAILY_SUMDAY ( FACTORY,
+      SHIFT_GROUP, MONTHLY, DEFECT_QTY)
+   select FACTORY_S,group_s, stat_month,sum(DEFECT_QTY)
+   from (
+   select FACTORY_S, group_s,TO_CHAR(DATE_T,'YYYY-MM-DD') stat_month ,sum(DEFECT_QTY_I) DEFECT_QTY
+   from  AT_STAMPINGDAILYREPORT
+     <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and DATE_T <  TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,group_s,TO_CHAR(DATE_T,'YYYY-MM-DD')
+
+  )
+  group by FACTORY_S,group_s,stat_month
+  </insert>
+  <delete id="deleteStampingDailyReportSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from  AT_STAMPINGDAILY_SUMDAY  trd
+    where 1=1 
+    <if test="queryDay != null" >
+    and trd.monthly = #{queryDay} 
+    </if>
+  </delete>
+  
+  <!-- 插入喷涂质量日报总和表天 -->
+  <insert id="insertPaintingDailySumDay" parameterType="com.peg.model.bph.MesDataSum" >
+   insert into   AT_PAINTINGDAILYREPORT_SUMDAY( FACTORY,  
+      SHIFT_GROUP, MONTHLY,QUALITY_QTY)
+   select FACTORY_S,group_s, stat_month,sum(QUALITY_QTY)
+   from (
+   select FACTORY_S, group_s,TO_CHAR(DATE_T,'YYYY-MM-DD') stat_month ,sum(QUALITY_QTY_I) QUALITY_QTY
+   from  AT_PAINTINGDAILYREPORT
+     <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and  DATE_T < TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,group_s,TO_CHAR(DATE_T,'YYYY-MM-DD')
+
+  )where group_s is not null
+  group by FACTORY_S,group_s,stat_month
+  </insert>
+  <delete id="deletePaintingDailySumDay" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from  AT_PAINTINGDAILYREPORT_SUMDAY  trd
+    where 1=1 
+    <if test="queryDay != null" >
+    and trd.monthly = #{queryDay} 
+    </if>
+  </delete>
+  
+   <!-- 市场开箱不良记录总和表天 -->
+  <insert id="insertBoxDefectRecordSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+   insert into   AT_BOXDEFECTRECORD_SUMDAY ( FACTORY, 
+      SHIFT_GROUP, MONTHLY,DEFECT_SOURCE,DEFECT_NUM)
+   select FACTORY_S,group_s, stat_month,DEFECT_SOURCE_S,sum(numbers)
+   from (
+   select FACTORY_S,substr(group1_s,0,instr(group1_s,'_',1)-1) group_s,TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD') stat_month ,DEFECT_SOURCE_S,count(DEFECT_SOURCE_S) numbers
+   from  AT_BOXDEFECTRECORD
+     <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             RECORD_DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and RECORD_DATE_T < TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,substr(group1_s,0,instr(group1_s,'_',1)-1),TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD'),DEFECT_SOURCE_S
+   
+   union all
+   
+   select FACTORY_S,GROUP2_S group_s,TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD') stat_month ,DEFECT_SOURCE_S,count(DEFECT_SOURCE_S) numbers
+   from  AT_BOXDEFECTRECORD
+     <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+              RECORD_DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and RECORD_DATE_T < TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,group2_s,TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD'),DEFECT_SOURCE_S
+
+  union all
+  
+   select FACTORY_S,GROUP3_S group_s,TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD') stat_month ,DEFECT_SOURCE_S,count(DEFECT_SOURCE_S) numbers
+   from  AT_BOXDEFECTRECORD
+     <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+            RECORD_DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and RECORD_DATE_T < TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,group3_s,TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD'),DEFECT_SOURCE_S
+  )where group_s is not null
+  group by FACTORY_S,group_s,stat_month,DEFECT_SOURCE_S
+  </insert>
+  <delete id="deleteBoxDefectRecordSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from  AT_BOXDEFECTRECORD_SUMDAY  trd
+    where 1=1 
+    <if test="queryDay != null" >
+    and trd.monthly = #{queryDay} 
+    </if>
+  </delete>
+
+ 
+  
+   <!-- 插入qms_data_month表
+   <insert id="insertQmsDataByMonth" parameterType="com.peg.model.bph.MesDataSum">
+   insert into   t_qms_data_month ( FACTORY_NAME, AREA_NAME,GROUP_NAME,WORKING_DATE)
+   select UDA_1,UDA_2,DESCRIPTION, #{queryMonth} WORKING_DATE
+   from (
+   select  UDA_1,UDA_2,DESCRIPTION
+   from  APP_GROUP where category='SHIFT' and UDA_1 is not null and UDA_2 is not null     )
+   </insert>
+    -->
+  
+  <!-- 插入qms_data_month表 -->
+  <insert id="insertQmsdataMonth" parameterType="com.peg.model.bph.MesDataSum">
+    insert into t_qms_data_month(factory_name,working_date,area_name,group_name,assemble_defect_qty,downline_qty,
+    stamping_finish_qty,painting_qty,assemble_finish_qty,assemble_produce_qty,ipqc_total_qty,
+    ipqc_defect_qty)  
+    select factory_name,working_date,area_name,group_name,sum(assemble_defect_qty),sum(downline_qty) ,
+    sum(stamping_finish_qty) ,sum(painting_qty) ,sum(assemble_finish_qty) ,sum(assemble_produce_qty) ,sum(ipqc_total_qty),
+    sum(ipqc_defect_qty) from(
+    select factory_name,substr(#{param2},0,7) working_date,area_name,group_name,sum(assemble_defect_qty) assemble_defect_qty,sum(downline_qty) downline_qty ,
+    sum(stamping_finish_qty) stamping_finish_qty ,sum(painting_qty) painting_qty,sum(assemble_finish_qty) assemble_finish_qty,sum(assemble_produce_qty) assemble_produce_qty,sum(ipqc_total_qty) ipqc_total_qty,
+    sum(ipqc_defect_qty) ipqc_defect_qty from qms_data
+    <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             working_date BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+         ]]>
+       </if>
+   </where>
+
+   group by factory_name,substr(#{param2},0,7),area_name,group_name
+    )
+    group by factory_name,working_date,area_name,group_name
+  </insert>
+   <delete id="deleteQmsdataMonth" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from  t_qms_data_month  trd
+    where 1=1 
+    <if test="queryMonth != null" >
+    and trd.working_date = #{queryMonth} 
+    </if>
+  </delete>
+  
+   <!-- 插入MES数据总和表月份 -->
+    <delete id="deleteMesDataSumMonth" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from T_MES_DATA_SUM_MONTH tdtr
+    where 1=1 
+    <if test="queryMonth != null" >
+    and tdtr.sum_date = TO_DATE(#{queryMonth},'YYYY-MM') 
+    </if>
+  </delete>
+  <insert id="insertMesDataSumMonth" parameterType="com.peg.model.bph.MesDataSum" >    
+     insert into  T_MES_DATA_SUM_MONTH ( FACTORY, AREA,SHIFT_GROUP_CODE, 
+     SHIFT_GROUP_NAME,GROUP_TYPE,SUM_DATE,INSERT_TIME)
+   select UDA_1,UDA_2,GROUP_NAME,DESCRIPTION,UDA_4,TO_DATE(#{queryMonth},'YYYY-MM') MONTHLY,SYSDATE
+   from (
+   select  UDA_1,UDA_2,GROUP_NAME,DESCRIPTION,UDA_4
+   from  APP_GROUP where category='SHIFT' and UDA_1 is not null and UDA_2 is not null         
+  )
+  </insert>
+  
+  <!-- 插入MES数据总和表单日 -->
+   <delete id="deleteMesDataSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from T_MES_DATA_SUM_DAY trd
+    where 1=1 
+    <if test="queryDay != null" >
+    and trd.sum_date = TO_DATE(#{queryDay},'YYYY-MM-DD') 
+    </if>
+  </delete>
+  <insert id="insertMesDataSumDay" parameterType="com.peg.model.bph.MesDataSum" >    
+     insert into  T_MES_DATA_SUM_DAY ( FACTORY, AREA,SHIFT_GROUP_CODE, 
+     SHIFT_GROUP_NAME,GROUP_TYPE,SUM_DATE,INSERT_TIME)
+   select UDA_1,UDA_2,GROUP_NAME,DESCRIPTION,UDA_4,TO_DATE(#{queryDay},'YYYY-MM-DD') MONTHLY,SYSDATE
+   from (
+   select  UDA_1,UDA_2,GROUP_NAME,DESCRIPTION,UDA_4 
+   from  APP_GROUP where category='SHIFT' and UDA_1 is not null and UDA_2 is not null  and UDA_4 is not null
+  )
+  </insert>
+  <!-- 更新MES数据总和表月份 -->
+  <update id="updateMesDataSumMonthAssembly" parameterType="com.peg.model.bph.MesDataSum">
+     update T_MES_DATA_SUM_MONTH sm set ( col_1 ) =  (select  return_num from at_assemblyproductback_sum a 
+     where a.shift_group = sm.shift_group_name and  a.factory = sm.factory and a.monthly = #{queryMonth} 
+     and to_char(sm.sum_date,'YYYY-MM') =  #{queryMonth} ) 
+     where to_char(sm.sum_date,'YYYY-MM') =#{queryMonth} 
+  </update>
+  <update id="updateMesDataSumMonthFormer" parameterType="com.peg.model.bph.MesDataSum">
+     update T_MES_DATA_SUM_MONTH sm set ( col_3 ,col_4) =  (select  defect_qty ,simple_qty  from AT_FORMERPROCESSFQCCHECK_SUM a 
+     where a.shift_group = sm.shift_group_name and a.factory = sm.factory and a.monthly =#{queryMonth} 
+     and to_char(sm.sum_date,'YYYY-MM') =  #{queryMonth} ) 
+     where to_char(sm.sum_date,'YYYY-MM') =#{queryMonth} 
+  </update>
+  
+   <update id="updateMesDataSumMonthProcess" parameterType="com.peg.model.bph.MesDataSum">
+     update T_MES_DATA_SUM_MONTH sm set ( col_9 ) =  (select  audit_num  from AT_PROCESSAUDITRECORD_SUM a 
+     where a.shift_group = sm.shift_group_name  and a.factory = sm.factory and a.monthly = #{queryMonth}
+     and to_char(sm.sum_date,'YYYY-MM') =  #{queryMonth} ) 
+     where to_char(sm.sum_date,'YYYY-MM') =#{queryMonth} 
+  </update>
+  
+  <update id="updateMesDataSumMonthQuality" parameterType="com.peg.model.bph.MesDataSum">
+     update T_MES_DATA_SUM_MONTH sm set ( col_8 ) =  (select  total_score  from AT_QUALITYIMPROVEMENTRFP_SUM a 
+     where a.shift_group = sm.shift_group_name  and a.factory = sm.factory and a.monthly= #{queryMonth} 
+      and to_char(sm.sum_date,'YYYY-MM') =  #{queryMonth} ) 
+     where to_char(sm.sum_date,'YYYY-MM') =#{queryMonth} 
+  </update>
+  
+  <update id="updateMesDataSumMonthBatch" parameterType="com.peg.model.bph.MesDataSum">
+     update T_MES_DATA_SUM_MONTH sm set ( col_9 ) =  (select  risk_score  from AT_BATCHDEFECTRECORD_SUM a 
+     where a.shift_group = sm.shift_group_name and  and a.factory = sm.factory and a.monthly = #{queryMonth} 
+     and to_char(sm.sum_date,'YYYY-MM') =  #{queryMonth} ) 
+     where to_char(sm.sum_date,'YYYY-MM') =#{queryMonth} 
+  </update>
+  
+  <update id="updateMesDataSumMonthStmp" parameterType="com.peg.model.bph.MesDataSum">
+     update T_MES_DATA_SUM_MONTH sm set ( col_10,col_11 ) =  (select  defect_qty,total_qty  from AT_STAMPINGDAILYREPORT_SUM a 
+     where a.shift_group = sm.shift_group_name and a.factory = sm.factory and a.monthly = #{queryMonth}
+     and to_char(sm.sum_date,'YYYY-MM') =  #{queryMonth} )  
+     where to_char(sm.sum_date,'YYYY-MM') =#{queryMonth} 
+  </update>
+  
+   <update id="updateMesDataSumMonthPaint" parameterType="com.peg.model.bph.MesDataSum">
+     update T_MES_DATA_SUM_MONTH sm set ( col_12,col_13 ) =  (select  quality_qty,defect_qty  from AT_PAINTINGDAILYREPORT_SUM a 
+     where a.shift_group = sm.shift_group_name  and a.factory = sm.factory and a.monthly = #{queryMonth} 
+     and to_char(sm.sum_date,'YYYY-MM') =  #{queryMonth} ) 
+     where to_char(sm.sum_date,'YYYY-MM') =#{queryMonth} 
+  </update>
+  
+   <update id="updateMesDataSumMonthBox" parameterType="com.peg.model.bph.MesDataSum">
+     update T_MES_DATA_SUM_MONTH sm set ( col_14,col_15 ) =  (select  defect_source,defect_num  from AT_BOXDEFECTRECORD_SUM a 
+     where a.shift_group = sm.shift_group_name  and a.factory = sm.factory and a.monthly= #{queryMonth} 
+     and to_char(sm.sum_date,'YYYY-MM') =  #{queryMonth} )
+     where to_char(sm.sum_date,'YYYY-MM') =#{queryMonth} 
+  </update>
+  <!-- 从qms_data_month更新MES总和表 -->
+   <update id="updateMesDataSumMonthQmsData" parameterType="com.peg.model.bph.MesDataSum">
+     update T_MES_DATA_SUM_MONTH sm set ( col_2,col_5,col_6,col_11,col_13,col_16,col_17  )
+  =  (select  assemble_produce_qty,ipqc_defect_qty ,ipqc_total_qty ,stamping_finish_qty,
+  painting_qty,assemble_defect_qty,downline_qty from t_qms_data_month a 
+  where a.group_name = sm.shift_group_name  and a.factory_name = sm.factory
+  and a.area_name = sm.area  and a.working_date = #{queryMonth} and to_char(sm.sum_date,'YYYY-MM') =#{queryMonth}  )
+  where  to_char(sm.sum_date,'YYYY-MM') =#{queryMonth}
+  </update>
+   <!-- 从at_inspects巡检表更新MES总和表 -->
+ <!--  <update id="updateMesDataSumMonthInspects" parameterType="com.peg.model.bph.MesDataSum">
+    update  T_MES_DATA_SUM_MONTH sm set (col_5,col_6) = (  select sum(decode(inspect_result_s,'不合格',1,0)),count(inspect_result_s) from  
+    at_inspects a  where a.factory_s = sm.factory and a.group_name_s =sm.shift_group_name 
+    and  substr(a.find_time_s,0,10) between #{startTime} and #{endTime} and to_char(sm.sum_date,'YYYY-MM') =#{queryMonth} )
+    where  to_char(sm.sum_date,'YYYY-MM') =#{queryMonth}
+   </update>
+ -->  
+  <update id="updateMesDataSumMonthInspects" parameterType="com.peg.model.bph.MesDataSum">
+      update  T_MES_DATA_SUM_MONTH sm set (col_6,col_5) =(
+     select CHECK_QTY,DEFECT_QTY from (
+     select FACTORY_S,group_s,stat_month, sum(CHECK_QTY) CHECK_QTY ,sum(DEFECT_QTY)DEFECT_QTY 
+     from (
+   select FACTORY_S,GROUP1_S group_s,substr(#{endTime},0,7) stat_month, sum(CHECKQTY_I) CHECK_QTY,sum(DEFECTQTY_I) DEFECT_QTY
+   from at_inspects 
+   <where>
+        <if test="startTime != null and endTime !=null">
+        <![CDATA[
+             find_time_s BETWEEN #{startTime} and #{endTime}
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,GROUP1_S,substr(#{endTime},0,7)
+
+   union all
+
+   select FACTORY_S,GROUP2_S group_s,substr(#{endTime},0,7) stat_month , sum(CHECKQTY_I) CHECK_QTY,sum(DEFECTQTY_I) DEFECT_QTY
+   from at_inspects  
+    <where>
+        <if test="startTime != null and endTime !=null">
+        <![CDATA[
+             find_time_s BETWEEN #{startTime} and  #{endTime}
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,GROUP2_S,substr(#{endTime},0,7)
+
+   union all
+
+   select FACTORY_S,GROUP3_S group_s,substr(#{endTime},0,7) stat_month ,sum(CHECKQTY_I) CHECK_QTY,sum(DEFECTQTY_I) DEFECT_QTY
+   from at_inspects  
+   <where>
+        <if test="startTime != null and endTime !=null">
+        <![CDATA[
+             find_time_s BETWEEN #{startTime} and  #{endTime}
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,GROUP3_S,substr(#{endTime},0,7)
+  ) where group_s is not null
+  group by FACTORY_S,group_s,stat_month
+ )
+ a where a.factory_s = sm.factory and a.group_s =sm.shift_group_name 
+    and  a.stat_month = #{queryMonth} and to_char(sm.sum_date,'YYYY-MM') =#{queryMonth}
+  )where  to_char(sm.sum_date,'YYYY-MM') =#{queryMonth}
+   
+  </update>
+   
+  
+   <!-- 从qms_data_month更新MES总和表月度组装投产数_电器冲压 -->
+   <update id="updateMesDataSumMonthQmsAssDStamp" parameterType="com.peg.model.bph.MesDataSum">
+     update  t_mes_data_sum_month sm set(col_2)=(select sum(assemble_produce_qty) from t_qms_data_month a where a.factory_name='电器工厂' and
+     a.area_name='组装车间' and instr(group_name,'油烟机')>0  and working_date=#{queryMonth}
+     )where sm.shift_group_code in(
+     select a.group_name from app_group a where a.category='SHIFT' 
+     and a.uda_4 in('冲压班组','喷涂班组','精加工班组','点焊班组')
+     and a.uda_1 ='电器工厂'
+     ) and to_char(sm.sum_date,'YYYY-MM')=#{queryMonth}
+   </update>
+   <!-- 燃气冲压A -->
+   <update id="updateMesDataSumMonthQmsAssRStampA" parameterType="com.peg.model.bph.MesDataSum">
+    update  t_mes_data_sum_month sm set(col_2)=(select sum(assemble_produce_qty) from t_qms_data_month a where a.factory_name='燃气工厂' and
+     a.area_name='组装车间' and a.group_name in('L50A组','L51A组')  and working_date=#{queryMonth}
+    )where sm.shift_group_code in('RCY01') and to_char(sm.sum_date,'YYYY-MM')=#{queryMonth}
+   </update>
+    <!-- 燃气冲压B -->
+   <update id="updateMesDataSumMonthQmsAssRStampB" parameterType="com.peg.model.bph.MesDataSum">
+      update  t_mes_data_sum_month sm set(col_2)=(select sum(assemble_produce_qty) from t_qms_data_month a where a.factory_name='燃气工厂' and
+      a.area_name='组装车间'  and a.group_name in('L40A组', 'L41A组','L42A组', 'L43A组', 'L44A组')  and working_date=#{queryMonth}
+      )where sm.shift_group_code in('RCY02') and to_char(sm.sum_date,'YYYY-MM')=#{queryMonth}
+   </update>
+    <!-- 燃气喷涂,点焊 -->
+   <update id="updateMesDataSumMonthQmsAssRSpay" parameterType="com.peg.model.bph.MesDataSum">
+       update  t_mes_data_sum_month sm set(col_2)=(select sum(assemble_produce_qty) from t_qms_data_month a where a.factory_name='燃气工厂' and
+       a.area_name='组装车间' and a.group_name in('L40A组', 'L41A组','L42A组', 'L43A组', 'L44A组','L50A组','L51A组')   and working_date=#{queryMonth}
+       )where sm.shift_group_code in(
+        select a.group_name from app_group a where a.category='SHIFT' 
+        and a.uda_4 in('喷涂班组','精加工班组','点焊班组')
+        and a.uda_1 ='燃气工厂'
+       ) and to_char(sm.sum_date,'YYYY-MM')=#{queryMonth}
+   </update>
+     <!-- 电器喷涂，精加工，点焊 -->
+  <update id="updateMesDataSumMonthQmsAssDSpayFa"  parameterType="com.peg.model.bph.MesDataSum">
+  update  t_mes_data_sum_month sm set(col_2)=(select sum(assemble_produce_qty) from t_qms_data_month a where a.factory_name='电器工厂' and
+  a.area_name='组装车间'  and working_date=#{queryMonth}
+  )where sm.shift_group_code in('PFX01','PQX01','YQJ01','JJG01','JJG02','JJG04','JJG05','PFX02','JJG03','DHX01') and to_char(sm.sum_date,'YYYY-MM')=#{queryMonth}
+  </update>
+  
+  
+  <!-- 更新MES数据总和表单日 -->
+  <update id="updateMesDataSumDayAssembly" parameterType="com.peg.model.bph.MesDataSum">
+     update T_MES_DATA_SUM_DAY sm set ( col_1 ) =  (select  return_num from  AT_ASSEMBLYPRODUCTBACK_SUMDAY a 
+     where a.shift_group = sm.shift_group_name and a.factory = sm.factory and a.monthly = #{queryDay}
+     and to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay} ) 
+     where to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay}
+  </update>
+  <update id="updateMesDataSumDayFormer" parameterType="com.peg.model.bph.MesDataSum">
+     update T_MES_DATA_SUM_DAY sm set ( col_3 ,col_4) =  (select  defect_qty ,simple_qty  from  AT_FORMERPROCESS_SUMDAY a 
+     where a.shift_group = sm.shift_group_name and a.factory = sm.factory and a.monthly = #{queryDay} 
+     and to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay} ) 
+     where to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay}
+  </update>
+  
+   <update id="updateMesDataSumDayProcess" parameterType="com.peg.model.bph.MesDataSum">
+     update T_MES_DATA_SUM_DAY sm set ( col_9 ) =  (select  audit_num  from AT_PROCESSAUDITRECORD_SUMDAY a 
+     where a.shift_group = sm.shift_group_name  and a.factory = sm.factory and a.monthly = #{queryDay}
+     and to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay} ) 
+     where to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay}
+  </update>
+  
+  <update id="updateMesDataSumDayQuality" parameterType="com.peg.model.bph.MesDataSum">
+     update T_MES_DATA_SUM_DAY sm set ( col_8 ) =  (select  total_score  from AT_QUALITYIMPROVEMENT_SUMDAY a 
+     where a.shift_group = sm.shift_group_name and a.factory = sm.factory and a.monthly = #{queryDay}
+     and to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay} )
+     where to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay} 
+  </update>
+  
+  <update id="updateMesDataSumDayBatch" parameterType="com.peg.model.bph.MesDataSum">
+     update T_MES_DATA_SUM_DAY sm set ( col_9 ) =  (select  risk_score  from  AT_BATCHDEFECTRECORD_SUMDAY a 
+     where a.shift_group = sm.shift_group_name  and a.factory = sm.factory and a.monthly = #{queryDay} 
+     and to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay} ) 
+     where to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay}
+  </update>
+  
+  <update id="updateMesDataSumDayStmp" parameterType="com.peg.model.bph.MesDataSum">
+     update T_MES_DATA_SUM_DAY sm set ( col_10,col_11 ) =  (select  defect_qty,total_qty  from AT_STAMPINGDAILY_SUMDAY a 
+     where a.shift_group = sm.shift_group_name  and a.factory = sm.factory and a.monthly = #{queryDay}
+     and to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay} )
+     where to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay}  
+  </update>
+  
+   <update id="updateMesDataSumDayPaint" parameterType="com.peg.model.bph.MesDataSum">
+     update T_MES_DATA_SUM_DAY sm set ( col_12,col_13 ) =  (select  quality_qty,defect_qty  from  AT_PAINTINGDAILYREPORT_SUMDAY a 
+     where a.shift_group = sm.shift_group_name and a.factory = sm.factory and a.monthly = #{queryDay}
+     and to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay} ) 
+     where to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay}
+  </update>
+  
+   <update id="updateMesDataSumDayBox" parameterType="com.peg.model.bph.MesDataSum">
+     update T_MES_DATA_SUM_DAY sm set ( col_14,col_15 ) =  (select  defect_source,defect_num  from AT_BOXDEFECTRECORD_SUMDAY a 
+     where a.shift_group = sm.shift_group_name  and a.factory = sm.factory and a.monthly = #{queryDay}
+     and to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay} )
+     where to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay}
+  </update>
+    <!-- 从qms_data更新MES总和日表 -->
+   <update id="updateMesDataSumDayQmsData" parameterType="com.peg.model.bph.MesDataSum">
+  update T_MES_DATA_SUM_DAY sm set ( col_2,col_5,col_6,col_11,col_13,col_16,col_17  )
+  =  (select  sum(assemble_produce_qty),sum(ipqc_defect_qty) ,sum(ipqc_total_qty) ,sum(stamping_finish_qty),  
+    sum(painting_qty),sum(assemble_defect_qty),sum(downline_qty) from qms_data a  
+  where a.group_name = sm.shift_group_name  and a.factory_name = sm.factory
+  and a.area_name = sm.area  and a.working_date =to_date(#{queryDay},'YYYY-MM-DD') and sm.sum_date =to_date(#{queryDay},'YYYY-MM-DD')
+  group by  a.factory_name,a.area_name,a.group_name ,a.working_date )
+  where sm.sum_date =to_date(#{queryDay},'YYYY-MM-DD') 
+  </update>
+  
+   <!-- 从at_inspects巡检表更新MES总和表天 -->
+<!--    <update id="updateMesDataSumDayInspects" parameterType="com.peg.model.bph.MesDataSum">
+    update  T_MES_DATA_SUM_DAY sm set (col_5,col_6) = (  select sum(decode(inspect_result_s,'不合格',1,0)),count(inspect_result_s) from  
+    at_inspects a  where a.factory_s = sm.factory and a.group_name_s =sm.shift_group_name 
+    and a.find_time_s = #{queryDay} and to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay} )
+    where  to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay}
+   </update>
+ --> 
+  <update id="updateMesDataSumDayInspects" parameterType="com.peg.model.bph.MesDataSum">
+    update  T_MES_DATA_SUM_DAY sm set (col_6,col_5) = ( select CHECK_QTY,DEFECT_QTY from (
+     select FACTORY_S,group_s,stat_month, sum(CHECK_QTY) CHECK_QTY ,sum(DEFECT_QTY)DEFECT_QTY 
+     from (
+   select FACTORY_S,GROUP1_S group_s,#{queryDay} stat_month, sum(CHECKQTY_I) CHECK_QTY,sum(DEFECTQTY_I) DEFECT_QTY
+   from at_inspects 
+   <where>
+        <if test="queryDay != null ">
+        <![CDATA[
+             find_time_s = #{queryDay}
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,GROUP1_S,#{queryDay}
+
+   union all
+
+   select FACTORY_S,GROUP2_S group_s,#{queryDay} stat_month , sum(CHECKQTY_I) CHECK_QTY,sum(DEFECTQTY_I) DEFECT_QTY
+   from at_inspects  
+   <where>
+        <if test="queryDay != null ">
+        <![CDATA[
+             find_time_s = #{queryDay}
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,GROUP2_S,#{queryDay}
+
+   union all
+
+   select FACTORY_S,GROUP3_S group_s,#{queryDay} stat_month ,sum(CHECKQTY_I) CHECK_QTY,sum(DEFECTQTY_I) DEFECT_QTY
+   from at_inspects  
+  <where>
+        <if test="queryDay != null ">
+        <![CDATA[
+             find_time_s = #{queryDay}
+         ]]>
+       </if>
+   </where>
+   group by FACTORY_S,GROUP3_S,#{queryDay}
+  ) where group_s is not null
+  group by FACTORY_S,group_s,stat_month
+  )a  where a.factory_s = sm.factory and a.group_s =sm.shift_group_name 
+    and a.stat_month = #{queryDay} and to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay} )
+    where  to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay}
+   </update>
+ 
+ 
+     <!-- 从qms_data更新MES总和表日度组装投产数_电器冲压 -->
+   <update id="updateMesDataSumDayQmsAssDStamp" parameterType="com.peg.model.bph.MesDataSum">
+     update  t_mes_data_sum_day sm set(col_2)=(select sum(assemble_produce_qty) from qms_data a where a.factory_name='电器工厂' and
+     a.area_name='组装车间' and instr(group_name,'油烟机')>0  and working_date=to_date(#{queryDay},'YYYY-MM-DD')
+     )where sm.shift_group_code in(
+     select a.group_name from app_group a where a.category='SHIFT' 
+     and a.uda_4 in('冲压班组','喷涂班组','精加工班组','点焊班组')
+     and a.uda_1 ='电器工厂'
+     ) and sm.sum_date =to_date(#{queryDay},'YYYY-MM-DD') 
+   </update>
+   <!-- 燃气冲压A -->
+   <update id="updateMesDataSumDayQmsAssRStampA" parameterType="com.peg.model.bph.MesDataSum">
+    update  t_mes_data_sum_day sm set(col_2)=(select sum(assemble_produce_qty) from qms_data a where a.factory_name='燃气工厂' and
+     a.area_name='组装车间' and a.group_name in('L50A组','L51A组')  and working_date=to_date(#{queryDay},'YYYY-MM-DD')
+    )where sm.shift_group_code in('RCY01') and sm.sum_date =to_date(#{queryDay},'YYYY-MM-DD')
+   </update>
+    <!-- 燃气冲压B -->
+   <update id="updateMesDataSumDayQmsAssRStampB" parameterType="com.peg.model.bph.MesDataSum">
+      update  t_mes_data_sum_day sm set(col_2)=(select sum(assemble_produce_qty) from qms_data a where a.factory_name='燃气工厂' and
+      a.area_name='组装车间' and a.group_name in('L40A组', 'L41A组','L42A组', 'L43A组','L44A组')  and working_date=to_date(#{queryDay},'YYYY-MM-DD')
+      )where sm.shift_group_code in('RCY02') and sm.sum_date =to_date(#{queryDay},'YYYY-MM-DD')
+   </update>
+    <!-- 燃气喷涂 -->
+   <update id="updateMesDataSumDayQmsAssRSpay" parameterType="com.peg.model.bph.MesDataSum">
+       update  t_mes_data_sum_day sm set(col_2)=(select sum(assemble_produce_qty) from qms_data a where a.factory_name='燃气工厂' and
+       a.area_name='组装车间' and a.group_name in('L40A组', 'L41A组','L42A组', 'L43A组','L44A组','L50A组','L51A组') and working_date=to_date(#{queryDay},'YYYY-MM-DD')
+       )where sm.shift_group_code in(
+       select a.group_name from app_group a where a.category='SHIFT' 
+       and a.uda_4 in('喷涂班组','精加工班组','点焊班组')
+       and a.uda_1 ='燃气工厂'
+       ) and sm.sum_date =to_date(#{queryDay},'YYYY-MM-DD')
+   </update>
+     <!-- 电器喷涂，精加工 -->
+  <update id="updateMesDataSumDayQmsAssDSpayFa"  parameterType="com.peg.model.bph.MesDataSum">
+  update  t_mes_data_sum_day sm set(col_2)=(select sum(assemble_produce_qty) from qms_data a where a.factory_name='电器工厂' and
+  a.area_name='组装车间'  and working_date=to_date(#{queryDay},'YYYY-MM-DD')
+  )where sm.shift_group_code in('PFX01','PQX01','YQJ01','JJG01','JJG02','JJG04','JJG05','PFX02','JJG03','DHX01') and sm.sum_date =to_date(#{queryDay},'YYYY-MM-DD')
+  </update>
+  
+  
+  <!-- 查询给出时间天的MES子表数据是否存在 -->
+  <select id="AssemblyExistList" parameterType="com.peg.model.bph.MesDataSum" resultMap="BaseResultMap">
+      select SHIFT_GROUP,MONTHLY from at_assemblyproductback_sumday a where a.MONTHLY = #{queryDay}
+  </select>
+  <!-- 查询给出时间月的MES子表数据是否存在 -->
+  <select id="AssemblyMonthExistList" parameterType="com.peg.model.bph.MesDataSum" resultMap="BaseResultMap">
+      select SHIFT_GROUP,MONTHLY from at_assemblyproductback_sum a where a.MONTHLY = #{queryMonth}
+  </select>
+  
+  <!-- 查询各班组市场开箱不良记录表不良来源次数月份 -->
+  <select id="boxDefectSource" parameterType="com.peg.model.bph.MesDataSum" resultMap="BaseResultMap">
+      select a.FACTORY ,a.SHIFT_GROUP,a.MONTHLY,a.DEFECT_SOURCE , a.defect_num as col_16 from at_boxdefectrecord_sum a
+      where  substr(a.MONTHLY, 1, 7) = #{queryMonth}
+  </select>
+  
+  <!-- 查询各班组市场开箱不良记录表不良来源次数天 -->
+   <select id="boxDefectSourceByDay" parameterType="com.peg.model.bph.MesDataSum" resultMap="BaseResultMap">
+      select a.FACTORY ,a.SHIFT_GROUP,a.MONTHLY,a.DEFECT_SOURCE ,  a.defect_num as col_16 from at_boxdefectrecord_sum a
+      where  a.MONTHLY = #{queryDay}
+  </select>
+  
+  <select id="getMesDataAll"  resultMap="BaseResultMap" parameterType="com.peg.model.bph.MesDataSum">
+      select FACTORY, AREA as AREAS, SHIFT_GROUP_CODE,SHIFT_GROUP_NAME,SUM_DATE,INSERT_TIME,LAST_UPDATE_TIME,NEED_SUM,GROUP_TYPE,
+     COL_1,COL_2,COL_3,COL_4,COL_5,COL_6,COL_7,COL_8,COL_9,COL_10,COL_11,COL_12,COL_13,COL_14,COL_15,COL_16,COL_17,
+     COL_18,COL_19,COL_20,COL_21,COL_22,COL_23 from T_MES_DATA_SUM_MONTH 
+     <where>
+          <if test="startTime != null and endTime !=null">
+        <![CDATA[
+             sum_date BETWEEN TO_Date(#{startTime},'yyyy-MM-DD') and  TO_Date(#{endTime},'yyyy-MM-DD')
+         ]]>
+       </if>
+     </where>
+  </select>
+   <select id="getMesDataDayAll"  resultMap="BaseResultMap" parameterType="com.peg.model.bph.MesDataSum">
+      select FACTORY, AREA as AREAS, SHIFT_GROUP_CODE,SHIFT_GROUP_NAME,SUM_DATE,INSERT_TIME,LAST_UPDATE_TIME,NEED_SUM,GROUP_TYPE,
+     COL_1,COL_2,COL_3,COL_4,COL_5,COL_6,COL_7,COL_8,COL_9,COL_10,COL_11,COL_12,COL_13,COL_14,COL_15,COL_16,COL_17,
+     COL_18,COL_19,COL_20,COL_21,COL_22,COL_23 from T_MES_DATA_SUM_DAY 
+     <where>
+          <if test="startTime != null and endTime !=null">
+        <![CDATA[
+             sum_date > TO_Date(#{startTime},'yyyy-MM-DD') and sum_date < TO_Date(#{endTime},'yyyy-MM-DD')
+         ]]>
+       </if>
+     </where>
+  </select>
+  <!-- 查询各班组过程审核记录表月度责任班组的审核次数 -->
+   <select id="processAuditRecordByMonth" parameterType="com.peg.model.bph.MesDataSum" resultMap="BaseResultMap">
+      select a.FACTORY ,a.SHIFT_GROUP,a.MONTHLY,a.check_content as col_14, a.audit_num as col_2 from  AT_PROCESSAUDITRECORD_SUM a
+      where  substr(a.MONTHLY, 1, 7) = #{queryMonth} 
+  </select>
+  
+   <!-- 查询各班组过程审核记录表责任班组的审核次数天 -->
+   <select id="processAuditRecordByDay" parameterType="com.peg.model.bph.MesDataSum" resultMap="BaseResultMap">
+      select a.FACTORY ,a.SHIFT_GROUP,a.MONTHLY,a.check_content as col_14, a.audit_num as col_2 from  AT_PROCESSAUDITRECORD_SUM a
+      where  a.MONTHLY = #{queryDay}
+  </select>
+  
+    <!-- 查询各班组过程批量不良记录表月度责任班组的质量风险分数之和-->
+   <select id="batchDefectByMonth" parameterType="com.peg.model.bph.MesDataSum" resultMap="BaseResultMap">
+      select a.FACTORY ,a.SHIFT_GROUP,a.MONTHLY,a.PROCESS_NODE as col_14, a.RISK_SCORE as col_9 from  at_batchdefectrecord_sum a
+      where  substr(a.MONTHLY, 1, 7) = #{queryMonth}
+  </select>
+  
+  
+   <!-- 查询各班组过程批量不良记录表责任班组的质量风险分数之和天-->
+   <select id="batchDefectByDay" parameterType="com.peg.model.bph.MesDataSum" resultMap="BaseResultMap">
+      select a.FACTORY ,a.SHIFT_GROUP,a.MONTHLY,a.PROCESS_NODE as col_14, a.RISK_SCORE as col_9 from  at_batchdefectrecord_sumday a
+      where  a.MONTHLY = #{queryDay} 
+  </select>
+  <!-- 删除指标得分月 -->
+  <delete id="deleteIndexScoreMonth" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from  t_item_index_scroe_month  trd
+    where 1=1 
+    <if test="queryMonth != null" >
+    and trd.sum_date = to_date(#{queryMonth},'YYYY-MM') 
+    </if>
+  </delete>
+  
+    <!-- 删除项目得分月 -->
+  <delete id="deleteItemScoreMonth" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from  t_item_scroe  trd
+    where 1=1 
+    <if test="queryMonth != null" >
+    and trd.sum_date = to_date(#{queryMonth},'YYYY-MM') 
+    </if>
+  </delete>
+  
+    <!-- 删除指标得分天 -->
+  <delete id="deleteIndexScoreDay" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from  t_item_index_scroe_day  trd
+    where 1=1 
+    <if test="queryDay != null" >
+    and trd.sum_date = to_date(#{queryDay},'YYYY-MM-DD') 
+    </if>
+  </delete>
+  
+  <!-- 插入组装维修日报表 -->
+  <insert id="insertAssembleRepairedSum" parameterType="com.peg.model.bph.MesDataSum">
+  insert into AT_ASEEBLEREPAIRED_SUM(col_1,shift_group,monthly,repaired_num)
+  select factory,shift_group,creation_time,sum(repaired_num) from (   
+    select stmp.factory factory, stmp.group_name  shift_group,substr(#{param2},0,7) creation_time, count(distinct(stmp.serial_number)) repaired_num from(select w.addr_city factory,w.order_number,d.defect_route_step_name,u.serial_number,u.description,nvl(d.uda_3,' '),
+             nvl(d.uda_5,' '),nvl(d.uda_6,' '),decode(nvl(d.defect_user_name,' '),'供应商',nvl(ac.description,' '),nvl(d.defect_user_name,' ')),w.uda_1,d.uda_7,concat(concat(at.test_code_s,'-'), at.test_name_s),
+             nvl(d.uda_0,' '),nvl(au.description,' '),to_char(d.udt_1,'yyyy-MM-dd HH24:mi:ss') creation_time,
+             pl.description pl_name,d.defect_sub_location||'-'||at3.test_name_s,
+             d.uda_8,d.uda_9,au2.description userName,to_char(d.udt_2,'yyyy-mm-dd hh24:mi:ss'),d.defect_repair_entry_key,t.test_instance_key,nvl(at2.test_name_s,''),decode(u1.serial_number_s,null,'维修R','更换C'),
+             ag.description group_name,auser.description group_leader
+      from  defect_repair_entry d,test_instance t,unit u,work_order w,app_user au,work_order_items woi,shift s,
+            production_line pl,part p, at_testcodedefinition at,account ac,(select * from at_testcodedefinition aa where aa.type_s = '不良原因分类') at2,at_testcodedefinition at3,
+            (
+                 select distinct uc.serial_number_s from at_unitchangematerialrecord uc
+                ) u1,app_group ag,app_user auser,app_user au2
+      where 1=1 
+            and w.order_key = woi.order_key
+            and au.user_name(+)=d.repair_user_name
+            and d.test_instance_key=t.test_instance_key 
+            and t.object_key=u.unit_key 
+            and u.order_item_key=woi.order_item_key
+            and t.location='在线检验' 
+            and t.test_valid='1'
+            and woi.uda_2 = s.shift_name(+)
+            and u.serial_number = u1.serial_number_s(+)
+            and pl.p_line_name=woi.planned_line
+            and u.part_number=p.part_number 
+            and d.defect_code=at.test_code_s 
+            and at2.test_code_s(+)=d.uda_2
+            and at3.test_code_s(+)=d.defect_sub_location
+            and ac.account_name(+) = d.uda_4
+            and woi.uda_1=ag.description
+            and ag.uda_0=auser.user_name(+)
+            and d.repair_location=au2.user_name(+)
+            and decode(nvl(d.defect_user_name,' '),'供应商',nvl(ac.description,' '),nvl(d.defect_user_name,' '))='组装车间') stmp
+    <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             substr(stmp.creation_time,0,10) BETWEEN #{param1} and  #{param2}
+         ]]>
+       </if>
+   </where>
+    group by stmp.factory, stmp.group_name,substr(#{param2},0,7))
+    where  shift_group is not null
+    group by factory, shift_group,creation_time
+  </insert>
+  
+  <delete id="deleteAssembleRepairedSum" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_ASEEBLEREPAIRED_SUM  trd
+    where 1=1 
+   <if test="queryMonth != null" >
+    and trd.monthly = #{queryMonth} 
+    </if>
+  </delete>
+  
+  
+  
+   <!-- 插入组装维修日报表天表 -->
+  <insert id="insertAssembleRepairedSumDay" parameterType="com.peg.model.bph.MesDataSum">
+  insert into AT_ASEEBLEREPAIRED_SUMDAY(col_1,shift_group,monthly,repaired_num)
+  select factory,shift_group,creation_time,sum(repaired_num) from (   
+    select stmp.factory factory, stmp.group_name  shift_group,substr(stmp.creation_time,0,10) creation_time, count(distinct(stmp.serial_number)) repaired_num from(select w.addr_city factory,w.order_number,d.defect_route_step_name,u.serial_number,u.description,nvl(d.uda_3,' '),
+			       nvl(d.uda_5,' '),nvl(d.uda_6,' '),decode(nvl(d.defect_user_name,' '),'供应商',nvl(ac.description,' '),nvl(d.defect_user_name,' ')),w.uda_1,d.uda_7,concat(concat(at.test_code_s,'-'), at.test_name_s),
+						 nvl(d.uda_0,' '),nvl(au.description,' '),to_char(d.udt_1,'yyyy-MM-dd HH24:mi:ss') creation_time,
+			       pl.description pl_name,d.defect_sub_location||'-'||at3.test_name_s,
+			       d.uda_8,d.uda_9,au2.description userName,to_char(d.udt_2,'yyyy-mm-dd hh24:mi:ss'),d.defect_repair_entry_key,t.test_instance_key,nvl(at2.test_name_s,''),decode(u1.serial_number_s,null,'维修R','更换C'),
+			       ag.description group_name,auser.description group_leader
+			from  defect_repair_entry d,test_instance t,unit u,work_order w,app_user au,work_order_items woi,shift s,
+			      production_line pl,part p, at_testcodedefinition at,account ac,(select * from at_testcodedefinition aa where aa.type_s = '不良原因分类') at2,at_testcodedefinition at3,
+			      (
+	             	select distinct uc.serial_number_s from at_unitchangematerialrecord uc
+	              ) u1,app_group ag,app_user auser,app_user au2
+			where 1=1 
+            and w.order_key = woi.order_key
+				    and au.user_name(+)=d.repair_user_name
+			      and d.test_instance_key=t.test_instance_key 
+			      and t.object_key=u.unit_key 
+			      and u.order_item_key=woi.order_item_key
+			      and t.location='在线检验' 
+			      and t.test_valid='1'
+			      and woi.uda_2 = s.shift_name(+)
+			      and u.serial_number = u1.serial_number_s(+)
+			      and pl.p_line_name=woi.planned_line
+			      and u.part_number=p.part_number 
+			      and d.defect_code=at.test_code_s 
+			      and at2.test_code_s(+)=d.uda_2
+			      and at3.test_code_s(+)=d.defect_sub_location
+			      and ac.account_name(+) = d.uda_4
+			      and woi.uda_1=ag.description
+			      and ag.uda_0=auser.user_name(+)
+			      and d.repair_location=au2.user_name(+)
+			      and decode(nvl(d.defect_user_name,' '),'供应商',nvl(ac.description,' '),nvl(d.defect_user_name,' '))='组装车间') stmp
+   <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+            substr(stmp.creation_time,0,10) > #{param1} and substr(stmp.creation_time,0,10) < #{param2}
+         ]]>
+       </if>
+   </where>
+    group by stmp.factory, stmp.group_name,substr(stmp.creation_time,0,10))
+    where  shift_group is not null
+    group by factory, shift_group,creation_time
+  </insert>
+  
+  <delete id="deleteAssembleRepairedSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_ASEEBLEREPAIRED_SUMDAY  trd
+    where 1=1 
+    <if test="queryDay != null" >
+    and trd.monthly = #{queryDay} 
+    </if>
+  </delete>
+  
+  
+  
+    <!-- 更新MES总和表月组装维修数 -->
+    <update id="updateMesDataSumMonthAssRepaired" parameterType="com.peg.model.bph.MesDataSum">
+      update  T_MES_DATA_SUM_MONTH sm set (col_18) = ( select repaired_num from AT_ASEEBLEREPAIRED_SUM a
+      where a.col_1 = sm.factory and a.shift_group = sm.shift_group_name and a.monthly= #{queryMonth}
+      and to_char(sm.sum_date,'YYYY-MM') = #{queryMonth}   )
+    where  to_char(sm.sum_date,'YYYY-MM') =#{queryMonth}
+    </update>
+    
+      
+     <!-- 更新MES总和表天表组装维修数 -->
+    <update id="updateMesDataSumDayAssRepaired" parameterType="com.peg.model.bph.MesDataSum">
+      update  T_MES_DATA_SUM_DAY sm set (col_18) = ( select repaired_num from AT_ASEEBLEREPAIRED_SUMDAY a
+      where a.col_1 = sm.factory and a.shift_group = sm.shift_group_name and a.monthly= #{queryDay}
+      and to_char(sm.sum_date,'YYYY-MM-DD') = #{queryDay}   )
+    where  to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay}
+    </update>
+    
+    <!-- 更新MES总和表月抽样批次数 -->
+    <update id="updateMesDataSumMonthFqcCheckSimQty" parameterType="com.peg.model.bph.MesDataSum">
+      update  t_mes_data_sum_month sm set(col_4)=( select  count(substr(group_s,0,instr(group_s,'_',1)-1)) SIMPLE_QTY 
+    from AT_FORMERPROCESSFQCCHECK a where a.factory_s = sm.factory and
+       substr(a.group_s,0,instr(a.group_s,'_',1)-1)=sm.shift_group_name  and 
+    a.date_t between to_date(#{startTime},'YYYY-MM-DD') and to_date(#{endTime},'YYYY-MM-DD') and to_char(sm.sum_date,'YYYY-MM') =#{queryMonth}
+     group by a.factory_s,substr(a.group_s,0,instr(a.group_s,'_',1)-1)
+      )where to_char(sm.sum_date,'YYYY-MM') =#{queryMonth}
+    </update>
+  
+    <!-- 更新MES总和表天抽样批次数 -->
+    <update id="updateMesDataSumDayFqcCheckSimQty" parameterType="com.peg.model.bph.MesDataSum">
+      update  T_MES_DATA_SUM_DAY sm set(col_4)=( select  count(substr(group_s,0,instr(group_s,'_',1)-1)) SIMPLE_QTY 
+    from AT_FORMERPROCESSFQCCHECK a where a.factory_s = sm.factory and
+      substr(a.group_s,0,instr(a.group_s,'_',1)-1)=sm.shift_group_name  and 
+     to_char(a.date_t,'YYYY-MM-DD')=#{queryDay}  and to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay} 
+     group by a.factory_s,substr(a.group_s,0,instr(a.group_s,'_',1)-1)
+      )where to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay} 
+    </update>
+    
+  <!-- 插入OQC抽检表月 -->
+  <insert id="insertOqcCheckSum" parameterType="com.peg.model.bph.MesDataSum">
+   insert into AT_OQCCHECK_SUM(shift_group,monthly,defect_num) 
+   select  duty_group, creation_date,sum(nums) defect_qty from (
+   select substr(#{param2},0,7) creation_date,substr(t.uda_5,0,instr(t.uda_5||',',',')-1) duty_group,
+   count(*) nums  
+   from  test_instance t
+   <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             to_char(t.creation_time,'YYYY-MM-DD') between #{param1} and #{param2}
+         ]]>
+       </if>
+   </where>
+   and  t.uda_7='OQC单独抽检'
+   and t.test_passed=0
+   and t.uda_5 is not null 
+   group by substr(#{param2},0,7),substr(t.uda_5,0,instr(t.uda_5||',',',')-1)
+   
+   union all
+   
+   select substr(#{param2},0,7) creation_date,substr(t.uda_5,instr(t.uda_5,',')+1,instr(t.uda_5||',',',',1,2)-instr(t.uda_5||',',',')-1) duty_group,
+   count(*) nums 
+   from  test_instance t
+   <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             to_char(t.creation_time,'YYYY-MM-DD') between #{param1} and #{param2}
+         ]]>
+       </if>
+   </where>
+    and t.uda_7='OQC单独抽检'
+   and t.test_passed=0
+   and t.uda_5 is not null 
+   group by substr(#{param2},0,7),substr(t.uda_5,instr(t.uda_5,',')+1,instr(t.uda_5||',',',',1,2)-instr(t.uda_5||',',',')-1)
+   
+   union all
+   
+      select substr(#{param2},0,7) creation_date,substr(t.uda_5,instr(t.uda_5,',',1,2)+1,instr(t.uda_5||',',',',1,3)-instr(t.uda_5||',',',',1,2)-1) duty_group,
+   count(*) nums
+   from  test_instance t
+   <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             to_char(t.creation_time,'YYYY-MM-DD') between #{param1} and #{param2}
+         ]]>
+       </if>
+   </where>
+   and  t.uda_7='OQC单独抽检'
+   and t.test_passed=0
+   and t.uda_5 is not null 
+   group by substr(#{param2},0,7),substr(t.uda_5,instr(t.uda_5,',',1,2)+1,instr(t.uda_5||',',',',1,3)-instr(t.uda_5||',',',',1,2)-1)
+   
+   ) where duty_group is not null
+   group by duty_group, creation_date
+  </insert>
+  <delete id="deleteOqcCheckSum" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_OQCCHECK_SUM  trd
+    where 1=1 
+    <if test="queryMonth != null" >
+    and trd.monthly = #{queryMonth} 
+    </if>
+  </delete>
+  
+  
+   <!-- 插入OQC抽检表天 -->
+  <insert id="insertOqcCheckSumDay" parameterType="com.peg.model.bph.MesDataSum">
+   insert into AT_IPQCCHECK_SUMDAY(shift_group,monthly,defect_num) 
+   select  duty_group, creation_date,sum(nums) defect_qty from (
+   select to_char(t.creation_time,'YYYY-MM-DD')creation_date,substr(t.uda_5,0,instr(t.uda_5||',',',')-1) duty_group,
+   count(*) nums  
+   from  test_instance t
+   <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+          to_char(t.creation_time,'YYYY-MM-DD') > #{param1} and to_char(t.creation_time,'YYYY-MM-DD') < #{param2}          
+         ]]>
+       </if>
+   </where>
+   and  t.uda_7='OQC单独抽检'
+   and t.test_passed=0
+   and t.uda_5 is not null 
+   group by t.creation_time,substr(t.uda_5,0,instr(t.uda_5||',',',')-1)
+   
+   union all
+   
+   select to_char(t.creation_time,'YYYY-MM-DD')creation_date,substr(t.uda_5,instr(t.uda_5,',')+1,instr(t.uda_5||',',',',1,2)-instr(t.uda_5||',',',')-1) duty_group,
+   count(*) nums 
+   from  test_instance t
+   <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+            to_char(t.creation_time,'YYYY-MM-DD') > #{param1} and to_char(t.creation_time,'YYYY-MM-DD') < #{param2}     
+         ]]>
+       </if>
+   </where>
+    and  t.uda_7='OQC单独抽检'
+   and t.test_passed=0
+   and t.uda_5 is not null 
+   group by t.creation_time,substr(t.uda_5,instr(t.uda_5,',')+1,instr(t.uda_5||',',',',1,2)-instr(t.uda_5||',',',')-1)
+   
+   union all
+   
+      select to_char(t.creation_time,'YYYY-MM-DD') creation_date,substr(t.uda_5,instr(t.uda_5,',',1,2)+1,instr(t.uda_5||',',',',1,3)-instr(t.uda_5||',',',',1,2)-1) duty_group,
+   count(*) nums
+   from  test_instance t
+   <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+          to_char(t.creation_time,'YYYY-MM-DD') > #{param1} and to_char(t.creation_time,'YYYY-MM-DD') < #{param2}     
+         ]]>
+       </if>
+   </where>
+   and  t.uda_7='OQC单独抽检'
+   and t.test_passed=0
+   and t.uda_5 is not null 
+   group by t.creation_time,substr(t.uda_5,instr(t.uda_5,',',1,2)+1,instr(t.uda_5||',',',',1,3)-instr(t.uda_5||',',',',1,2)-1)
+   
+   ) where duty_group is not null
+   group by duty_group, creation_date
+  </insert>
+  <delete id="deleteOqcCheckSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_IPQCCHECK_SUMDAY  trd
+    where 1=1 
+    <if test="queryDay != null" >
+    and trd.monthly = #{queryDay} 
+    </if>
+  </delete>
+  
+   <!-- 更新MES总和表月OQC抽检不良台数 -->
+    <update id="updateMesDataSumMonthOqcDedectQty" parameterType="com.peg.model.bph.MesDataSum">
+      update  T_MES_DATA_SUM_MONTH sm set (col_16) = ( select defect_num from AT_OQCCHECK_SUM a
+      where  a.shift_group = sm.shift_group_name and a.monthly= #{queryMonth}
+      and to_char(sm.sum_date,'YYYY-MM') = #{queryMonth}   )
+      where  to_char(sm.sum_date,'YYYY-MM') =#{queryMonth}
+    </update>
+    <!-- 更新MES总和表天OQC抽检不良台数 -->
+     <update id="updateMesDataSumDayOqcDedectQty" parameterType="com.peg.model.bph.MesDataSum">
+      update  T_MES_DATA_SUM_DAY sm set (col_16) = ( select defect_num from AT_IPQCCHECK_SUMDAY a
+      where  a.shift_group = sm.shift_group_name and a.monthly= #{queryDay}
+      and to_char(sm.sum_date,'YYYY-MM-DD') = #{queryDay}   )
+      where  to_char(sm.sum_date,'YYYY-MM-DD') =#{queryDay}
+    </update>
+    
+    <!-- 更新MES总和表月组装停线次数 (燃气IQC班组A)-->
+    <update id="updateMesDataSumMonthDownQtyRiqcA" parameterType="com.peg.model.bph.MesDataSum">
+     update  t_mes_data_sum_month sm set(col_17)=(
+     select count(*) downline_num from at_downlinerecord at
+     where at.duty_name_s ='燃气品质中心' and at.productionline_s in ('L50','L51') and 
+     substr(at.stop_date_s,0,10) between  #{startTime} and #{endTime}
+     )where trim(sm.shift_group_code) in('RIQC01') and sm.sum_date =to_date(#{queryMonth},'YYYY-MM')
+    
+    </update>
+    
+    <!-- 更新MES总和表月组装停线次数 (燃气IQC班组B)-->
+    <update id="updateMesDataSumMonthDownQtyRiqcB" parameterType="com.peg.model.bph.MesDataSum">
+     update  t_mes_data_sum_month sm set(col_17)=(
+     select count(*)from at_downlinerecord at
+     where at.duty_name_s ='燃气品质中心' and at.productionline_s in ('L40', 'L41','L42', 'L43', 'L60') and 
+     substr(at.stop_date_s,0,10) between  #{startTime} and #{endTime}
+     )where trim(sm.shift_group_code) in('RIQC02') and sm.sum_date =to_date(#{queryMonth},'YYYY-MM')
+
+    </update>
+    <!-- 更新MES总和表月组装停线次数 (电器IQC班组)-->
+    <update id="updateMesDataSumMonthDownQtyDiqc" parameterType="com.peg.model.bph.MesDataSum">
+    update  t_mes_data_sum_month sm set(col_17)=(
+    select count(*) from at_downlinerecord at
+    where at.duty_name_s ='电器品质中心'  and 
+    substr(at.stop_date_s,0,10) between  #{startTime} and #{endTime}
+    )where trim(sm.shift_group_code) in('DQIQC') and sm.sum_date =to_date(#{queryMonth},'YYYY-MM')
+    </update>
+    
+     <!-- 更新MES总和表天组装停线次数 (燃气IQC班组A)-->
+    <update id="updateMesDataSumDayDownQtyRiqcA" parameterType="com.peg.model.bph.MesDataSum">
+     update  t_mes_data_sum_day sm set(col_17)=(
+     select count(*) downline_num from at_downlinerecord at
+     where at.duty_name_s ='燃气品质中心' and at.productionline_s in ('L50','L51') and 
+     at.stop_date_s = #{queryDay}
+     )where trim(sm.shift_group_code) in('RIQC01') and sm.sum_date =to_date(#{queryDay},'YYYY-MM-DD')
+    
+    </update>
+    
+    <!-- 更新MES总和表月组装停线次数 (燃气IQC班组B)-->
+    <update id="updateMesDataSumDayDownQtyRiqcB" parameterType="com.peg.model.bph.MesDataSum">
+     update  t_mes_data_sum_day sm set(col_17)=(
+     select count(*)from at_downlinerecord at
+     where at.duty_name_s ='燃气品质中心' and at.productionline_s in ('L40', 'L41','L42', 'L43', 'L60') and 
+     at.stop_date_s = #{queryDay}
+     )where trim(sm.shift_group_code) in('RIQC02') and sm.sum_date =to_date(#{queryDay},'YYYY-MM-DD')
+
+    </update>
+    <!-- 更新MES总和表月组装停线次数 (电器IQC班组)-->
+    <update id="updateMesDataSumDayDownQtyDiqc" parameterType="com.peg.model.bph.MesDataSum">
+    update  t_mes_data_sum_day sm set(col_17)=(
+    select count(*) from at_downlinerecord at
+    where at.duty_name_s ='电器品质中心'  and 
+    at.stop_date_s = #{queryDay}
+    )where trim(sm.shift_group_code) in('DQIQC') and sm.sum_date =to_date(#{queryDay},'YYYY-MM-DD')
+    </update>
+    
+    <!-- 插入qms_data表数据(组装投产数) -->
+    <insert id="insertQmsDataAssembly" parameterType="com.peg.model.bph.MesDataSum">
+		insert into qms_data
+		(
+		select u1.factory_name ,u1.finish_date as working_date,u1.area_name ,
+		u1.group_desc,null,
+		null,null,null,u1.pl_desc,
+		null,u1.assemble_finish_qty,null,null
+		from
+		(
+		  select ud.factory_name,ud.area_name,ud.pl_description as pl_desc,ud.group_name as group_desc,
+		  to_date(ud.finish_date,'yyyy-mm-dd') as finish_date ,ud.qty as assemble_finish_qty
+		  from unit_detail_pline_shift ud
+		  where 1=1
+		  and substr(ud.finish_date,0,7) = #{queryMonth}
+		) u1
+    )  
+    </insert>
+    
+    <!-- 插入qms_data表（冲压入库数） -->
+    <insert id="insertQmsDataStamping"  parameterType="com.peg.model.bph.MesDataSum">
+		insert into qms_data
+		(
+		select u5.uda_1 as factory_name,to_date(u5.checking_date,'yyyy-mm-dd') as working_date,u5.uda_2 as area_name,
+		u5.group_desc,null,null,u5.stamping_finish_qty,null,u5.pl_desc,
+		null,null,null,null
+		from
+		(
+		 select pl.uda_1,pl.uda_2,pl.description as pl_desc,ag.description as group_desc,
+		 to_char(swcr.checking_time_t,'yyyy-mm-dd') as checking_date,
+		 sum(swcr.pass_count_i) as stamping_finish_qty
+		 from at_stampingworkcheckingrecord swcr,production_line pl,work_order_items woi,app_group ag
+		 where 1=1
+		 and swcr.is_last_step_y = 1
+		 and swcr.order_item_name_s = woi.order_item
+		 and woi.planned_line = pl.p_line_name
+		 and ag.description = woi.uda_1
+		 and to_char(swcr.checking_time_t,'yyyy-mm') =#{queryMonth}
+		 group by pl.uda_1,pl.uda_2,pl.description,ag.description,to_char(swcr.checking_time_t,'yyyy-mm-dd')
+		) u5
+		)
+    </insert>
+    <!-- 插入qms_data表（喷涂挂件数） -->
+    <insert id="insertQmsDataPainting" parameterType="com.peg.model.bph.MesDataSum">
+		 insert into qms_data
+		(
+		select u5.uda_1 as factory_name,to_date(u5.checking_date,'yyyy-mm-dd') as working_date,u5.uda_2 as area_name,
+		u5.group_desc,null,null,null,u5.painting_qty,u5.pl_desc,
+		null,null,null,null
+		from
+		(
+		 select pl.uda_1,pl.uda_2,pl.description as pl_desc,ag.description as group_desc,
+		 to_char(woi.planned_start_time,'yyyy-mm-dd') as checking_date,
+		 sum(pfr.qty_up_i) as painting_qty 
+		 from at_paintingfrontrecord pfr,production_line pl,work_order_items woi,app_group ag
+		 where 1=1
+		 and pfr.order_item_name_s = woi.order_item
+		 and woi.planned_line = pl.p_line_name
+		 and ag.description = woi.uda_1
+		 and to_char(woi.planned_start_time,'yyyy-mm') = #{queryMonth}
+		 group by pl.uda_1,pl.uda_2,pl.description,ag.description,to_char(woi.planned_start_time,'yyyy-mm-dd')
+		) u5
+		)
+    </insert>
+    
+   <!-- 插入IPQC巡检记录总和表月份 -->
+  <insert id="insertIpqcInspectSum" parameterType="com.peg.model.bph.MesDataSum" >
+  insert into  AT_IPQCINSPECTS_SUM ( FACTORY,  
+      SHIFT_GROUP, MONTHLY,PROCESS_NODE, RISK_SCORE)
+   select FACTORY_S, group_s, stat_month,process_node,sum(RISK_SCORE)
+   from (
+   select FACTORY_S,group1_s group_s,substr(#{param2},0,7) stat_month ,
+   decode(substr(process_node_s,1,1),'A','A','B','A','C','A','D','D',' ')  process_node,sum(RISK_SCORE_F) RISK_SCORE
+   from  at_inspects
+    <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+            substr(find_time_s,0,10) BETWEEN #{param1} and  #{param2}
+            and feeding_qty_i >= 50 and unquantity_qty_i/feeding_qty_i >=0.2
+         ]]>
+       </if>
+   </where>
+   
+   group by FACTORY_S,group1_s,substr(#{param2},0,7),decode(substr(process_node_s,1,1),'A','A','B','A','C','A','D','D',' ') 
+
+   union all
+
+    select FACTORY_S,group2_s group_s,substr(#{param2},0,7) stat_month ,
+   decode(substr(process_node_s,1,1),'A','A','B','A','C','A','D','D',' ')  process_node,sum(RISK_SCORE_F) RISK_SCORE
+   from  at_inspects
+   <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+            substr(find_time_s,0,10) BETWEEN #{param1} and  #{param2}
+            and feeding_qty_i >= 50 and unquantity_qty_i/feeding_qty_i >=0.2
+         ]]>
+       </if>
+   </where>
+   
+   group by FACTORY_S,group2_s,substr(#{param2},0,7),decode(substr(process_node_s,1,1),'A','A','B','A','C','A','D','D',' ') 
+
+   union all
+
+   select FACTORY_S,group3_s group_s,substr(#{param2},0,7) stat_month ,
+   decode(substr(process_node_s,1,1),'A','A','B','A','C','A','D','D',' ')  process_node,sum(RISK_SCORE_F) RISK_SCORE
+   from  at_inspects
+  <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+            substr(find_time_s,0,10) BETWEEN #{param1} and  #{param2}
+            and feeding_qty_i >= 50 and unquantity_qty_i/feeding_qty_i >=0.2
+         ]]>
+       </if>
+   </where>
+    
+   group by FACTORY_S,group3_s,substr(#{param2},0,7),decode(substr(process_node_s,1,1),'A','A','B','A','C','A','D','D',' ') 
+  ) where group_s is not null
+  group by FACTORY_S,group_s,stat_month,process_node
+  </insert> 
+  <delete id="deleteIpqcInspectSum" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_IPQCINSPECTS_SUM  trd
+    where 1=1 
+    <if test="queryMonth != null" >
+    and trd.monthly = #{queryMonth} 
+    </if>
+  </delete>
+
+    <select id="getIpqcByMonth" parameterType="com.peg.model.bph.MesDataSum" resultMap="BaseResultMap">
+     select a.FACTORY ,a.SHIFT_GROUP,a.MONTHLY,a.PROCESS_NODE as col_14, a.RISK_SCORE as col_9 from  AT_IPQCINSPECTS_SUM a
+     where  substr(a.MONTHLY, 1, 7) = #{queryMonth}
+    </select>
+    
+      <!-- 插入IPQC巡检记录总和表天 -->
+  <insert id="insertIpqcInspectSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+  insert into  AT_IPQCINSPECTS_SUMDAY ( FACTORY,  
+      SHIFT_GROUP, MONTHLY,PROCESS_NODE, RISK_SCORE)
+   select FACTORY_S, group_s, stat_month,process_node,sum(RISK_SCORE)
+   from (
+   select FACTORY_S,group1_s group_s,substr(find_time_s,0,10) stat_month ,
+   decode(substr(process_node_s,1,1),'A','A','B','A','C','A','D','D',' ')  process_node,sum(RISK_SCORE_F) RISK_SCORE
+   from  at_inspects
+   <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             substr(find_time_s,0,10) > #{param1} and substr(find_time_s,0,10) < #{param2}
+             and feeding_qty_i >= 50 and unquantity_qty_i/feeding_qty_i >=0.2          
+         ]]>
+       </if>
+   </where>
+   
+   group by FACTORY_S,group1_s,substr(find_time_s,0,10),decode(substr(process_node_s,1,1),'A','A','B','A','C','A','D','D',' ') 
+
+   union all
+
+   select FACTORY_S,group2_s group_s,substr(find_time_s,0,10) stat_month ,
+   decode(substr(process_node_s,1,1),'A','A','B','A','C','A','D','D',' ')  process_node,sum(RISK_SCORE_F) RISK_SCORE
+   from  at_inspects
+   <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             substr(find_time_s,0,10) > #{param1} and substr(find_time_s,0,10) < #{param2}
+             and feeding_qty_i >= 50 and unquantity_qty_i/feeding_qty_i >=0.2          
+         ]]>
+       </if>
+   </where>
+   
+   group by FACTORY_S,group2_s,substr(find_time_s,0,10),decode(substr(process_node_s,1,1),'A','A','B','A','C','A','D','D',' ') 
+
+   union all
+
+   select FACTORY_S,group3_s group_s,substr(find_time_s,0,10) stat_month ,
+   decode(substr(process_node_s,1,1),'A','A','B','A','C','A','D','D',' ')  process_node,sum(RISK_SCORE_F) RISK_SCORE
+   from  at_inspects
+   <where>
+        <if test="param1 != null and param2 !=null">
+        <![CDATA[
+             substr(find_time_s,0,10) > #{param1} and substr(find_time_s,0,10) < #{param2}
+             and feeding_qty_i >= 50 and unquantity_qty_i/feeding_qty_i >=0.2          
+         ]]>
+       </if>
+   </where>
+   
+   group by FACTORY_S,group3_s,substr(find_time_s,0,10),decode(substr(process_node_s,1,1),'A','A','B','A','C','A','D','D',' ') 
+  ) where group_s is not null
+  group by FACTORY_S,group_s,stat_month,process_node
+  </insert>
+  
+   <delete id="deleteIpqcInspectSumDay" parameterType="com.peg.model.bph.MesDataSum" >
+    delete from AT_IPQCINSPECTS_SUMDAY  trd
+    where 1=1 
+    <if test="queryDay != null" >
+    and trd.monthly = #{queryDay} 
+    </if>
+  </delete>
+  
+   <select id="getIpqcByDay" parameterType="com.peg.model.bph.MesDataSum" resultMap="BaseResultMap">
+     select a.FACTORY ,a.SHIFT_GROUP,a.MONTHLY,a.PROCESS_NODE as col_14, a.RISK_SCORE as col_9 from  AT_IPQCINSPECTS_SUMDAY a
+     where  a.MONTHLY = #{queryDay} 
+    </select>
+   
+  <update id="updateProcessAuditSum" parameterType="com.peg.model.bph.MesDataSum">
+      update AT_PROCESSAUDITRECORD_SUM sm set (audit_num)=(
+	  select a.audit_num+sm.audit_num from (
+	   select FACTORY_S, group_s, stat_month,sum(audit_num) audit_num
+	   from (
+	  select FACTORY_S,substr(group1_s,0,instr(group1_s,'_',1)-1) group_s,substr(#{param2},0,7) stat_month ,count(FACTORY_S) audit_num
+	   from  at_BatchDefectRecord
+	   where    RECORD_DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+	             and me_s in('人','机','法','环')
+	             and substr(group1_s,0,instr(group1_s,'_',1)-1) in (
+	             select a.description from app_group a where category ='SHIFT' 
+	             and uda_4 in('组装班组')
+	             )
+	  group by FACTORY_S,substr(group1_s,0,instr(group1_s,'_',1)-1),substr(#{param2},0,7)
+	  
+	  union all
+	   select FACTORY_S,group2_s group_s,substr(#{param2},0,7) stat_month ,count(FACTORY_S) audit_num
+	   from  at_BatchDefectRecord
+	   where    RECORD_DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+	             and me_s in('人','机','法','环')
+	             and substr(group1_s,0,instr(group1_s,'_',1)-1) in (
+	             select a.description from app_group a where category ='SHIFT' 
+	             and uda_4 in('组装班组')
+	             )
+	  group by FACTORY_S,group2_s,substr(#{param2},0,7)
+	   
+	   union all
+	   select FACTORY_S,group3_s group_s,substr(#{param2},0,7) stat_month ,count(FACTORY_S) audit_num
+	   from  at_BatchDefectRecord
+	   where    RECORD_DATE_T BETWEEN TO_Date(#{param1},'yyyy-MM-DD') and  TO_Date(#{param2},'yyyy-MM-DD')
+	             and me_s in('人','机','法','环')
+	             and substr(group1_s,0,instr(group1_s,'_',1)-1) in (
+	             select a.description from app_group a where category ='SHIFT' 
+	             and uda_4 in('组装班组')
+	             )
+	  group by FACTORY_S,group3_s,substr(#{param2},0,7)                 
+	 ) where group_s is not null
+	 group by FACTORY_S, group_s, stat_month
+	  ) a 
+	   where a.group_s = sm.shift_group and a.FACTORY_S = sm.factory and a.stat_month = substr(#{param2},0,7)
+	     and sm.monthly = substr(#{param2},0,7)
+	 ) where sm.monthly = substr(#{param2},0,7) and sm.check_content in('过程5M1E','盲点测试') 
+  </update> 
+
+   <update id="updateProcessAuditSumDay" parameterType="com.peg.model.bph.MesDataSum">
+      update AT_PROCESSAUDITRECORD_SUMDAY sm set (audit_num)=(
+	  select a.audit_num+sm.audit_num from (
+	   select FACTORY_S, group_s, stat_month,sum(audit_num) audit_num
+	   from (
+	  select FACTORY_S,substr(group1_s,0,instr(group1_s,'_',1)-1) group_s,TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD') stat_month ,count(FACTORY_S) audit_num
+	   from  at_BatchDefectRecord
+	   where   1=1
+	            <if test="param1 != null and param2 !=null">
+	            <![CDATA[
+	             and RECORD_DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and RECORD_DATE_T < TO_Date(#{param2},'yyyy-MM-DD')
+	             and me_s in('人','机','法','环')
+	             and substr(group1_s,0,instr(group1_s,'_',1)-1) in (
+	             select a.description from app_group a where category ='SHIFT' 
+	             and uda_4 in('组装班组')
+	             )
+	             ]]> 
+	            </if> 
+	  group by FACTORY_S,substr(group1_s,0,instr(group1_s,'_',1)-1),TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD')
+	  
+	  union all
+	   select FACTORY_S,group2_s group_s,TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD') stat_month ,count(FACTORY_S) audit_num
+	   from  at_BatchDefectRecord
+	   where  1=1  
+	           <if test="param1 != null and param2 !=null">
+	            <![CDATA[
+	             and RECORD_DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and RECORD_DATE_T < TO_Date(#{param2},'yyyy-MM-DD')
+	             and me_s in('人','机','法','环')
+	             and substr(group1_s,0,instr(group1_s,'_',1)-1) in (
+	             select a.description from app_group a where category ='SHIFT' 
+	             and uda_4 in('组装班组')
+	             )
+	             ]]> 
+	            </if> 
+	  group by FACTORY_S,group2_s,TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD')
+	   
+	   union all
+	   select FACTORY_S,group3_s group_s,TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD') stat_month ,count(FACTORY_S) audit_num
+	   from  at_BatchDefectRecord
+	   where   1=1
+	         <if test="param1 != null and param2 !=null">
+	            <![CDATA[
+	             and RECORD_DATE_T > TO_Date(#{param1},'yyyy-MM-DD') and RECORD_DATE_T < TO_Date(#{param2},'yyyy-MM-DD')
+	             and me_s in('人','机','法','环')
+	             and substr(group1_s,0,instr(group1_s,'_',1)-1) in (
+	             select a.description from app_group a where category ='SHIFT' 
+	             and uda_4 in('组装班组')
+	             )
+	             ]]> 
+	            </if> 
+	  group by FACTORY_S,group3_s,TO_CHAR(RECORD_DATE_T,'YYYY-MM-DD')               
+	 ) where group_s is not null
+	 group by FACTORY_S, group_s, stat_month
+	  ) a 
+	   where a.group_s = sm.shift_group and a.FACTORY_S = sm.factory and a.stat_month =to_char(TO_Date(#{param1},'yyyy-MM-DD')+1,'yyyy-mm-dd')
+	     and sm.monthly = to_char(TO_Date(#{param1},'yyyy-MM-DD')+1,'yyyy-mm-dd')
+	 ) where sm.monthly = to_char(TO_Date(#{param1},'yyyy-MM-DD')+1,'yyyy-mm-dd') and sm.check_content in('过程5M1E','盲点测试') 
+  </update>  
+
+</mapper>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.RepairTotalrateInputMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.RepairTotalrateInput" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="TYPE_CATEGORY" property="typeCategory" jdbcType="VARCHAR" />
+    <result column="REPAIR_RATE" property="repairRate" jdbcType="DECIMAL" />
+    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="insert_month" property="insertMonth" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, TYPE_CATEGORY, REPAIR_RATE, CREATE_USER, CREATE_TIME,insert_month
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_REPAIR_TOTALRATE_INPUT
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  
+   <select id="getByTypeAndMonth" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from T_REPAIR_TOTALRATE_INPUT
+    where TYPE_CATEGORY = #{productType,jdbcType=VARCHAR}
+    and insert_month = #{repairMonth,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from T_REPAIR_TOTALRATE_INPUT
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.RepairTotalrateInput" >
+    insert into T_REPAIR_TOTALRATE_INPUT ( TYPE_CATEGORY, REPAIR_RATE, 
+      CREATE_USER,insert_month)
+    values ( #{typeCategory,jdbcType=VARCHAR}, #{repairRate,jdbcType=DECIMAL}, 
+      #{createUser,jdbcType=VARCHAR},#{insertMonth,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.RepairTotalrateInput" >
+    insert into T_REPAIR_TOTALRATE_INPUT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="typeCategory != null" >
+        TYPE_CATEGORY,
+      </if>
+      <if test="repairRate != null" >
+        REPAIR_RATE,
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="typeCategory != null" >
+        #{typeCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="repairRate != null" >
+        #{repairRate,jdbcType=DECIMAL},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.RepairTotalrateInput" >
+    update T_REPAIR_TOTALRATE_INPUT
+    <set >
+      <if test="typeCategory != null" >
+        TYPE_CATEGORY = #{typeCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="repairRate != null" >
+        REPAIR_RATE = #{repairRate,jdbcType=DECIMAL},
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="insertMonth != null" >
+        insert_month = #{insertMonth,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.RepairTotalrateInput" >
+    update T_REPAIR_TOTALRATE_INPUT
+    set TYPE_CATEGORY = #{typeCategory,jdbcType=VARCHAR},
+      REPAIR_RATE = #{repairRate,jdbcType=DECIMAL},
+      CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      insert_month = #{insertMonth,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <select id="getTotalAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from T_REPAIR_TOTALRATE_INPUT 
+    where 1=1
+    <if test="queryMonth != null">
+    and insert_month = #{queryMonth}
+    </if>
+  </select>
+  
+</mapper>

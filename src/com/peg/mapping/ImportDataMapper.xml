@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.ImportDataMapper" >
+<!-- 导入CRM数据前，删除T_MARKET_REPAIR_RECORD表对应时间段数据，避免重复 -->
+<delete id="deleteCRMDataByTimes" parameterType="com.peg.model.CommonVo" >
+	delete from T_MARKET_REPAIR_RECORD tmrr
+    <where>
+	    <if test="startTime != null and startTime != '' and endTime != null and endTime != ''" >
+	    	tmrr.finish_date BETWEEN to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss') 
+	    	AND to_date(#{endTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+	    </if>
+    </where>
+</delete>
+
+<!-- 通过物料名称匹配从CRM_REPAIR_CONTENT，PART，UDA_PART表导出数据到T_MARKET_REPAIR_RECORD -->
+<insert id="getDataFromCRM" parameterType="com.peg.model.CommonVo">
+	<![CDATA[
+		INSERT INTO T_MARKET_REPAIR_RECORD (ORDER_NUMBER, PART_CODE, PART_NAME, PART_NUMBER, INVOICE_DATE, FINISH_DATE, SERVICE_SITE, SERVICE_ENGINEER, SETTLEMENT_DESC, HOME_PHONE, CELLPHONE, RECORD_TIME,
+        BUY_TYPE, FAULT_TYPE_CODE, FAULT_TYPE_NAME, FAULT_REASON_CODE, FAULT_REASON_NAME, FAULT_DESC, FAULT_CURRENT_DESC, INFO_DESC, ENTERING_TIME, PRODUCT_TYPE, PRODUCT_FAMILY, PART_TYPE, IS_OVER,
+        IS_SETTLEMENT, RAW_SERVICE_CENTER, CUSTOMER_ID, PART_ID, under_warranty,intall_date,IS_CONSUMED_PART)
+        
+        SELECT C.REPAIR_ORDER_NUMBER, C.SERIAL_NUMBER, C.PART_DESCRIPTION, T1.PART_NUMBER, C.INVOICE_TIME, C.COMPLETE_TIME, C.SERVICE_POINT, C.SERVICE_PERSON, C.SETTLEMENT, C.TELEPHONE,
+		C.MOBILEPHONE, C.CREATION_TIME, C.BUY_THE_WAY, C.DEFECT_TYPE, C.DEFECT_COMMENT, C.DEFECT_CODE, C.DEFECT_REASON, C.DEFECT_DESCRIPTION, C.DEFECT_LOCAL_DESCRIPTION, C.DETAIL_DESCRIPTION,
+		C.ENTERING_TIME, U.MOLD_TYPE_S, U.PRODUCT_FAMILY_S, U.PRODUCT_TYPE_S, 
+		(CASE WHEN ((TO_DATE(C.COMPLETE_TIME) - TO_DATE(C.INVOICE_TIME)) <= 365) THEN '否' ELSE '是' END) AS IS_OVER,
+		C.IS_SETTLEMENT, C.SERVICE_CENTER, C.CUSTOMER_ID, C.PART_ID,
+		(CASE WHEN ((TO_DATE(C.COMPLETE_TIME) - TO_DATE(C.INVOICE_TIME)) <= 1825 AND C.INVOICE_TIME IS NOT NULL AND C.IS_SETTLEMENT = '1' AND SUBSTR(C.SETTLEMENT, -2, 2) = '免费') THEN '是' ELSE '否' END) as under_warranty,intall_date,IS_CONSUMED_PART
+    	FROM CRM_REPAIR_CONTENT C,
+		(SELECT P1.PART_KEY, P1.PART_NUMBER, P1.DESCRIPTION FROM PART P1 INNER JOIN (SELECT MIN(P2.PART_NUMBER) AS T_PART_NUMBER FROM PART P2 GROUP BY DESCRIPTION) T ON P1.PART_NUMBER = T.T_PART_NUMBER) T1, UDA_PART U
+    	WHERE C.PART_DESCRIPTION = T1.DESCRIPTION AND T1.PART_KEY = U.OBJECT_KEY
+	]]>
+	<if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+		AND C.COMPLETE_TIME BETWEEN to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss') AND to_date(#{endTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+	</if>
+</insert>
+
+<!-- 通过主机条码匹配物料名称匹配不上的数据 -->
+<insert id="getDataFromCrmBySerialNumber" parameterType="com.peg.model.CommonVo">
+<![CDATA[
+	INSERT INTO T_MARKET_REPAIR_RECORD (ORDER_NUMBER, PART_CODE, PART_NAME, PART_NUMBER, INVOICE_DATE, FINISH_DATE, SERVICE_SITE, SERVICE_ENGINEER, SETTLEMENT_DESC, HOME_PHONE, CELLPHONE, RECORD_TIME,
+	BUY_TYPE, FAULT_TYPE_CODE, FAULT_TYPE_NAME, FAULT_REASON_CODE, FAULT_REASON_NAME, FAULT_DESC, FAULT_CURRENT_DESC, INFO_DESC, ENTERING_TIME, PRODUCT_TYPE, PRODUCT_FAMILY, PART_TYPE, IS_OVER,
+	IS_SETTLEMENT, RAW_SERVICE_CENTER, CUSTOMER_ID, PART_ID)
+	SELECT T.REPAIR_ORDER_NUMBER, T.SERIAL_NUMBER, T.PART_DESCRIPTION, TPT.PART_NUMBER, T.INVOICE_TIME, T.COMPLETE_TIME, T.SERVICE_POINT, T.SERVICE_PERSON, T.SETTLEMENT, T.TELEPHONE,
+	T.MOBILEPHONE, T.CREATION_TIME, T.BUY_THE_WAY, T.DEFECT_TYPE, T.DEFECT_COMMENT, T.DEFECT_CODE, T.DEFECT_REASON, T.DEFECT_DESCRIPTION, T.DEFECT_LOCAL_DESCRIPTION, T.DETAIL_DESCRIPTION,
+	T.ENTERING_TIME, TPT.PART_TYPE, TPT.PART_FAMILY, TPT.QMS_COUNT_PART, 
+	(CASE WHEN ((TO_DATE(T.COMPLETE_TIME) - TO_DATE(T.INVOICE_TIME)) <= 365 AND T.INVOICE_TIME IS NOT NULL) THEN '否' ELSE '是' END) AS IS_OVER,
+	T.IS_SETTLEMENT, T.SERVICE_CENTER, T.CUSTOMER_ID, T.PART_ID
+	FROM (SELECT C.REPAIR_ORDER_NUMBER, C.SERIAL_NUMBER, C.PART_DESCRIPTION, C.INVOICE_TIME, C.COMPLETE_TIME, C.SERVICE_POINT, C.SERVICE_PERSON, C.SETTLEMENT, C.TELEPHONE,
+	C.MOBILEPHONE, C.CREATION_TIME, C.BUY_THE_WAY, C.DEFECT_TYPE, C.DEFECT_COMMENT, C.DEFECT_CODE, C.DEFECT_REASON, C.DEFECT_DESCRIPTION, C.DEFECT_LOCAL_DESCRIPTION, C.DETAIL_DESCRIPTION,
+	C.ENTERING_TIME,
+	(CASE WHEN ((TO_DATE(C.COMPLETE_TIME) - TO_DATE(C.INVOICE_TIME)) <= 365 AND C.INVOICE_TIME IS NOT NULL AND C.IS_SETTLEMENT = '1' AND SUBSTR(C.SETTLEMENT, -2, 2) = '免费') THEN '否' ELSE '是' END) AS IS_OVER,
+	C.IS_SETTLEMENT, C.SERVICE_CENTER, C.CUSTOMER_ID, C.PART_ID
+	FROM CRM_REPAIR_CONTENT C WHERE NOT EXISTS (SELECT * FROM PART P WHERE P.DESCRIPTION = C.PART_DESCRIPTION)) T, T_PRODUCT_TYPE TPT
+	WHERE TPT.PART_NUMBER = SUBSTR(T.SERIAL_NUMBER, 0, instr(upper(T.SERIAL_NUMBER),'L')-1)
+]]>
+<if test="startTime != null and endTime != null">
+	AND T.COMPLETE_TIME BETWEEN to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss') AND to_date(#{endTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+</if>
+</insert>
+
+<!-- 匹配仓库服务中心表刷新合并服务中心名称 -->
+<update id="updateServiceCenterForCRM" parameterType="com.peg.model.CommonVo" >
+	update T_MARKET_REPAIR_RECORD t set t.service_center = (
+		select tc.merge_region from T_LOCATION_REGION tc where tc.region = t.raw_service_center and rownum = 1
+	)
+	<if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+		where t.finish_date BETWEEN to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss') AND to_date(#{endTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+	</if>
+</update>
+<update id="updateVocCategoryToRe" parameterType="com.peg.model.CommonVo">
+	update T_MARKET_REPAIR_RECORD T SET T.VOC_TYPE_KEY = (
+		SELECT TVC.CLASS_NUMBER FROM (select T1.CLASS_NUMBER,T2.CLASS_NAME PATER_NAME,T1.CLASS_NAME from T_VOICE_CATEGORY T1,T_VOICE_CATEGORY T2 WHERE T1.PATER_NUMBER=T2.CLASS_NUMBER) TVC,VOICE_CUSTOMER VC WHERE VC.ORDER_NUMBER=T.ORDER_NUMBER AND VC.TYPE1 = TVC.PATER_NAME AND VC.TYPE2=TVC.CLASS_NAME 
+	
+	<if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+		AND VC.DATE_TIME BETWEEN TO_DATE(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss') AND to_date(#{endTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+		
+	</if>
+	 AND ROWNUM = 1
+) where T.ORDER_NUMBER is not null
+	<if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+		and t.finish_date BETWEEN to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss') AND to_date(#{endTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')		
+	</if>
+</update>
+
+<delete id="deleteSameOrderNoForCRM" parameterType="com.peg.model.CommonVo">
+	<![CDATA[	    
+ 		delete from T_MARKET_REPAIR_RECORD t 
+       	where t.order_number in (select t1.order_number from T_MARKET_REPAIR_RECORD t1 group by t1.order_number having count(t1.order_number) > 1) 
+       	and t.id not in (select max(t2.id) from T_MARKET_REPAIR_RECORD t2 group by t2.order_number having count(t2.order_number)>1)
+       	and t.order_number is not null
+	]]>
+	<if test="startTime != null and startTime != '' and endTime != null and endTime != ''" >
+   		and t.finish_date BETWEEN to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss') AND to_date(#{endTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+   	</if>
+</delete>
+
+<!-- 
+	crm维修数据根据条码解析，更新下线日期 
+	7天头的条码，且条码中不包含线别代码’’L“时，从条码最右至左截取，截取10位后再从左至右截取8位，代表年份(2位)、月份(2位)、日期(2位)。
+	7天头的条码，且条码中包含线别代码’’L“时，从条码中”L”位开始从左至右截取11位后再从右至左截取8位，代表年份(2位)、月份(2位)、日期(2位)；
+	4008057 01 0509 0041
+-->
+<update id="updateDownlineDateByCode" parameterType="com.peg.model.CommonVo" >
+	update T_MARKET_REPAIR_RECORD t set t.downline_date = (
+		select (case 
+			when instr(upper(t1.part_code),'L')=0 then '20'|| substr(t1.part_code,-10,2)||'-'||substr(t1.part_code,-8,2)|| '-'||substr(t1.part_code,-6,2)
+             	when instr(upper(t1.part_code),'L')>0 then '20'|| substr(substr(t1.part_code,instr(upper(t1.part_code),'L'),9),-6,2) || '-'|| substr(substr(t1.part_code,instr(upper(t1.part_code),'L'),9),-4,2)|| '-'||substr(substr(t1.part_code,instr(upper(t1.part_code),'L'),9),-2,2) 
+             	end 
+		) from T_MARKET_REPAIR_RECORD t1 
+           where (t1.part_code like '7%' or t1.part_code like '10%L%')
+           and t.part_code= t1.part_code  
+           and rownum = 1  
+	)
+	<if test="startTime != null and startTime != '' and endTime != null and endTime != ''" >
+		where t.finish_date BETWEEN to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss') AND to_date(#{endTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+	</if>
+</update>
+
+<!-- crm维修数据根据安装产品信息表，更新安装日期 -->   <!-- 该方法已经弃用，因为CEM已经给了安装日期，直接取CEM给的安装日期，不再去匹配安装工单的安装日期   liuwjg 2019年7月1日15:57:27-->
+<update id="updateInstallDateByCode" parameterType="com.peg.model.CommonVo" >
+	update T_MARKET_REPAIR_RECORD t set t.intall_date = (      
+		select max(ins.intall_date) from CRM_UNIT_INSTALL ins
+		where ins.customer_id = t.customer_id and ins.part_id = t.part_id
+	)
+	<if test="startTime != null and startTime != '' and endTime != null and endTime != ''" >
+		where t.finish_date BETWEEN to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss') AND to_date(#{endTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+	</if>
+</update>
+
+<!-- 对于crm导入的缺失机型类别，产品型号进行刷新（根据物料名称匹配mes） -->
+<update id="updateByPartNameForCRM" parameterType="com.peg.model.CommonVo" >
+	update T_MARKET_REPAIR_RECORD t set (t.part_number,t.part_name,t.part_type,t.product_type,t.product_family) = 
+	(
+		select p.part_number as part_number,p.description as part_name,up.product_type_s as part_type,up.mold_type_s as product_type,up.product_family_s as product_family
+		from part p,uda_part up
+		where up.object_key=p.part_key
+		and p.description = t.part_name
+		and rownum = 1   
+	) 
+	where t.part_name is not null and exists(select p.description from part p where t.part_name = p.description) 
+	<if test="startTime != null and startTime != '' and endTime != null and endTime != ''" >
+		and t.finish_date BETWEEN to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss') AND to_date(#{endTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+	</if>
+</update>
+<!-- 更新气源信息 -->
+<update id = "updateGas" parameterType = "com.peg.model.CommonVo">
+	update T_MARKET_REPAIR_RECORD t set(t.gas) = (select up.gas_s from part p,uda_part up where p.part_key = up.object_key(+) and p.part_number = t.part_number) where t.part_number is not null
+	<if test="startTime != null and startTime != '' and endTime != null and endTime != ''" >
+		and t.finish_date BETWEEN to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss') AND to_date(#{endTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+	</if>
+</update>
+  
+<!-- 导入MES数据 -->
+<delete id="deleteDownlineShipDataByTimes" parameterType="com.peg.model.CommonVo" >
+	delete from T_DOWNLINE_SHIP_RECORD tdsr
+  	where 1=1
+  	<if test="startTime != null and endTime != null" >
+		and tdsr.DOWNLINE_DATE BETWEEN to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss') AND to_date(#{endTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+  	</if>
+</delete>
+
+<!-- AND (instr(U.SERIAL_NUMBER,'L')<12 OR (instr(U.SERIAL_NUMBER,'L')=12 AND substr(U.SERIAL_NUMBER,7,3)<='008' )) -->
+<insert id="getDataFromMES" parameterType="com.peg.model.CommonVo" >
+	<![CDATA[	    
+		insert into T_DOWNLINE_SHIP_RECORD (FACTORY, AREA, PRODUCTLINE_NUMBER, PRODUCTLINE_NAME, PART_CODE, PART_NUMBER, 
+			PRODUCT_TYPE, PART_TYPE, PART_NAME, DOWNLINE_DATE, SHIP_DATE, LOCATION, LOCATION_CODE, product_family)
+			
+		SELECT PL.UDA_1,PL.UDA_2,PL.P_LINE_NAME,PL.DESCRIPTION,U.SERIAL_NUMBER,u.part_number, up.mold_type_s as product_type,
+			up.product_type_s AS part_type,p.description as partname,u.finished_time downline_time,
+		  	(case u.uda_0 when '已出库' then nvl(u.promised_time,u.Last_Modified_Time) else null end)  ship_time, so.destination_s,so.destination_id_s,up.product_family_s
+		FROM UNIT@MES_FPW_LINK U,WORK_ORDER_ITEMS@MES_FPW_LINK WOI,PRODUCTION_LINE PL,AT_STORAGEORDER@MES_FPW_LINK SO,PART P,uda_part up
+		WHERE U.ORDER_ITEM_KEY = WOI.ORDER_ITEM_KEY(+) 
+		AND WOI.PLANNED_LINE = PL.P_LINE_NAME(+)
+		AND U.UDA_6 = SO.STORAGE_NUMBER_S(+)
+		AND U.PART_NUMBER = P.PART_NUMBER(+)
+		AND P.Part_Key = up.object_key(+)
+		AND (U.SERIAL_NUMBER like '7%L%' or U.SERIAL_NUMBER like '10%L%')
+		AND p.description not like '%展示%'
+    	AND p.description not like '%空壳%'
+	]]>
+	<if test="startTime != null and endTime != null" >
+		and u.finished_time BETWEEN to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss') AND to_date(#{endTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+    </if>
+</insert>
+
+<!-- 删除条码重复的数据-->
+<delete id="deleteSameDownlineShip" parameterType="com.peg.model.CommonVo" >
+	delete from T_DOWNLINE_SHIP_RECORD t 
+		where t.part_code in (select t1.part_code from T_DOWNLINE_SHIP_RECORD t1 group by t1.part_code having count(t1.part_code) > 1) 
+		and t.id not in (select max(t2.id) from T_DOWNLINE_SHIP_RECORD t2 group by t2.part_code having count(t2.part_code)>1)
+		and t.part_code is not null
+</delete>
+  
+<!-- 更新MES时间 -->
+<update id="updateShipDateForMES" parameterType="com.peg.model.CommonVo" >
+	update t_downline_ship_record tdsr set tdsr.ship_date = 
+	( 
+		select (case u.uda_0 when '已出库' then u.promised_time else null end) ship_time from unit u 
+	  	where tdsr.part_code = u.SERIAL_NUMBER
+	  	and u.lifecycle='Production'
+	  	and rownum =1
+	)
+	where exists 
+	( 
+		select 1
+		from unit u1 
+		where tdsr.part_code = u1.SERIAL_NUMBER
+	)
+	and tdsr.ship_date is null
+	<if test="startTime != null and endTime != null" >
+		and tdsr.ship_date BETWEEN to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss') AND to_date(#{endTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+	</if>
+</update>
+
+<!-- 汇总维修信息 -->
+<delete id="deleteMarketRepairTotalByMonth" parameterType="com.peg.model.MarketRepairTotal" >
+	delete from T_MARKET_REPAIR_TOTAL_RECORD tmrtr where 1=1
+  	<if test="repairedMonth != null and repairedMonth != ''" >
+  		and tmrtr.REPAIRED_MONTH = #{repairedMonth,jdbcType=VARCHAR}
+  	</if>
+</delete>
+
+<!--维修汇总 不关联直接本表下线日期（解析条码）统计下线月-->
+<insert id="updateMarketRepairTotalByMonth" parameterType="com.peg.model.MarketRepairTotal" >
+insert into T_MARKET_REPAIR_TOTAL_RECORD tmrtr (tmrtr.PRODUCT_TYPE, tmrtr.DOWNLINE_MONTH, 
+    tmrtr.REPAIRED_MONTH, tmrtr.PART_TYPE, tmrtr.REGION, 
+        tmrtr.PRODUCTLINE_NUMBER, tmrtr.FAULT_TYPE_CODE, tmrtr.FAULT_REASON_CODE, 
+        tmrtr.REPAIRED_COUNT, tmrtr.is_over,tmrtr.product_family, tmrtr.install_month, under_warranty,gas,tmrtr.VOC_TYPE_KEY,tmrtr.is_consumed_part)
+  select tmrr.product_type as PRODUCT_TYPE, ISDATE(tmrr.downline_date) as DOWNLINE_MONTH,
+    to_char(tmrr.finish_date,'yyyy-mm') as REPAIRED_MONTH,
+    tmrr.part_type as PART_TYPE, tmrr.service_center AS REGION, tdsr.PRODUCTLINE_NUMBER AS PRODUCTLINE_NUMBER, 
+    tmrr.fault_type_code, tmrr.fault_reason_code, 
+    count(*) as REPAIRED_COUNT, tmrr.is_over as is_over,tmrr.product_family, to_char(tmrr.intall_date, 'yyyy-mm'), tmrr.under_warranty,up.gas_s,tmrr.voc_type_key,tmrr.is_consumed_part
+    from t_Market_Repair_Record tmrr,T_DOWNLINE_SHIP_RECORD tdsr,part p,uda_part up
+  where 1=1 and tmrr.description is null and tmrr.part_code = tdsr.part_code(+)
+  and tmrr.part_number = p.part_number(+)
+  and p.part_key = up.object_key(+)
+	<if test="repairedMonth != null and repairedMonth != ''" >
+		and to_char(tmrr.finish_date,'yyyy-mm') = #{repairedMonth,jdbcType=VARCHAR}
+	</if>
+	group by tmrr.product_type, ISDATE(tmrr.downline_date), to_char(tmrr.finish_date,'yyyy-mm'), tmrr.part_type, tmrr.service_center, tdsr.PRODUCTLINE_NUMBER,
+			tmrr.fault_type_code, tmrr.fault_reason_code, tmrr.is_over, tmrr.product_family, to_char(tmrr.intall_date, 'yyyy-mm'),tmrr.under_warranty,up.gas_s,tmrr.voc_type_key,tmrr.is_consumed_part
+</insert> 
+
+<insert id="deleteInstallRepair" parameterType="com.peg.model.MarketRepairTotal">
+	delete from T_INSTALL_REPAIR where 1 = 1
+	<if test="repairedMonth != null and repairedMonth != ''">
+		and REPAIR_MONTH = #{repairedMonth,jdbcType=VARCHAR}
+	</if>
+</insert>
+<!-- BY JiangFeng -->
+<!-- 更新维修安装表 -->
+<insert id="updateInstallRepair" parameterType="com.peg.model.MarketRepairTotal">
+	INSERT INTO T_INSTALL_REPAIR (PRODUCT_TYPE, PRODUCT_FAMILY, PART_TYPE, REGION, FAULT_TYPE_CODE, FAULT_REASON_CODE, IS_OVER, INSTALL_MONTH, REPAIR_MONTH, REPAIR_COUNT,DOWNLINE_TIME,INTERVAL_TIME,VOC_TYPE_KEY,GAS,IS_CONSUMED_PART)	
+	SELECT PRODUCT_TYPE, PRODUCT_FAMILY, PART_TYPE, RAW_SERVICE_CENTER, FAULT_TYPE_CODE, FAULT_REASON_CODE, IS_OVER, TO_CHAR(INTALL_DATE, 'yyyy-mm') INSTALL_DATE, 
+		TO_CHAR(FINISH_DATE, 'yyyy-mm') REPAIR_MONTH, COUNT(1),DOWNLINE_DATE,(case when FINISH_DATE-INTALL_DATE>1826 then -1 else round((FINISH_DATE-INTALL_DATE)/30) end )as INTERVAL_TIME,VOC_TYPE_KEY,GAS,IS_CONSUMED_PART
+	FROM T_MARKET_REPAIR_RECORD WHERE 1 = 1
+	<if test="repairedMonth != null and repairedMonth != ''">
+		and to_char(FINISH_DATE,'yyyy-mm') = #{repairedMonth,jdbcType=VARCHAR}
+	</if>
+    GROUP BY PRODUCT_TYPE, PRODUCT_FAMILY, PART_TYPE, RAW_SERVICE_CENTER, FAULT_TYPE_CODE, FAULT_REASON_CODE, IS_OVER, TO_CHAR(INTALL_DATE, 'yyyy-mm'), TO_CHAR(FINISH_DATE, 'yyyy-mm'),DOWNLINE_DATE,(case when FINISH_DATE-INTALL_DATE>1826 then -1 else round((FINISH_DATE-INTALL_DATE)/30) end ),VOC_TYPE_KEY,GAS,IS_CONSUMED_PART
+	</insert>
+
+<!-- 下线汇总 -->
+<delete id="deleteDownlineTotalByMonth" parameterType="com.peg.model.DownLineTotal" >
+    delete from T_DOWNLINE_TOTAL_RECORD tdtr where 1=1 
+	<if test="statisticsMonth != null" >
+    	and tdtr.STATISTICS_MONTH = #{statisticsMonth,jdbcType=VARCHAR}
+    </if>
+</delete>
+
+<insert id="updateDownlineTotalByMonth" parameterType="com.peg.model.DownLineTotal" >
+	insert into T_DOWNLINE_TOTAL_RECORD (PRODUCT_TYPE, STATISTICS_MONTH, PART_TYPE, REGION, PRODUCTLINE_NUMBER, DOWNLINE_COUNT,product_family,GAS)
+	
+	select tdsr.PRODUCT_TYPE, to_char(tdsr.DOWNLINE_DATE,'yyyy-mm') as STATISTICS_MONTH, tdsr.PART_TYPE, 
+		tlr.merge_region, tdsr.PRODUCTLINE_NUMBER,count(*) as DOWNLINE_COUNT,tdsr.product_family,up.GAS_S
+	from T_DOWNLINE_SHIP_RECORD tdsr, T_LOCATION_REGION tlr,part p,uda_part up
+	where 1=1 and tdsr.description is null
+	<if test="statisticsMonth != null" >
+		and to_char(tdsr.DOWNLINE_DATE,'yyyy-mm') = #{statisticsMonth,jdbcType=VARCHAR}
+	</if>
+	and tdsr.LOCATION_CODE = tlr.LOCATION_CODE(+)
+	and tdsr.part_number = p.part_number(+)
+	and p.part_key = up.object_key
+	group by tdsr.PRODUCT_TYPE,tdsr.product_family,to_char(tdsr.DOWNLINE_DATE,'yyyy-mm'), tdsr.PART_TYPE, tlr.merge_region, tdsr.PRODUCTLINE_NUMBER,up.GAS_S
+</insert>
+  
+<!-- 发货汇总 -->
+<delete id="deleteShipTotalByMonth" parameterType="com.peg.model.ShipTotal" >
+	delete from T_SHIP_TOTAL_RECORD tstr where 1=1
+	<if test="statisticsMonth != null" >
+    	and tstr.STATISTICS_MONTH = #{statisticsMonth,jdbcType=VARCHAR}
+    </if>
+</delete>
+
+<insert id="updateShipTotalByMonth" parameterType="com.peg.model.ShipTotal" >
+	insert into T_SHIP_TOTAL_RECORD (PRODUCT_TYPE, STATISTICS_MONTH, PART_TYPE, REGION, PRODUCTLINE_NUMBER,SHIP_COUNT,product_family)
+	
+	select tdsr.PRODUCT_TYPE, to_char(tdsr.SHIP_DATE,'yyyy-mm') as STATISTICS_MONTH, tdsr.PART_TYPE, 
+		tlr.merge_region, tdsr.PRODUCTLINE_NUMBER,count(*) as SHIP_COUNT,tdsr.product_family 
+	from T_DOWNLINE_SHIP_RECORD tdsr, T_LOCATION_REGION tlr
+	where 1=1 and tdsr.description is null
+	<if test="statisticsMonth != null" >
+		and to_char(tdsr.SHIP_DATE,'yyyy-mm') = #{statisticsMonth,jdbcType=VARCHAR}
+	</if>
+	and tdsr.LOCATION_CODE = tlr.LOCATION_CODE(+)
+	group by tdsr.PRODUCT_TYPE, tdsr.product_family ,to_char(tdsr.SHIP_DATE,'yyyy-mm'), tdsr.PART_TYPE, tlr.merge_region, tdsr.PRODUCTLINE_NUMBER
+</insert>
+
+<!-- 安装汇总 -->
+<delete id="deleteInstallTotalByMonth">
+	<![CDATA[ DELETE FROM T_INSTALL WHERE 1 = 1 ]]>
+	<if test="startDate != null and endDate != null" >
+		AND INSTALL_MONTH BETWEEN #{startDate,jdbcType=VARCHAR} AND #{endDate,jdbcType=VARCHAR}
+	</if>
+</delete>
+
+<insert id="updateInstallTotalByMonth">
+	<![CDATA[
+	INSERT INTO T_INSTALL (SERVICE_ORDER, SERIAL_NUMBER, PRODUCT_TYPE, PART_NUMBER, PART_FAMILY, PART_TYPE, REGION, INSTALL_MONTH, CUSTOMER_ID, PART_ID, PART_NAME)
+  	SELECT distinct C.SERVICE_ORDER, C.SERIAL_NUMBER, U.MOLD_TYPE_S, T1.PART_NUMBER, U.PRODUCT_FAMILY_S, U.PRODUCT_TYPE_S, C.REGION, TO_CHAR(C.INTALL_DATE, 'yyyy-mm'), C.CUSTOMER_ID, C.PART_ID, C.DESCRIPTION FROM CRM_UNIT_INSTALL C,
+  	(SELECT P1.PART_KEY, P1.PART_NUMBER, P1.DESCRIPTION FROM PART P1 INNER JOIN (SELECT MIN(P2.PART_NUMBER) AS T_PART_NUMBER FROM PART P2 GROUP BY DESCRIPTION) T ON P1.PART_NUMBER = T.T_PART_NUMBER) T1, UDA_PART U
+  	WHERE C.DESCRIPTION = T1.DESCRIPTION(+) AND T1.PART_KEY = U.OBJECT_KEY(+)
+	]]>
+	<if test="startDate != null and endDate != null" >
+		AND TO_CHAR(INTALL_DATE, 'yyyy-mm') BETWEEN #{startDate,jdbcType=VARCHAR} AND #{endDate,jdbcType=VARCHAR}
+	</if>
+</insert>
+
+<update id="updateInstallDownlineTime">
+	<![CDATA[
+		UPDATE T_INSTALL TI SET DOWNLINE_TIME = (SELECT TO_CHAR(DOWNLINE_DATE, 'yyyy-mm-dd') FROM T_DOWNLINE_SHIP_RECORD TD WHERE TI.SERIAL_NUMBER = TD.PART_CODE) WHERE TI.DOWNLINE_TIME IS NULL
+	]]>
+	<if test="startDate != null and endDate != null" >
+		AND INSTALL_MONTH BETWEEN #{startDate,jdbcType=VARCHAR} AND #{endDate,jdbcType=VARCHAR}
+	</if>
+</update>
+
+<delete id="deleteInstallTotalByIdentity">
+	<![CDATA[
+		delete from T_INSTALL T1 where (T1.SERVICE_ORDER, T1.CUSTOMER_ID) in
+		(SELECT T2.SERVICE_ORDER, T2.CUSTOMER_ID FROM T_INSTALL T2 GROUP BY T2.SERVICE_ORDER, T2.CUSTOMER_ID HAVING COUNT(*) > 1)
+		AND ROWID NOT IN (SELECT MIN(ROWID) FROM T_INSTALL T3 GROUP BY T3.SERVICE_ORDER, T3.CUSTOMER_ID HAVING COUNT(*) > 1)
+	]]>
+</delete>
+
+<delete id="deleteInstallTotalBySerialNumber">
+	<![CDATA[
+		DELETE FROM T_INSTALL T1 WHERE T1.SERIAL_NUMBER IN
+		(SELECT T2.SERIAL_NUMBER FROM T_INSTALL T2 GROUP BY T2.SERIAL_NUMBER HAVING COUNT(*) > 1)
+		AND ROWID NOT IN (SELECT MIN(ROWID) FROM T_INSTALL T3 GROUP BY T3.SERIAL_NUMBER HAVING COUNT(*) > 1)
+	]]>
+</delete>
+
+<!-- 安装信息汇总 (按安装月份删除和插入)-->
+<!-- 
+<delete id="deleteInstallTotalByMonth">
+	delete from t_install_total_record t where 1=1
+   	<if test="startDate != null and endDate != null" >
+ 		and t.install_month BETWEEN #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR}
+   	</if>
+</delete>
+-->
+
+<!-- 
+<insert id="updateInstallTotalByMonth" >
+  <![CDATA[
+       insert into t_install_total_record (
+               product_type,install_month,install_count,repair_month ,repair_count ,part_type ,region ,
+               fault_type_code ,fault_reason_code, is_over,valid,part_family
+        )
+        select t1.repPt,t1.intall_month,t2.ins_num,t1.repair_month,t1.repair_num,t1.part_type,t1.service_center,
+         t1.fault_type_code,t1.fault_reason_code,t1.is_over,t1.valid,t1.product_family
+         from (
+        select ins1.product_type as insPt,ins1.product_type as repPt,to_char(ins1.intall_date,'yyyy-mm') as intall_month,to_char(rep1.finish_date,'yyyy-mm') as repair_month,
+                ins1.part_type,rep1.service_center,rep1.fault_reason_code,rep1.fault_type_code,count(1) as repair_num ,rep1.is_over,
+               (case when ins1.intall_date < rep1.finish_date then '是' else '否' end) as valid,rep1.product_family
+        from crm_unit_install ins1,t_market_repair_record rep1 
+        where ins1.serial_number = rep1.part_code(+)
+        and ins1.serial_number like '7%' 
+        and rep1.description is null
+        group by ins1.product_type,ins1.product_type,to_char(ins1.intall_date,'yyyy-mm'),to_char(rep1.finish_date,'yyyy-mm'),
+              ins1.part_type,rep1.service_center,rep1.fault_reason_code,rep1.fault_type_code, rep1.is_over,
+              (case when ins1.intall_date < rep1.finish_date then '是' else '否' end),rep1.product_family
+        ) t1 ,  
+        (      
+        select ins2.product_type,ins2.part_type,count(1) as ins_num,to_char(intall_date,'yyyy-mm') as intall_month
+        from crm_unit_install ins2  
+        where ins2.serial_number like '7%' 
+        group by product_type,ins2.part_type,to_char(intall_date,'yyyy-mm')
+        ) t2 where t1.intall_month = t2.intall_month and t1.insPt = t2.product_type and t1.part_type=t2.part_type
+      ]]>
+   <if test="startDate != null and endDate != null" > 
+     and t1.intall_month BETWEEN #{startDate,jdbcType=VARCHAR} and #{endDate,jdbcType=VARCHAR}
+  </if> 
+  </insert>
+ -->
+<!-- 导出CRM数据，采用新方法导出，此方法弃用 -->
+<!-- 
+<insert id="getDataFromCRM" parameterType="com.peg.model.CommonVo" >
+    <![CDATA[	    
+	INSERT INTO T_MARKET_REPAIR_RECORD(raw_service_center,order_number,part_code,part_name,invoice_date,finish_date,service_site,
+	service_engineer,settlement_desc,home_phone,cellphone,record_time,buy_type,fault_type_code,fault_type_name,fault_reason_code,
+	fault_reason_name,fault_desc,fault_current_desc,info_desc,entering_time,part_number,part_type,product_family,product_type,is_over,is_settlement,customer_id,part_id
+	) 
+	SELECT service_center,repair_order_number,serial_number,part_description,invoice_time,complete_time,service_point,
+	  service_person,settlement,telephone,mobilephone,creation_time,buy_the_way,defect_type,defect_comment,defect_code,
+	  defect_reason,defect_description,defect_local_description,detail_description,entering_time,part_number,part_type,
+	  product_family,product_type,(case when ((to_date(crc.complete_time)-to_date(crc.invoice_time))<=365 and crc.invoice_time is not null and crc.is_settlement='1' and  substr(crc.settlement,-2,2)='免费') then '否' else '是' end) as is_over,is_settlement,customer_id,part_id 
+	FROM CRM_REPAIR_CONTENT crc
+	WHERE 1=1
+	]]>
+	<if test="startTime != null and endTime != null" >
+		and crc.complete_time BETWEEN to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss') AND to_date(#{endTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+     </if>
+  </insert>
+ -->
+<!-- 对于crm导入的缺失机型类别，产品型号进行刷新（根据mes解析主机条码匹配mes），因主机条码解析不准确，此方法弃用 -->
+<!-- 
+<update id="updateByPartCodeForCRM" parameterType="com.peg.model.CommonVo" >
+	update T_MARKET_REPAIR_RECORD t set (t.part_number,t.part_name,t.part_type,t.product_type,t.product_family) = 
+	(
+		select p.part_number as part_number,p.description as part_name,up.product_type_s as part_type,up.mold_type_s as product_type,up.product_family_s as product_family
+		from part p,uda_part up
+		where up.object_key=p.part_key 
+		and p.part_number = substr(t.part_code,0,instr(upper(t.part_code),'L')-1)
+		and rownum = 1     
+	) where (t.part_number is null or t.part_type is null or t.product_type is null)
+		and upper(t.part_code) like '%L%'
+		and not exists(select p.description from part p where t.part_name = p.description)  
+      	<if test="startTime != null and endTime != null" >
+			and t.finish_date BETWEEN to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss') AND to_date(#{endTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+	    </if>
+</update>
+ --> 
+ <!--维修汇总 关联下线发货表 条码匹配获取下线月 -->
+  <!-- <insert id="updateMarketRepairTotalByMonth" parameterType="com.peg.model.MarketRepairTotal" >
+	  insert into T_MARKET_REPAIR_TOTAL_RECORD tmrtr (tmrtr.PRODUCT_TYPE, tmrtr.DOWNLINE_MONTH, 
+      tmrtr.REPAIRED_MONTH, tmrtr.PART_TYPE, tmrtr.REGION, 
+      tmrtr.PRODUCTLINE_NUMBER, tmrtr.FAULT_TYPE_CODE, tmrtr.FAULT_REASON_CODE, 
+      tmrtr.REPAIRED_COUNT, tmrtr.is_over)
+  select tmrr.product_type as PRODUCT_TYPE, to_char(tdsr.DOWNLINE_DATE,'yyyy-mm') as DOWNLINE_MONTH,
+         to_char(tmrr.finish_date,'yyyy-mm') as REPAIRED_MONTH,tmrr.part_type as PART_TYPE, 
+         tmrr.service_center AS REGION, tdsr.PRODUCTLINE_NUMBER AS PRODUCTLINE_NUMBER, 
+         tmrr.fault_type_code, tmrr.fault_reason_code, 
+         count(*) as REPAIRED_COUNT, tmrr.is_over as is_over
+  from t_Market_Repair_Record tmrr,T_DOWNLINE_SHIP_RECORD tdsr
+  where 1=1
+	<if test="repairedMonth != null" >
+      and to_char(tmrr.finish_date,'yyyy-mm') = #{repairedMonth,jdbcType=VARCHAR}
+     </if>
+	  and tmrr.part_code = tdsr.part_code(+)
+  	group by tmrr.product_type,tmrr.part_type,to_char(tdsr.DOWNLINE_DATE,'yyyy-mm'),tdsr.PRODUCTLINE_NUMBER,
+           tmrr.service_center, tmrr.fault_type_code, tmrr.fault_reason_code, 
+           to_char(tmrr.finish_date,'yyyy-mm'), tmrr.is_over
+  </insert> -->
+</mapper>

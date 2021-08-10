@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.peg.dao.SupplierRefMapper">
+<resultMap id="BaseResultMap" type="com.peg.model.SupplierRef">
+	<id column="ID" property="id" jdbcType="DECIMAL" />
+	<result column="SUPPLIER_NUMBER" property="supplierNumber" jdbcType="VARCHAR" />
+	<result column="SUPPLIER_NUMBER_N" property="supplierNumberN" jdbcType="VARCHAR" />
+	<result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR" />
+	<result column="SUPPLIER_NAME_N" property="supplierNameN" jdbcType="VARCHAR" />
+	<result column="SUPPLIER_SHORT_NAME" property="supplierShortName" jdbcType="VARCHAR" />
+	<result column="PART_NUMBER" property="partNumber" jdbcType="VARCHAR" />
+	<result column="PART_NAME" property="partName" jdbcType="VARCHAR" />
+	<result column="SUPPLIER_CODE" property="supplierCode" jdbcType="VARCHAR" />
+</resultMap>
+
+<select id="findPage" resultMap="BaseResultMap">
+		SELECT ID, SUPPLIER_NUMBER, SUPPLIER_NUMBER_N, SUPPLIER_NAME, SUPPLIER_NAME_N, SUPPLIER_SHORT_NAME FROM T_SUPPLIER_REF
+		where 1=1
+		<if test="hashMap.supplierNumberN != null">
+		 and SUPPLIER_NUMBER_N like '%${hashMap.supplierNumberN}%'
+		</if>
+		<if test="hashMap.supplierNameN!= null">
+		 and SUPPLIER_NAME_N like '%${hashMap.supplierNameN}%'
+		</if>
+</select>
+
+<select id="findAll" resultMap="BaseResultMap" parameterType="com.peg.model.SupplierRef">
+	<![CDATA[
+		SELECT SUPPLIER_NUMBER, SUPPLIER_NUMBER_N, SUPPLIER_NAME, SUPPLIER_NAME_N, SUPPLIER_SHORT_NAME FROM T_SUPPLIER_REF
+	]]>
+</select>
+
+<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+	<![CDATA[
+		SELECT ID, SUPPLIER_NUMBER, SUPPLIER_NUMBER_N, SUPPLIER_NAME, SUPPLIER_NAME_N, SUPPLIER_SHORT_NAME FROM T_SUPPLIER_REF where ID = #{id,jdbcType=DECIMAL}
+	]]>
+</select>
+
+<insert id="insert" parameterType="com.peg.model.SupplierRef">
+	<![CDATA[
+		INSERT INTO T_SUPPLIER_REF(SUPPLIER_NUMBER, SUPPLIER_NUMBER_N, SUPPLIER_NAME, SUPPLIER_NAME_N, SUPPLIER_SHORT_NAME)
+		VALUES(#{supplierNumber, jdbcType=VARCHAR}, #{supplierNumberN, jdbcType=VARCHAR}, #{supplierName, jdbcType=VARCHAR},
+			#{supplierNameN, jdbcType=VARCHAR}, #{supplierShortName, jdbcType=VARCHAR})
+	]]>
+</insert>
+
+<update id="update" parameterType="com.peg.model.SupplierRef">
+	<![CDATA[
+		UPDATE T_SUPPLIER_REF SET SUPPLIER_NUMBER = #{supplierNumber, jdbcType=VARCHAR}, SUPPLIER_NUMBER_N = #{supplierNumberN, jdbcType=VARCHAR},
+			SUPPLIER_NAME = #{supplierName, jdbcType=VARCHAR}, SUPPLIER_NAME_N = #{supplierNameN, jdbcType=VARCHAR}, SUPPLIER_SHORT_NAME = #{supplierShortName, jdbcType=VARCHAR}
+		WHERE ID = #{id, jdbcType=DECIMAL}
+	]]>
+</update>
+
+<delete id="delete" parameterType="com.peg.model.SupplierRef"> 
+	<![CDATA[
+		DELETE FROM T_SUPPLIER_REF WHERE ID = #{id, jdbcType=DECIMAL}
+	]]>
+</delete>
+
+<select id="findSupplierPartPage" resultMap="BaseResultMap">
+		SELECT ID, SUPPLIER_NUMBER, SUPPLIER_NAME, SUPPLIER_NUMBER_N, PART_NUMBER, PART_NAME, SUPPLIER_CODE, SUPPLIER_SHORT_NAME FROM T_SUPPLIER_PART
+	    <where>
+		   <if test="hashMap.partNumber != null">
+		      PART_NUMBER like '%${hashMap.partNumber}%'
+		   </if>
+		   <if test="hashMap.supplierNumberN != null">
+		      and SUPPLIER_NUMBER_N like '%${hashMap.supplierNumberN}%'
+		   </if>
+	    </where>
+	    ORDER BY PART_NUMBER, SUPPLIER_CODE
+</select>
+
+<select id="findSupplierPartAll" resultMap="BaseResultMap" parameterType="com.peg.model.SupplierRef">
+	<![CDATA[
+		SELECT ID, SUPPLIER_NUMBER, SUPPLIER_NAME, SUPPLIER_NUMBER_N, PART_NUMBER, PART_NAME, SUPPLIER_CODE, SUPPLIER_SHORT_NAME FROM T_SUPPLIER_PART
+	]]>
+</select>
+
+<select id="selectSupplierPartByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+	<![CDATA[
+		SELECT ID, SUPPLIER_NUMBER, SUPPLIER_NAME, SUPPLIER_NUMBER_N, PART_NUMBER, PART_NAME, SUPPLIER_CODE FROM T_SUPPLIER_PART where ID = #{id,jdbcType=DECIMAL}
+	]]>
+</select>
+
+<insert id="insertSupplierPart" parameterType="com.peg.model.SupplierRef">
+	<![CDATA[
+		INSERT INTO T_SUPPLIER_PART(SUPPLIER_NUMBER, SUPPLIER_NAME, SUPPLIER_NUMBER_N, PART_NUMBER, PART_NAME, SUPPLIER_CODE)
+		VALUES(#{supplierNumber, jdbcType=VARCHAR}, #{supplierName, jdbcType=VARCHAR}, #{supplierNumberN, jdbcType=VARCHAR},
+			#{partNumber, jdbcType=VARCHAR}, #{partName, jdbcType=VARCHAR}, #{supplierCode, jdbcType=VARCHAR})
+	]]>
+</insert>
+
+<update id="updateSupplierPart" parameterType="com.peg.model.SupplierRef">
+	<![CDATA[
+		UPDATE T_SUPPLIER_PART SET SUPPLIER_NUMBER = #{supplierNumber, jdbcType=VARCHAR}, SUPPLIER_NUMBER_N = #{supplierNumberN, jdbcType=VARCHAR},
+			SUPPLIER_NAME = #{supplierName, jdbcType=VARCHAR}, PART_NUMBER = #{partNumber, jdbcType=VARCHAR}, PART_NAME = #{partName, jdbcType=VARCHAR}, SUPPLIER_CODE = #{supplierCode, jdbcType=VARCHAR}
+		WHERE ID = #{id, jdbcType=DECIMAL}
+	]]>
+</update>
+
+<delete id="deleteSupplierPart" parameterType="com.peg.model.SupplierRef"> 
+	<![CDATA[
+		DELETE FROM T_SUPPLIER_PART WHERE ID = #{id, jdbcType=DECIMAL}
+	]]>
+</delete>
+</mapper>

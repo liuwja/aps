@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.part.MCPartMapper">
+<resultMap id="BaseResultMap" type="com.peg.model.part.MCPart">
+	<id column="ID" property="id" jdbcType="DECIMAL" />
+	<result column="mes_part_number" property="mesPartNumber" jdbcType="VARCHAR" />
+	<result column="mes_part_name" property="mesPartName" jdbcType="VARCHAR" />
+	<result column="crm_part_number" property="crmPartNumber" jdbcType="VARCHAR" />
+	<result column="crm_part_name" property="crmPartName" jdbcType="VARCHAR" />
+</resultMap>
+
+<select id="findAllPage" resultMap="BaseResultMap">
+	SELECT ID, mes_part_number, mes_part_name, crm_part_number, crm_part_name FROM T_MES_PART where 1=1
+	<if test="hashMap.mes_part_number != null">
+		and MES_PART_NUMBER like '%${hashMap.mes_part_number}%'
+	</if>
+	<if test="hashMap.crm_part_number!= null">
+		and CRM_PART_NUMBER like '%${hashMap.crm_part_number}%'
+	</if>
+</select>
+
+<select id="findAll" resultMap="BaseResultMap">
+	SELECT ID, mes_part_number, mes_part_name, crm_part_number, crm_part_name FROM T_MES_PART where 1=1
+	<if test="hashMap.mes_part_number != null">
+		and MES_PART_NUMBER like '%${hashMap.mes_part_number}%'
+	</if>
+	<if test="hashMap.crm_part_number!= null">
+		and CRM_PART_NUMBER like '%${hashMap.crm_part_number}%'
+	</if>
+</select>
+
+<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+	<![CDATA[
+		SELECT ID, mes_part_number, mes_part_name, crm_part_number, crm_part_name FROM T_MES_PART where ID = #{id,jdbcType=DECIMAL}
+	]]>
+</select>
+
+<insert id="insert" parameterType="com.peg.model.part.MCPart">
+	<![CDATA[
+		INSERT INTO T_MES_PART(mes_part_number, mes_part_name, crm_part_number, crm_part_name)
+		VALUES(#{mesPartNumber, jdbcType=VARCHAR}, #{mesPartName, jdbcType=VARCHAR}, #{crmPartNumber, jdbcType=VARCHAR}, #{crmPartName, jdbcType=VARCHAR})
+	]]>
+</insert>
+
+<update id="update" parameterType="com.peg.model.part.MCPart">
+	<![CDATA[
+		UPDATE T_MES_PART SET mes_part_number = #{mesPartNumber, jdbcType=VARCHAR}, mes_part_name = #{mesPartName, jdbcType=VARCHAR}, crm_part_number = #{crmPartNumber, jdbcType=VARCHAR}, crm_part_name = #{crmPartName, jdbcType=VARCHAR}
+		WHERE ID = #{id, jdbcType=DECIMAL}
+	]]>
+</update>
+
+<delete id="delete" parameterType="com.peg.model.part.MCPart"> 
+	<![CDATA[
+		DELETE FROM T_MES_PART WHERE ID = #{id, jdbcType=DECIMAL}
+	]]>
+</delete>
+</mapper>

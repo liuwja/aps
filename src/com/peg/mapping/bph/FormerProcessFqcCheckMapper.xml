@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.FormerProcessFqcCheckMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.FormerProcessFqcCheck" >
+    <id column="ATR_KEY" property="atrKey" jdbcType="DECIMAL" />
+    <id column="SITE_NUM" property="siteNum" jdbcType="DECIMAL" />
+    <result column="ATR_NAME" property="atrName" jdbcType="VARCHAR" />
+    <result column="PURGE_STATUS" property="purgeStatus" jdbcType="DECIMAL" />
+    <result column="CREATION_TIME" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="CREATION_TIME_U" property="creationTimeU" jdbcType="TIMESTAMP" />
+    <result column="CREATION_TIME_Z" property="creationTimeZ" jdbcType="VARCHAR" />
+    <result column="LAST_MODIFIED_TIME" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME_U" property="lastModifiedTimeU" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME_Z" property="lastModifiedTimeZ" jdbcType="VARCHAR" />
+    <result column="XFR_INSERT_PID" property="xfrInsertPid" jdbcType="DECIMAL" />
+    <result column="XFR_UPDATE_PID" property="xfrUpdatePid" jdbcType="DECIMAL" />
+    <result column="TRX_ID" property="trxId" jdbcType="CHAR" />
+    <result column="PARENT_KEY" property="parentKey" jdbcType="DECIMAL" />
+    <result column="AREA_S" property="areaS" jdbcType="VARCHAR" />
+    <result column="CHECK_RESULT_S" property="checkResultS" jdbcType="VARCHAR" />
+    <result column="DATE_T" property="dateT" jdbcType="TIMESTAMP" />
+    <result column="DATE_U" property="dateU" jdbcType="TIMESTAMP" />
+    <result column="DATE_Z" property="dateZ" jdbcType="VARCHAR" />
+    <result column="DEFECT_S" property="defectS" jdbcType="VARCHAR" />
+    <result column="DEFECT_QTY_I" property="defectQtyI" jdbcType="DECIMAL" />
+    <result column="FACTORY_S" property="factoryS" jdbcType="VARCHAR" />
+    <result column="GROUP1_S" property="group1S" jdbcType="VARCHAR" />
+    <result column="GROUP2_S" property="group2S" jdbcType="VARCHAR" />
+    <result column="GROUP3_S" property="group3S" jdbcType="VARCHAR" />
+    <result column="GROUP_S" property="groupS" jdbcType="VARCHAR" />
+    <result column="ITEM_NAME_S" property="itemNameS" jdbcType="VARCHAR" />
+    <result column="ITEM_NUMBER_S" property="itemNumberS" jdbcType="VARCHAR" />
+    <result column="LINE_S" property="lineS" jdbcType="VARCHAR" />
+    <result column="METHOD_S" property="methodS" jdbcType="VARCHAR" />
+    <result column="ORDER_NUMBER_S" property="orderNumberS" jdbcType="VARCHAR" />
+    <result column="RECORD_MAN_S" property="recordManS" jdbcType="VARCHAR" />
+    <result column="SIMPLE_QTY_I" property="simpleQtyI" jdbcType="DECIMAL" />
+    <result column="TOTAL_QTY_I" property="totalQtyI" jdbcType="DECIMAL" />
+    <result column="TRACKING_NUMBER_S" property="trackingNumberS" jdbcType="VARCHAR" />
+    <result column="TYPE_S" property="typeS" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ATR_KEY, SITE_NUM, ATR_NAME, PURGE_STATUS, CREATION_TIME, CREATION_TIME_U, CREATION_TIME_Z, 
+    LAST_MODIFIED_TIME, LAST_MODIFIED_TIME_U, LAST_MODIFIED_TIME_Z, XFR_INSERT_PID, XFR_UPDATE_PID, 
+    TRX_ID, PARENT_KEY, AREA_S, CHECK_RESULT_S, DATE_T, DATE_U, DATE_Z, DEFECT_S, DEFECT_QTY_I, 
+    FACTORY_S, GROUP1_S, GROUP2_S, GROUP3_S, GROUP_S, ITEM_NAME_S, ITEM_NUMBER_S, LINE_S, 
+    METHOD_S, ORDER_NUMBER_S, RECORD_MAN_S, SIMPLE_QTY_I, TOTAL_QTY_I, TRACKING_NUMBER_S, 
+    TYPE_S
+  </sql>
+   <select id="getFormerProcessAllByPage" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from at_FormerProcessFqcCheck
+    <where>
+       <if test="hashMap.startTime != null and hashMap.endTime !=null">
+       
+             date_t BETWEEN #{hashMap.startTime,jdbcType=TIMESTAMP} and  #{hashMap.endTime,jdbcType=TIMESTAMP}
+ 
+       </if>
+       <if test="hashMap.factoryS != null">
+           and FACTORY_S  like '%${hashMap.factoryS}%'
+       </if> 
+       <if test="hashMap.areaS != null">
+        and   AREA_S  like '%${hashMap.areaS}%'  
+       </if> 
+       <if test="hashMap.group!= null">
+         and   ( GROUP1_S  like '%${hashMap.group}%' or GROUP2_S  like '%${hashMap.group}%' or GROUP3_S  like '%${hashMap.group}%')
+       </if> 
+       <if test="hashMap.groupS!= null">
+         and   substr(group_s,0,instr(group_s,'_',1)-1)  like '%${hashMap.groupS}%' 
+       </if> 
+        <if test="hashMap.typeS != null">
+         and   TYPE_S  like '%${hashMap.typeS}%'
+       </if> 
+       <if test="hashMap.itemNameS!= null">
+         and   ITEM_NAME_S  like '%${hashMap.itemNameS}%'
+       </if>
+       <if test="hashMap.defectS!= null">
+         and   DEFECT_S  like '%${hashMap.defectS}%'
+       </if>
+       <if test="hashMap.methodS!= null">
+         and   METHOD_S  like '%${hashMap.methodS}%'
+       </if>
+        <if test="hashMap.checkResultS!= null">
+         and   CHECK_RESULT_S  like '%${hashMap.checkResultS}%'
+       </if>
+        
+    </where>
+    order by date_t DESC
+  </select>
+  
+  <select id="getFqcCheckList" resultMap="BaseResultMap" parameterType="com.peg.model.bph.FormerProcessFqcCheck">
+    select 
+    <include refid="Base_Column_List" />
+    from at_FormerProcessFqcCheck
+    <where>
+       <if test="startTime != null and endTime !=null">
+       
+             date_t BETWEEN #{startTime,jdbcType=TIMESTAMP} and  #{endTime,jdbcType=TIMESTAMP}
+ 
+       </if>
+       <if test="factoryS != null and factoryS !=''">
+           and FACTORY_S  = #{factoryS}
+       </if> 
+       <if test="areaS != null and areaS != ''">
+         and   AREA_S  like #{areaS}
+       </if> 
+       <if test="group!= null and group!=''">
+         and   GROUP1_S  like #{group} or GROUP2_S  like #{group} or GROUP3_S  like #{group}
+       </if> 
+       <if test="groupS!= null and groupS!=''">
+         and   substr(group_s,0,instr(group_s,'_',1)-1)  like #{groupS}
+       </if> 
+        <if test="typeS != null and typeS !=''">
+         and   TYPE_S  like #{hashMap.typeS}
+       </if> 
+       <if test="itemNameS!= null and itemNameS!=''">
+         and   ITEM_NAME_S  like #{itemNameS}
+       </if>
+       <if test="defectS!= null and defectS!=''">
+         and   DEFECT_S  like #{defectS}
+       </if>
+       <if test="methodS!= null and methodS!=''">
+         and   METHOD_S  like #{methodS}
+       </if>
+        <if test="checkResultS!= null and checkResultS!= ''">
+         and   CHECK_RESULT_S  like #{checkResultS}
+       </if> 
+    </where>
+    order by date_t DESC
+  </select>
+  
+</mapper>

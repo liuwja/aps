@@ -1,0 +1,16 @@
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../config/ehcache.xsd">
+	<diskStore path="java.io.tmpdir" />
+	<defaultCache maxElementsInMemory="10000" eternal="true"
+		timeToIdleSeconds="1800" timeToLiveSeconds="3600" overflowToDisk="true"
+		diskPersistent="false" diskExpiryThreadIntervalSeconds="120"
+		memoryStoreEvictionPolicy="LRU" />
+
+	<cache name="shiro-activeSessionCache" maxElementsInMemory="10000"
+		eternal="true" overflowToDisk="true" diskPersistent="true"
+		diskExpiryThreadIntervalSeconds="600" />
+
+	<cache name="shiro.authorizationCache" maxElementsInMemory="100"
+		eternal="false" timeToLiveSeconds="600" overflowToDisk="false" />
+
+</ehcache>

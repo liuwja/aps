@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.performance.EditReasonMapperA" >
+  <resultMap id="BaseResultMap" type="com.peg.model.performance.EditReason" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="FACTORYNUMBER" property="factoryNumber" jdbcType="VARCHAR" />
+    <result column="FACTORYNAME" property="factoryName" jdbcType="VARCHAR" />
+    <result column="DEPARTMENTNUMBER" property="departmentNumber" jdbcType="VARCHAR" />
+    <result column="DEPARTMENTNAME" property="departmentName" jdbcType="VARCHAR" />
+    <result column="PERFORMANCETARGETCLASS" property="performanceTargetClass" jdbcType="VARCHAR" />
+    <result column="PERFORMANCETYPE" property="performanceType" jdbcType="VARCHAR" />
+    <result column="INDEXCONTENT" property="indexContent" jdbcType="VARCHAR" />
+    <result column="INDEXTYPE" property="indexType" jdbcType="VARCHAR" />
+    <result column="WEIGHT" property="weight" jdbcType="VARCHAR" />
+    <result column="COMPANY" property="company" jdbcType="VARCHAR" />
+    <result column="UPDATEUSER" property="updateUser" jdbcType="VARCHAR" />
+    <result column="UPDATETIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATEREASON" property="updateReason" jdbcType="VARCHAR" />
+    <result column="UPDATETYPE" property="updateType" jdbcType="VARCHAR" />
+    <result column="OPERATORMODULE" property="operatorModule" jdbcType="VARCHAR" />
+    <result column="UPDATECONTENT" property="updateContent" jdbcType="VARCHAR" />
+    <result column="CREATETIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="CREATEUSER" property="createUser" jdbcType="VARCHAR" />
+    <result column="COLUMN1" property="column1" jdbcType="VARCHAR" />
+    <result column="COLUMN2" property="column2" jdbcType="VARCHAR" />
+    <result column="COLUMN3" property="column3" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID,FACTORYNUMBER,FACTORYNAME,DEPARTMENTNUMBER,DEPARTMENTNAME,PERFORMANCETARGETCLASS,
+PERFORMANCETYPE,INDEXCONTENT,INDEXTYPE,WEIGHT,COMPANY,UPDATEUSER,UPDATETIME,UPDATEREASON,UPDATETYPE,OPERATORMODULE,UPDATECONTENT,
+CREATETIME,CREATEUSER,COLUMN1,COLUMN2,COLUMN3
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from Y_PERFORMANCE_INDEX_EDITRECORD
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <select id="getAll" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from Y_PERFORMANCE_INDEX_EDITRECORD
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from Y_PERFORMANCE_INDEX_EDITRECORD
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.system.EditReason" >
+    <selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="id">
+      select QMS_EDITREASON_SEQUENCE.nextval as ITEM_KEY from dual
+    </selectKey>    
+    INSERT INTO Y_EDITREASON(LASTUPDATEUSER,UPDATEREASON,UPDATETYPE,UPDATECONTENT,CREATETIME,LASTUPDATETIME,
+FACTORYNUMBER,FACTORYNAME,DEPARTMENTNUMBER,DEPARTMENTNAME,TARGETCLASS,INDEXCONTENT,PERFORMANCECONTENT,
+WEIGHT,COMPANY,COLUMN1,COLUMN2,COLUMN3)
+VALUES('admin','aaa','aaa','aaa',sysdate,sysdate,
+'1002','电器二厂','1002-01','革新中心','100','指标a','望小型',
+'0.5','百分比','','','');
+  </insert>
+  
+  <!-- 向绩效修改记录表中插入一条记录 -->
+  <insert id="insertSelective" parameterType="com.peg.model.system.EditReason" >
+    <selectKey resultType="long" order="AFTER" keyProperty="id">
+      select QMS_EDITRECORD_SEQUENCE.currval as ID from dual
+    </selectKey>   
+    insert into Y_PERFORMANCE_INDEX_EDITRECORD
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="createUser != null and createUser != ''" >
+        CREATEUSER,
+      </if>
+      <if test="updateUser != null and updateUser != ''" >
+        UPDATEUSER,
+      </if>
+      <if test="updateReason != null and updateReason != ''" >
+        UPDATEREASON,
+      </if>
+      <if test="updateType != null and updateType != ''" >
+        UPDATETYPE,
+      </if>
+      <if test="operatorModule != null and operatorModule != ''" >
+        OPERATORMODULE,
+      </if>
+      <if test="updateContent != null and updateContent != ''" >
+        UPDATECONTENT,
+      </if>
+      <if test="createTime != null and createTime != ''" >
+        CREATETIME,
+      </if>
+      <if test="updateTime != null and updateTime != ''" >
+        UPDATETIME,
+      </if>
+      <if test="factoryNumber != null and factoryNumber != ''" >
+        FACTORYNUMBER,
+      </if>
+      <if test="factoryName != null and factoryName != ''" >
+        FACTORYNAME,
+      </if>
+      <if test="departmentNumber != null and departmentNumber != ''" >
+        DEPARTMENTNUMBER,
+      </if>
+      <if test="departmentName != null and departmentName != ''" >
+        DEPARTMENTNAME,
+      </if>
+      <if test="performanceTargetClass != null and performanceTargetClass != ''" >
+        PERFORMANCETARGETCLASS,
+      </if>
+      <if test="performanceType != null and performanceType != ''" >
+        PERFORMANCETYPE,
+      </if>
+      <if test="indexContent != null and indexContent != ''" >
+        INDEXCONTENT,
+      </if>
+      <if test="indexType != null and indexType != ''" >
+        INDEXTYPE,
+      </if>
+      <if test="weight != null and weight != ''" >
+        WEIGHT,
+      </if>
+      <if test="company != null and company != ''" >
+        COMPANY,
+      </if>
+      <if test="column1 != null and column1 != ''" >
+        COLUMN1,
+      </if>
+      <if test="column2 != null and column2 != ''" >
+        COLUMN2,
+      </if>
+      <if test="column3 != null and column3 != ''" >
+        COLUMN3,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="createUser != null and createUser != ''" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null and updateUser != ''" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateReason != null and updateReason != ''" >
+        #{updateReason,jdbcType=VARCHAR},
+      </if>
+      <if test="updateType != null and updateType != ''" >
+        #{updateType,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorModule != null and operatorModule != ''" >
+        #{operatorModule,jdbcType=VARCHAR},
+      </if>
+      <if test="updateContent != null and updateContent != ''" >
+        #{updateContent,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null and createTime != ''" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null and updateTime != ''" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="factoryNumber != null and factoryNumber != ''" >
+        #{factoryNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryName != null and factoryName != ''" >
+        #{factoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentNumber != null and departmentNumber != ''" >
+        #{departmentNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentName != null and departmentName != ''" >
+        #{departmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="performanceTargetClass != null and performanceTargetClass != ''" >
+        #{performanceTargetClass,jdbcType=VARCHAR},
+      </if>
+      <if test="performanceType != null and performanceType != ''" >
+        #{performanceType,jdbcType=VARCHAR},
+      </if>
+      <if test="indexContent != null and indexContent != ''" >
+        #{indexContent,jdbcType=VARCHAR},
+      </if>
+      <if test="indexType != null and indexType != ''" >
+        #{indexType,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null and weight != ''" >
+        #{weight,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null and company != ''" >
+        #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="column1 != null and column1 != ''" >
+        #{column1,jdbcType=VARCHAR},
+      </if>
+      <if test="column2 != null and column2 != ''" >
+        #{column2,jdbcType=VARCHAR},
+      </if>
+      <if test="column3 != null and column3 != ''" >
+        #{column3,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <insert id="insertSelective1" parameterType="com.peg.model.system.SysOperateLog" >
+    <selectKey resultType="long" order="BEFORE" keyProperty="id">
+      select seq_t_sys_operate_log.nextval as ID from dual
+    </selectKey>    
+    insert into T_SYS_OPERATE_LOG
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="opType != null" >
+        OP_TYPE,
+      </if>
+      <if test="content != null" >
+        CONTENT,
+      </if>
+      <if test="operator != null" >
+        OPERATOR,
+      </if>
+      <if test="operateTime != null" >
+        OPERATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="opType != null" >
+        #{opType,jdbcType=DECIMAL},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="operateTime != null" >
+        #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.system.SysOperateLog" >
+    update T_SYS_OPERATE_LOG
+    <set >
+      <if test="opType != null" >
+        OP_TYPE = #{opType,jdbcType=DECIMAL},
+      </if>
+      <if test="content != null" >
+        CONTENT = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        OPERATOR = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="operateTime != null" >
+        OPERATE_TIME = #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.system.SysOperateLog" >
+    update T_SYS_OPERATE_LOG
+    set OP_TYPE = #{opType,jdbcType=DECIMAL},
+      CONTENT = #{content,jdbcType=VARCHAR},
+      OPERATOR = #{operator,jdbcType=VARCHAR},
+      OPERATE_TIME = #{operateTime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  
+  <select id="findAllByPage" resultMap="BaseResultMap">
+  select * from Y_PERFORMANCE_INDEX_EDITRECORD
+  <where>
+  	<if test="log.factoryNumber != null and log.factoryNumber !=''">
+       AND FACTORYNUMBER like CONCAT(CONCAT('%', #{log.factoryNumber,jdbcType=VARCHAR}),'%')
+    </if>
+    <if test="log.departmentNumber != null and log.departmentNumber !=''">
+       AND DEPARTMENTNUMBER like CONCAT(CONCAT('%', #{log.departmentNumber,jdbcType=VARCHAR}),'%')
+    </if>
+    <if test="log.updateUser != null and log.updateUser !=''">
+       AND UPDATEUSER like CONCAT(CONCAT('%', #{log.updateUser,jdbcType=VARCHAR}),'%')
+    </if>
+    <if test="log.updateReason != null and log.updateReason !=''">
+       AND UPDATEREASON like CONCAT(CONCAT('%', #{log.updateReason,jdbcType=VARCHAR}),'%')
+    </if>
+    <if test="log.startTime != null and log.startTime !='' and log.endTime != null and log.endTime != ''">
+      	<!-- to_date(LASTUPDATETIME,'yyyy-mm-dd') = to_char(#{log.lastUpdateTime,jdbcType=TIMESTAMP},'yyyy-mm-dd') -->
+       AND UPDATETIME BETWEEN #{log.startTime,jdbcType=TIMESTAMP} AND #{log.endTime,jdbcType=TIMESTAMP}  
+    </if>
+  </where>
+  order by CREAETETIME DESC
+  </select>
+	<select id="getAllByPage" resultMap="BaseResultMap">
+	  SELECT 
+	  <include refid="Base_Column_List" />
+	  FROM Y_PERFORMANCE_INDEX_EDITRECORD
+	  <where>
+	  	<if test="hashMap.factoryNumber != null and hashMap.factoryNumber != ''">
+	       AND FACTORYNUMBER like '%${hashMap.factoryNumber}%'
+	    </if>
+	    <if test="hashMap.departmentNumber != null and hashMap.departmentNumber !=''">
+	       AND DEPARTMENTNUMBER like '%${hashMap.departmentNumber}%'
+	    </if>
+	    <if test="hashMap.updateUser != null and hashMap.updateUser !=''">
+	       AND UPDATEUSER like '%${hashMap.updateUser}%'
+	    </if>
+	    <if test="hashMap.updateReason != null and hashMap.updateReason !=''">
+	       AND UPDATEREASON like '%${hashMap.updateReason}%'
+	    </if>
+	    <if test="hashMap.startTime != null and hashMap.startTime !='' and hashMap.endTime != null and hashMap.endTime != ''">
+	      	<!-- to_date(LASTUPDATETIME,'yyyy-mm-dd') = to_char(#{log.lastUpdateTime,jdbcType=TIMESTAMP},'yyyy-mm-dd') -->
+	       AND UPDATETIME BETWEEN #{hashMap.startTime} AND #{hashMap.endTime}  
+	    </if>
+	    <if test="hashMap.performanceTargetClass != null and hashMap.performanceTargetClass !=''">
+	       AND PERFORMANCETARGETCLASS like '%${hashMap.performanceTargetClass}%'
+	    </if>
+	    <if test="hashMap.indexContent != null and hashMap.indexContent !=''">
+	       AND INDEXCONTENT like '%${hashMap.indexContent}%'
+	    </if>
+	    <if test="hashMap.indexType != null and hashMap.indexType !=''">
+	       AND INDEXTYPE like '%${hashMap.indexType}%'
+	    </if>
+	    <if test="hashMap.updateType != null and hashMap.updateType !=''">
+	       AND UPDATETYPE like '%${hashMap.updateType}%'
+	    </if>
+	    <if test="hashMap.operatorModule != null and hashMap.operatorModule !=''">
+	       AND OPERATORMODULE like '%${hashMap.operatorModule}%'
+	    </if>
+	  </where>
+	  ORDER BY CREATETIME DESC
+	</select>  
+</mapper>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.system.SysGroupMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.system.SysGroup" >
+   <id column="GROUP_KEY" property="groupKey" jdbcType="DECIMAL" />
+    <result column="GROUP_CODE" property="groupCode" jdbcType="VARCHAR" />
+    <result column="GROUP_NAME" property="groupName" jdbcType="VARCHAR" />
+    <result column="CREATION_TIME" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+ <sql id="Base_Column_List" >
+    GROUP_KEY, GROUP_CODE, GROUP_NAME, CREATION_TIME, LAST_MODIFIED_TIME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from SYS_GROUP
+    where GROUP_KEY = #{groupKey,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="findAllByPage" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from SYS_GROUP
+    <where>
+        <if test="code != null and code != ''">
+            and GROUP_CODE like '%${code}%'
+        </if>
+        <if test="name != null and name !=''">
+           and GROUP_NAME like '%${name}%'
+        </if>
+    </where>  
+  </select>
+    
+  <!-- add by lin -->
+  
+  <select id="findGroupsByUserKey" resultMap="BaseResultMap" >
+    select 
+    g.GROUP_KEY, g.GROUP_CODE, g.GROUP_NAME, g.CREATION_TIME, g.LAST_MODIFIED_TIME 
+    FROM SYS_GROUP g, SYS_USER_GROUP u
+    where g.GROUP_KEY = u.GROUP_KEY
+      and u.USER_KEY = #{userKey,jdbcType=DECIMAL}
+  </select>
+    
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from SYS_GROUP
+    where GROUP_KEY = #{groupKey,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.system.SysGroup" >
+    insert into SYS_GROUP (GROUP_KEY, GROUP_CODE, GROUP_NAME, 
+      CREATION_TIME, LAST_MODIFIED_TIME)
+    values (#{groupKey,jdbcType=DECIMAL}, #{groupCode,jdbcType=VARCHAR}, #{groupName,jdbcType=VARCHAR}, 
+      sysdate,sysdate)
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.system.SysGroup" >
+    insert into SYS_GROUP
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="groupKey != null" >
+        GROUP_KEY,
+      </if>
+      <if test="groupCode != null" >
+        GROUP_CODE,
+      </if>
+      <if test="groupName != null" >
+        GROUP_NAME,
+      </if>
+      <if test="creationTime != null" >
+        CREATION_TIME,
+      </if>
+      <if test="lastModifiedTime != null" >
+        LAST_MODIFIED_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="groupKey != null" >
+        #{groupKey,jdbcType=DECIMAL},
+      </if>
+      <if test="groupCode != null" >
+        #{groupCode,jdbcType=VARCHAR},
+      </if>
+      <if test="groupName != null" >
+        #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="creationTime != null" >
+        #{creationTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastModifiedTime != null" >
+        #{lastModifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.system.SysGroup" >
+    update SYS_GROUP
+    <set >
+      <if test="groupCode != null" >
+        GROUP_CODE = #{groupCode,jdbcType=VARCHAR},
+      </if>
+      <if test="groupName != null" >
+        GROUP_NAME = #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="creationTime != null" >
+        CREATION_TIME = #{creationTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastModifiedTime != null" >
+        LAST_MODIFIED_TIME = #{lastModifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where GROUP_KEY = #{groupKey,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.system.SysGroup" >
+    update SYS_GROUP
+    set GROUP_CODE = #{groupCode,jdbcType=VARCHAR},
+      GROUP_NAME = #{groupName,jdbcType=VARCHAR},
+      LAST_MODIFIED_TIME = sysdate
+    where GROUP_KEY = #{groupKey,jdbcType=DECIMAL}
+  </update>
+</mapper>

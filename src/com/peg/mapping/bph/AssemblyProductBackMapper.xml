@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.AssemblyProductBackMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.AssemblyProductBack" >
+    <id column="ATR_KEY" property="atrKey" jdbcType="DECIMAL" />
+    <id column="SITE_NUM" property="siteNum" jdbcType="DECIMAL" />
+    <result column="ATR_NAME" property="atrName" jdbcType="VARCHAR" />
+    <result column="PURGE_STATUS" property="purgeStatus" jdbcType="DECIMAL" />
+    <result column="CREATION_TIME" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="CREATION_TIME_U" property="creationTimeU" jdbcType="TIMESTAMP" />
+    <result column="CREATION_TIME_Z" property="creationTimeZ" jdbcType="VARCHAR" />
+    <result column="LAST_MODIFIED_TIME" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME_U" property="lastModifiedTimeU" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME_Z" property="lastModifiedTimeZ" jdbcType="VARCHAR" />
+    <result column="XFR_INSERT_PID" property="xfrInsertPid" jdbcType="DECIMAL" />
+    <result column="XFR_UPDATE_PID" property="xfrUpdatePid" jdbcType="DECIMAL" />
+    <result column="TRX_ID" property="trxId" jdbcType="CHAR" />
+    <result column="PARENT_KEY" property="parentKey" jdbcType="DECIMAL" />
+    <result column="CHECK_MAN_S" property="checkManS" jdbcType="VARCHAR" />
+    <result column="DEFECT_S" property="defectS" jdbcType="VARCHAR" />
+    <result column="DEFECT_QTY_I" property="defectQtyI" jdbcType="DECIMAL" />
+    <result column="DUTY_GROUP1_S" property="dutyGroup1S" jdbcType="VARCHAR" />
+    <result column="DUTY_GROUP2_S" property="dutyGroup2S" jdbcType="VARCHAR" />
+    <result column="DUTY_GROUP3_S" property="dutyGroup3S" jdbcType="VARCHAR" />
+    <result column="ITEM_NAME_S" property="itemNameS" jdbcType="VARCHAR" />
+    <result column="ITEM_NUMBER_S" property="itemNumberS" jdbcType="VARCHAR" />
+    <result column="PRODUCT_TYPE_S" property="productTypeS" jdbcType="VARCHAR" />
+    <result column="GROUP_S" property="groupS" jdbcType="VARCHAR" />
+    <result column="RECORD_MAN_S" property="recordManS" jdbcType="VARCHAR" />
+    <result column="AREA_S" property="areaS" jdbcType="VARCHAR" />
+    <result column="FACTORY_S" property="factoryS" jdbcType="VARCHAR" />
+    <result column="DUTY_S" property="dutyS" jdbcType="VARCHAR" />
+    <result column="DATE_T" property="dateT" jdbcType="TIMESTAMP" />
+    <result column="DATE_U" property="dateU" jdbcType="TIMESTAMP" />
+    <result column="DATE_Z" property="dateZ" jdbcType="VARCHAR" />
+    <result column="LINE_S" property="lineS" jdbcType="VARCHAR" />
+    <result column="ORDER_NUMBER_S" property="orderNumbers" jdbcType="VARCHAR" />
+    <result column="check_steps" property="checkStep" jdbcType="VARCHAR" />
+    <result column="defect_source" property="defectSource" jdbcType="VARCHAR" />
+    <result column="group_leader" property="groupLeader" jdbcType="VARCHAR" />
+    <result column="check_result" property="checkResult" jdbcType="VARCHAR" />
+    <result column="reparired_man" property="repariredMan" jdbcType="VARCHAR" />
+    <result column="repaired_method" property="repairedMethod" jdbcType="VARCHAR" />
+     <result column="TOTAL_QTY_I" property="totalQtyI" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ATR_KEY, SITE_NUM, ATR_NAME, PURGE_STATUS, CREATION_TIME, CREATION_TIME_U, CREATION_TIME_Z, 
+    LAST_MODIFIED_TIME, LAST_MODIFIED_TIME_U, LAST_MODIFIED_TIME_Z, XFR_INSERT_PID, XFR_UPDATE_PID, 
+    TRX_ID, PARENT_KEY, CHECK_MAN_S, DEFECT_S, DEFECT_QTY_I, DUTY_GROUP1_S, DUTY_GROUP2_S, 
+    DUTY_GROUP3_S, ITEM_NAME_S, ITEM_NUMBER_S, PRODUCT_TYPE_S, GROUP_S, RECORD_MAN_S, 
+    AREA_S, FACTORY_S, DUTY_S, DATE_T, DATE_U, DATE_Z, LINE_S,ORDER_NUMBER_S,TOTAL_QTY_I
+  </sql>
+  <select id="getAssemblyAllByPage" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from at_AssemblyProductBack
+    <where>
+       <if test="hashMap.factoryS != null">
+            FACTORY_S  like '%${hashMap.factoryS}%'
+       </if> 
+       <if test="hashMap.startTime != null and hashMap.endTime !=null">
+         
+            and date_t BETWEEN #{hashMap.startTime,jdbcType=TIMESTAMP} and  #{hashMap.endTime,jdbcType=TIMESTAMP}
+
+       </if>
+       <if test="hashMap.group != null">
+         and   (DUTY_GROUP1_S  like '%${hashMap.group}%' or DUTY_GROUP2_S like '%${hashMap.group}%'
+         or  DUTY_GROUP3_S like '%${hashMap.group}%')
+       </if> 
+        <if test="hashMap.dutyS != null">
+         and   DUTY_S  like '%${hashMap.dutyS}%'
+       </if> 
+       <if test="hashMap.productTypeS != null">
+         and   PRODUCT_TYPE_S  like '%${hashMap.productTypeS}%'
+       </if>
+       <if test="hashMap.lineS != null">
+         and   LINE_S  like '%${hashMap.lineS}%'
+       </if>
+       <if test="hashMap.itemNameS != null">
+         and   ITEM_NAME_S  like '%${hashMap.itemNameS}%'
+       </if>
+       <if test="hashMap.types != null">
+         and   TYPE_S  like '%${hashMap.types}%'
+       </if>
+      	<include refid='forlist'></include>
+       <!-- <if test="hashMap.startnum != null">
+         and   DEFECT_QTY_I  &gt;= ${hashMap.startnum}
+       </if>
+       <if test="hashMap.endnum != null">
+         and   DEFECT_QTY_I  &lt; ${hashMap.endnum}
+       </if> -->
+    </where>
+    order by date_t DESC
+  </select>
+  <sql id="forlist">
+  		<if test="list != null and list.size()>0">
+       		and PRODUCT_TYPE_S  in 
+       		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+       			'${item}'
+			</foreach> 
+       </if>
+  </sql>
+  <select id="getAssembleRepariedByPage"  resultMap="BaseResultMap">
+
+            select w.addr_city factory_S,w.order_number ORDER_NUMBER_S,d.defect_route_step_name check_steps,u.serial_number ITEM_NUMBER_S,u.description PRODUCT_TYPE_S,nvl(d.uda_3,' ') ATR_NAME,
+             nvl(d.uda_5,' '),nvl(d.uda_6,' ') ,w.uda_1 ,d.uda_7,concat(concat(at.test_code_s,'-'), at.test_name_s) defect_s,
+             nvl(d.uda_0,' ') defect_source,nvl(au.description,' ') reparired_man,to_char(d.udt_1,'yyyy-MM-dd') creation_time_z,
+             pl.description LINE_S,d.defect_sub_location||'-'||at3.test_name_s itemNameS,
+             d.uda_8 check_result,d.uda_9,au2.description RECORD_MAN_S,to_char(d.udt_2,'yyyy-mm-dd') DATE_Z,d.defect_repair_entry_key,t.test_instance_key,nvl(at2.test_name_s,''),decode(u1.serial_number_s,null,'维修R','更换C') repaired_method,
+             ag.description groupS,auser.description group_leader
+      from  defect_repair_entry d,test_instance_location@mes_test_link t,unit u,work_order w,app_user au,work_order_items woi,shift s,
+            production_line pl,part p, at_testcodedefinition at,account ac,(select * from at_testcodedefinition aa where aa.type_s = '不良原因分类') at2,at_testcodedefinition at3,
+            (
+                 select distinct uc.serial_number_s from at_unitchangematerialrecord uc
+                ) u1,app_group ag,app_user auser,app_user au2
+      where 1=1 
+            and w.order_key = woi.order_key
+            and au.user_name(+)=d.repair_user_name
+            and d.test_instance_key=t.test_instance_key 
+            and t.object_key=u.unit_key 
+            and u.order_item_key=woi.order_item_key
+            and woi.uda_2 = s.shift_name(+)
+            and u.serial_number = u1.serial_number_s(+)
+            and pl.p_line_name=woi.planned_line
+            and u.part_number=p.part_number 
+            and d.defect_code=at.test_code_s 
+            and at2.test_code_s(+)=d.uda_2
+            and at3.test_code_s(+)=d.defect_sub_location
+            and ac.account_name(+) = d.uda_4
+            and woi.uda_1=ag.description
+            and ag.uda_0=auser.user_name(+)
+            and d.repair_location=au2.user_name(+)
+            and decode(nvl(d.defect_user_name,' '),'供应商',nvl(ac.description,' '),nvl(d.defect_user_name,' '))='组装车间'
+            
+          
+		       <if test="hashMap.factoryS != null">
+		         and   w.addr_city =#{hashMap.factoryS}
+		       </if> 
+		      <if test="hashMap.startTime != null and hashMap.endTime !=null">
+		         
+		         and to_char(d.udt_1,'yyyy-MM-dd') BETWEEN #{hashMap.startTime,jdbcType=VARCHAR} and  #{hashMap.endTime,jdbcType=VARCHAR}
+		
+		       </if>
+		       <if test="hashMap.group != null">
+		         and ag.description  = #{hashMap.group}
+		       </if>   
+
+		    order by d.udt_1 desc
+  </select>
+  
+  <select id="getAssemblyList" resultMap="BaseResultMap" parameterType="com.peg.model.bph.AssemblyProductBack">
+   select 
+    <include refid="Base_Column_List" />
+    from at_AssemblyProductBack
+    <where>
+       <if test="factoryS != null and factoryS !=''">
+            FACTORY_S  = #{factoryS}
+       </if> 
+       <if test="startTime != null and endTime !=null">
+         
+            and date_t BETWEEN #{startTime,jdbcType=TIMESTAMP} and  #{endTime,jdbcType=TIMESTAMP}
+
+       </if>
+       <if test="areaS != null and areaS !=''">
+         and   AREA_S  = #{areaS}
+       </if> 
+       <if test="group != null and group !=''">
+         and   DUTY_GROUP1_S  = #{group} or DUTY_GROUP2_S = #{group}
+         or  DUTY_GROUP3_S = #{group}
+       </if> 
+        <if test="dutyS != null and dutyS !=''">
+         and   DUTY_S  = #{dutyS}
+       </if> 
+       <if test="productTypeS != null and productTypeS != ''">
+         and   PRODUCT_TYPE_S  = #{productTypeS}
+       </if>
+       <if test="itemNameS != null and itemNameS !=''">
+         and   ITEM_NAME_S = #{itemNameS}
+       </if>
+       <if test="hashMap.startnum != null">
+         and   DEFECT_QTY_I  &gt;= ${hashMap.startnum}
+       </if>
+       <if test="hashMap.endnum != null">
+         and   DEFECT_QTY_I  &lt; ${hashMap.endnum}
+       </if>
+     </where>  
+       order by date_t DESC
+  </select>
+  
+  <select id="getIpqcInspects" resultMap="BaseResultMap" parameterType="com.peg.model.bph.AssemblyProductBack">
+      select w.addr_city factory_S,w.order_number ORDER_NUMBER_S,d.defect_route_step_name check_steps,u.serial_number ITEM_NUMBER_S,u.description PRODUCT_TYPE_S,nvl(d.uda_3,' ') ATR_NAME,
+             nvl(d.uda_5,' '),nvl(d.uda_6,' ') ,w.uda_1 ,d.uda_7,concat(concat(at.test_code_s,'-'), at.test_name_s) defect_s,
+             nvl(d.uda_0,' ') defect_source,nvl(au.description,' ') reparired_man,to_char(d.udt_1,'yyyy-MM-dd') creation_time_z,
+             pl.description LINE_S,d.defect_sub_location||'-'||at3.test_name_s itemNameS,
+             d.uda_8 check_result,d.uda_9,au2.description RECORD_MAN_S,to_char(d.udt_2,'yyyy-mm-dd') DATE_Z,d.defect_repair_entry_key,t.test_instance_key,nvl(at2.test_name_s,''),decode(u1.serial_number_s,null,'维修R','更换C') repaired_method,
+             ag.description groupS,auser.description group_leader
+      from  defect_repair_entry d,test_instance_location@mes_test_link t,unit u,work_order w,app_user au,work_order_items woi,shift s,
+            production_line pl,part p, at_testcodedefinition at,account ac,(select * from at_testcodedefinition aa where aa.type_s = '不良原因分类') at2,at_testcodedefinition at3,
+            (
+                 select distinct uc.serial_number_s from at_unitchangematerialrecord uc
+                ) u1,app_group ag,app_user auser,app_user au2
+      where 1=1 
+            and w.order_key = woi.order_key
+            and au.user_name(+)=d.repair_user_name
+            and d.test_instance_key=t.test_instance_key 
+            and t.object_key=u.unit_key 
+            and u.order_item_key=woi.order_item_key
+            and woi.uda_2 = s.shift_name(+)
+            and u.serial_number = u1.serial_number_s(+)
+            and pl.p_line_name=woi.planned_line
+            and u.part_number=p.part_number 
+            and d.defect_code=at.test_code_s 
+            and at2.test_code_s(+)=d.uda_2
+            and at3.test_code_s(+)=d.defect_sub_location
+            and ac.account_name(+) = d.uda_4
+            and woi.uda_1=ag.description
+            and ag.uda_0=auser.user_name(+)
+            and d.repair_location=au2.user_name(+)
+            and decode(nvl(d.defect_user_name,' '),'供应商',nvl(ac.description,' '),nvl(d.defect_user_name,' '))='组装车间'
+            
+          
+		       <if test="factoryS != null and factoryS !=''">
+		         and   w.addr_city =#{factoryS}
+		       </if> 
+		      <if test="dutyGroup1S != null and dutyGroup2S !=null">
+		         
+		         and to_char(d.udt_1,'yyyy-MM-dd') BETWEEN #{dutyGroup1S,jdbcType=VARCHAR} and  #{dutyGroup2S,jdbcType=VARCHAR}
+		
+		       </if>
+		       <if test="group != null and group !=''">
+		         and ag.description  = #{group}
+		       </if>   
+
+		    order by d.udt_1 desc
+  </select>
+  <resultMap type="com.peg.model.EntityClass" id="EntityClassbad">
+  	<result column="DEFECT_S" property="badname" jdbcType="VARCHAR" />
+  	<result column="product_type_s" property="product_type_s" jdbcType="VARCHAR" />
+    <result column="badcountnum" property="badnumber" jdbcType="DECIMAL" />
+    <result column="countnum" property="countnumber" jdbcType="DECIMAL" />
+    
+    <result column="month" property="month" jdbcType="VARCHAR"/>
+    <result column="basevalue" property="basevalue" jdbcType="VARCHAR"/>
+    <result column="targetvalue" property="targetvalue" jdbcType="VARCHAR"/>
+    <result column="indexscore" property="indexscore" jdbcType="VARCHAR"/>
+  </resultMap>
+  <select id="getEntityClassbad" resultMap="EntityClassbad" parameterType="com.peg.model.bph.AssemblyProductBack">
+  	select DEFECT_S as badname,sum(defect_qty) as badcountnum,
+  	<if test="entity.type_s=='组装'">
+  	total_qty countnum
+  	</if>
+  	<if test="entity.type_s=='喷涂'">
+  	total_qty2 countnum
+  	</if>
+  	 from vw_findbad where type_s= #{entity.type_s}
+  	<if test="entity.baseFactory != null and entity.baseFactory !=''">
+    	and factory_s  = #{entity.baseFactory}
+    </if> 
+    <if test="entity.baseGroup != null and entity.baseGroup !=''">
+    	and group_s  = #{entity.baseGroup}
+    </if> 
+    <if test="entity.baseCategory != null and entity.baseCategory !=''">
+    	and duty_s  = #{entity.baseCategory}
+    </if> 
+    <if test="entity.type_s=='组装' and entity.productTypeS!=null and entity.productTypeS!=''">
+    	and line_s like '%${entity.productTypeS}%'
+    </if>
+    <if test="entity.type_s=='喷涂' and entity.productTypeS!=null and entity.productTypeS!=''">
+    	and product_type_s like '%${entity.productTypeS}%'
+    </if>
+    <if test="entity.itemNameS != null and entity.itemNameS !=''">
+    	and item_name_s like '%${entity.itemNameS}%'
+    </if>
+	<if test="entity.startTime != null  and entity.endTime != null">
+    	and date_t BETWEEN #{entity.startTime,jdbcType=TIMESTAMP} and  #{entity.endTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="entity.list!=null and entity.list.size()>0">
+    	and product_type_s in
+    	<foreach collection="entity.list" item="item" index="index" open="(" separator="," close=")">
+    		#{item}
+    	</foreach>
+    </if>
+  	group by factory_s,group_s,
+  	<if test="entity.type_s=='组装'">
+  	total_qty 
+  	</if>
+  	<if test="entity.type_s=='喷涂'">
+  	total_qty2 
+  	</if>
+  	,DEFECT_S 
+  	<if test="entity.startnum != null">
+    	 having sum(defect_qty) &gt;= ${entity.startnum}
+    </if>
+    <if test="entity.startnum != null and entity.endnum != null">
+    	and sum(defect_qty) &lt; ${entity.endnum}
+    </if>
+    <if test="entity.startnum == null and entity.endnum != null">
+    	 having sum(defect_qty) &lt; ${entity.endnum}
+    </if>
+  	order by badcountnum desc
+  </select> 
+  <select id="getEntityTypebad" resultMap="EntityClassbad">
+  	select product_type_s,count(1) as badnumber from AT_ASSEMBLYPRODUCTBACK where 1=1
+  	<if test="entity.type_s!=null and entity.type_s!=''">
+  		and type_s=#{entity.type_s}
+  	</if>
+  	<if test="entity.baseGroup != null and entity.baseGroup !=''">
+  		and (duty_group1_s=#{entity.baseGroup} or duty_group2_s=#{entity.baseGroup} or duty_group2_s=#{entity.baseGroup})
+  	</if>
+  	<if test="entity.dutyS!=null and entity.dutyS!=''">
+  		and duty_s=#{entity.dutyS}
+  	</if>
+  	<if test="entity.productTypeS!=null and entity.productTypeS!=''">
+  		 and line_s=#{entity.productTypeS} 
+  	</if>
+  	<if test="entity.list!=null and entity.list.size()>0">
+    	and product_type_s in
+    	<foreach collection="entity.list" item="item" index="index" open="(" separator="," close=")">
+    		#{item}
+    	</foreach>
+    </if>    
+    <if test="entity.startTime != null  and entity.endTime != null">
+    	and date_t BETWEEN #{entity.startTime,jdbcType=TIMESTAMP} and  #{entity.endTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="entity.startnum != null and entity.startnum !=''">
+    	  and defect_qty_i &gt;= ${entity.startnum}
+    </if>
+    <if test="entity.endnum != null and entity.endnum != null">
+    	and defect_qty_i &lt; ${entity.endnum}
+    </if>
+	 group by product_type_s order by count(1) desc
+  </select>
+  <select id="getEntityClassarrange" resultMap="EntityClassbad" parameterType="com.peg.model.bph.AssemblyProductBack">
+  	select t_3.monthly as month,t_3.base_value as basevalue,t_3.target_value as targetvalue from T_ITEM t_1 inner join T_INDEX t_2 on t_1.item_key=t_2.item_key inner join T_MONTHLY_ASSESSMENT t_3 
+		on t_2.index_key=t_3.index_key inner join t_group_category t_4 on t_4.gc_key=t_1.gc_key inner join t_group t_5 on t_4.gc_key=t_5.category_key where t_2.index_name like '%${entity.marking}%'
+	<if test="entity.baseFactory != null and entity.baseFactory !=''">
+    	and t_4.factory  = #{entity.baseFactory}
+    </if> 
+    <!-- <if test="entity.baseArea != null and entity.baseArea !=''">
+    	and t_4.area  = #{entity.baseArea}
+    </if>  -->
+    <if test="entity.baseGroup != null and entity.baseGroup !=''">
+    	and t_5.group_name = #{entity.baseGroup}
+    </if> 
+    order by t_3.monthly
+  </select>
+  <select id="getEntityClassarrangetwo" resultMap="EntityClassbad" parameterType="com.peg.model.bph.AssemblyProductBack">
+  	select t.index_act_value as indexscore,t.sum_date as month from t_item_index_scroe_month t inner join T_INDEX t_2 on t.index_id=t_2.index_key and t_2.index_name like '%${entity.marking}%'
+	<if test="entity.baseFactory != null and entity.baseFactory !=''">
+    	and t.factory  = #{entity.baseFactory}
+    </if> 
+    <!-- <if test="entity.baseArea != null and entity.baseArea !=''">
+    	and t.area  = #{entity.baseArea}
+    </if>  -->
+    <if test="entity.baseGroup != null and entity.baseGroup !=''">
+    	and t.shift_group_name = #{entity.baseGroup}
+    </if> 
+    order by t.sum_date
+  </select>
+</mapper>

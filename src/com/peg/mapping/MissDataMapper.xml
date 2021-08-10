@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.peg.dao.MissDataMapper">
+<resultMap id="BaseResultMap" type="com.peg.model.MissData">
+	<result column="FACTORY" property="factory" jdbcType="VARCHAR" />
+	<result column="PRODUCTLINE_NUMBER" property="productLineNumber" jdbcType="VARCHAR" />
+	<result column="PART_CODE" property="serialNumber" jdbcType="VARCHAR" />
+	<result column="PART_NUMBER" property="partNumber" jdbcType="VARCHAR" />
+	<result column="PRODUCT_TYPE" property="productType" jdbcType="VARCHAR" />
+	<result column="PRODUCT_FAMILY" property="partFamily" jdbcType="VARCHAR" />
+	<result column="PART_TYPE" property="partType" jdbcType="VARCHAR" />
+	<result column="PART_NAME" property="partName" jdbcType="VARCHAR" />
+	<result column="downlownDate" property="downlownDate" jdbcType="VARCHAR" />
+	<result column="shipDate" property="shipDate" jdbcType="VARCHAR" />
+	<result column="INSTALL_MONTH" property="installDate" jdbcType="VARCHAR" />
+	<result column="REGION" property="region" jdbcType="VARCHAR" />
+	<result column="DEFECT_COMMENT" property="faultTypeName" jdbcType="VARCHAR" />
+	<result column="DEFECT_REASON" property="faultReasonName" jdbcType="VARCHAR" />
+	<result column="repairDate" property="repairDate" jdbcType="VARCHAR" />
+	<result column="REPAIR_ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+	<result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR" />
+	<result column="SUPPLIER_NUMBER" property="supplierNumber" jdbcType="VARCHAR" />
+	<result column="PRODUCTLINE_NAME" property="productLineName" jdbcType="VARCHAR" />
+	<result column="SHORT_SUPPLIER_NAME" property="shortSupplierName" jdbcType="VARCHAR" />
+	<result column="IS_NEW_S" property="isNewS" jdbcType="VARCHAR" />
+	<result column="PART_LEVEL_S" property="partLevelS" jdbcType="VARCHAR" />
+</resultMap>
+<!-- 查询发货表中主机条码为空或者物料编码为空的值 -->
+<select id="getMissShipDataPage" resultMap="BaseResultMap">
+	<![CDATA[
+		SELECT T.FACTORY, T.PRODUCTLINE_NUMBER, T.PART_CODE, T.PART_NUMBER, T.PRODUCT_TYPE, T.PRODUCT_FAMILY, 
+			T.PART_TYPE, T.PART_NAME partName, TO_CHAR(T.DOWNLINE_DATE, 'yyyy-mm') downlownDate,
+			TO_CHAR(T.SHIP_DATE, 'yyyy-mm') shipDate, TLR.REGION FROM T_DOWNLINE_SHIP_RECORD T, T_LOCATION_REGION TLR
+		WHERE T.LOCATION_CODE = TLR.LOCATION_CODE
+		AND (T.PART_CODE IS NULL OR T.PART_NUMBER IS NULL)
+	]]>	
+	<if test="hashMap.startTime != null">
+		<![CDATA[ AND TO_CHAR(T.SHIP_DATE, 'yyyy-mm') >= #{hashMap.startTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="hashMap.endTime != null">
+		<![CDATA[ AND TO_CHAR(T.SHIP_DATE, 'yyyy-mm') <= #{hashMap.endTime,jdbcType=VARCHAR} ]]>
+	</if>
+</select>
+
+<!-- 查询安装表中主机条码为空或者物料编码为空的值 -->
+<select id="getMissInstallDataPage" resultMap="BaseResultMap">
+	<![CDATA[
+		SELECT SERIAL_NUMBER, TO_CHAR(INTALL_DATE, 'yyyy-mm') INSTALL_MONTH, SERVICE_ORDER REPAIR_ORDER_NUMBER, DESCRIPTION PART_NAME, REGION FROM CRM_UNIT_INSTALL
+		WHERE SERIAL_NUMBER IS NULL
+	]]>
+	<if test="hashMap.startTime != null and hashMap.startTime != ''">
+		<![CDATA[ AND TO_CHAR(INTALL_DATE, 'yyyy-mm') >= #{hashMap.startTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="hashMap.endTime != null and hashMap.endTime != ''">
+		<![CDATA[ AND TO_CHAR(INTALL_DATE, 'yyyy-mm') <= #{hashMap.endTime,jdbcType=VARCHAR} ]]>
+	</if>
+</select>
+
+<!-- 查询维修表中主机条码为空的物料 -->
+<select id="getMissRepairDataPage" resultMap="BaseResultMap">
+	<![CDATA[
+		SELECT SERIAL_NUMBER, REPAIR_ORDER_NUMBER orderNumber, PART_DESCRIPTION PART_NAME, DEFECT_COMMENT, DEFECT_REASON, TO_CHAR(COMPLETE_TIME, 'yyyy-mm') repairDate FROM CRM_REPAIR_CONTENT
+		WHERE SERIAL_NUMBER IS NULL
+	]]>
+	<if test="hashMap.startTime != null and hashMap.startTime != ''">
+		<![CDATA[ AND TO_CHAR(COMPLETE_TIME, 'yyyy-mm') >= #{hashMap.startTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="hashMap.endTime != null and hashMap.endTime != ''">
+		<![CDATA[ AND TO_CHAR(COMPLETE_TIME, 'yyyy-mm') <= #{hashMap.endTime,jdbcType=VARCHAR} ]]>
+	</if>
+</select>
+
+<select id="getMissShipDataTotalNumber" resultType="int" parameterType="com.peg.model.MissData">
+	<![CDATA[
+		SELECT COUNT(1) FROM T_DOWNLINE_SHIP_RECORD T, T_LOCATION_REGION TLR
+		WHERE T.LOCATION_CODE = TLR.LOCATION_CODE
+		AND (T.PART_CODE IS NULL OR T.PART_NUMBER IS NULL)
+	]]>	
+	<if test="startTime != null">
+		<![CDATA[ AND TO_CHAR(T.SHIP_DATE, 'yyyy-mm') >= #{startTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="endTime != null">
+		<![CDATA[ AND TO_CHAR(T.SHIP_DATE, 'yyyy-mm') <= #{endTime,jdbcType=VARCHAR} ]]>
+	</if>
+</select>
+
+<select id="getMissInstallDataTotalNumber" resultType="int" parameterType="com.peg.model.MissData">
+	<![CDATA[
+		SELECT COUNT(1) FROM CRM_UNIT_INSTALL
+		WHERE SERIAL_NUMBER IS NULL
+	]]>
+	<if test="startTime != null and startTime != ''">
+		<![CDATA[ AND TO_CHAR(INTALL_DATE, 'yyyy-mm') >= #{startTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="endTime != null and endTime != ''">
+		<![CDATA[ AND TO_CHAR(INTALL_DATE, 'yyyy-mm') <= #{endTime,jdbcType=VARCHAR} ]]>
+	</if>
+</select>
+
+<select id="getMissRepairDataTotalNumber" resultType="int" parameterType="com.peg.model.MissData">
+	<![CDATA[
+		SELECT COUNT(1) FROM CRM_REPAIR_CONTENT
+		WHERE SERIAL_NUMBER IS NULL
+	]]>
+	<if test="startTime != null and startTime != ''">
+		<![CDATA[ AND TO_CHAR(COMPLETE_TIME, 'yyyy-mm') >= #{startTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="endTime != null and endTime != ''">
+		<![CDATA[ AND TO_CHAR(COMPLETE_TIME, 'yyyy-mm') <= #{endTime,jdbcType=VARCHAR} ]]>
+	</if>
+</select>
+
+<select id="getAllMissShipData" resultMap="BaseResultMap" parameterType="com.peg.model.MissData">
+	<![CDATA[
+		SELECT T.FACTORY, T.PRODUCTLINE_NUMBER, T.PART_CODE, T.PART_NUMBER, T.PRODUCT_TYPE, T.PRODUCT_FAMILY, 
+			T.PART_TYPE, T.PART_NAME partName, TO_CHAR(T.DOWNLINE_DATE, 'yyyy-mm') downlownDate,
+			TO_CHAR(T.SHIP_DATE, 'yyyy-mm') shipDate, TLR.REGION FROM T_DOWNLINE_SHIP_RECORD T, T_LOCATION_REGION TLR
+		WHERE T.LOCATION_CODE = TLR.LOCATION_CODE
+		AND (T.PART_CODE IS NULL OR T.PART_NUMBER IS NULL)
+	]]>	
+	<if test="startTime != null">
+		<![CDATA[ AND TO_CHAR(T.SHIP_DATE, 'yyyy-mm') >= #{startTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="endTime != null">
+		<![CDATA[ AND TO_CHAR(T.SHIP_DATE, 'yyyy-mm') <= #{endTime,jdbcType=VARCHAR} ]]>
+	</if>
+</select>
+
+<select id="getAllMissInstallData" resultMap="BaseResultMap" parameterType="com.peg.model.MissData">
+	<![CDATA[
+		SELECT SERIAL_NUMBER, TO_CHAR(INTALL_DATE, 'yyyy-mm') INSTALL_MONTH, SERVICE_ORDER REPAIR_ORDER_NUMBER, DESCRIPTION PART_NAME, REGION FROM CRM_UNIT_INSTALL
+		WHERE SERIAL_NUMBER IS NULL
+	]]>
+	<if test="startTime != null and startTime != ''">
+		<![CDATA[ AND TO_CHAR(INTALL_DATE, 'yyyy-mm') >= #{startTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="endTime != null and endTime != ''">
+		<![CDATA[ AND TO_CHAR(INTALL_DATE, 'yyyy-mm') <= #{endTime,jdbcType=VARCHAR} ]]>
+	</if>
+</select>
+
+<select id="getAllMissRepairData" resultMap="BaseResultMap" parameterType="com.peg.model.MissData">
+	<![CDATA[
+		SELECT SERIAL_NUMBER, REPAIR_ORDER_NUMBER orderNumber, PART_DESCRIPTION PART_NAME, DEFECT_COMMENT, DEFECT_REASON, TO_CHAR(COMPLETE_TIME, 'yyyy-mm') repairDate FROM CRM_REPAIR_CONTENT
+		WHERE SERIAL_NUMBER IS NULL
+	]]>
+	<if test="startTime != null and startTime != ''">
+		<![CDATA[ AND TO_CHAR(COMPLETE_TIME, 'yyyy-mm') >= #{startTime,jdbcType=VARCHAR} ]]>
+	</if>
+	<if test="endTime != null and endTime != ''">
+		<![CDATA[ AND TO_CHAR(COMPLETE_TIME, 'yyyy-mm') <= #{endTime,jdbcType=VARCHAR} ]]>
+	</if>
+</select>
+
+<!-- 获取物料原材料残缺数据 -->
+<select id="getMissPartDataPage" resultMap="BaseResultMap">
+	<![CDATA[
+		SELECT P.PART_NUMBER, P.DESCRIPTION PART_NAME, UP.MOLD_TYPE_S PRODUCT_TYPE, UP.IS_NEW_S, UP.PART_LEVEL_S, UP.PART_TYPE_S PART_TYPE FROM UDA_PART UP, PART P
+	    WHERE P.PART_KEY = UP.OBJECT_KEY
+	    AND P.PART_NUMBER not LIKE '10%' and P.PART_NUMBER not LIKE '7%'
+	    AND (UP.IS_NEW_S IS NULL OR UP.PART_LEVEL_S IS NULL OR UP.PART_TYPE_S IS NULL)
+	]]>
+	<if test="hashMap.partNumber != null and hashMap.partNumber != ''">
+		AND P.PART_NUMBER = '${hashMap.partNumber}'
+	</if>
+	<if test="hashMap.partName != null and hashMap.partName != ''">
+		AND P.DESCRIPTION = '${hashMap.partName}'
+	</if>
+	ORDER BY P.LAST_MODIFIED_TIME DESC
+</select>
+
+<!-- 获取物料成品残缺数据 -->
+<select id="getMissPartDataByProductPage" resultMap="BaseResultMap">
+	<![CDATA[
+		SELECT P.PART_NUMBER, P.DESCRIPTION PART_NAME, UP.MOLD_TYPE_S PRODUCT_TYPE, UP.product_family_s PRODUCT_FAMILY, UP. product_type_s as part_type, T.DESCRIPTION FROM UDA_PART UP, PART P, T_PRODUCT_TYPE T
+		WHERE P.PART_KEY = UP.OBJECT_KEY
+		AND P.PART_NUMBER = T.PART_NUMBER(+)
+		AND (P.PART_NUMBER LIKE '10%' or P.PART_NUMBER LIKE '7%')
+	]]>
+	<if test="hashMap.sql != null and hashMap.sql != ''">
+		${hashMap.sql}
+	</if>
+	<if test="hashMap.partNumber != null and hashMap.partNumber != ''">
+		AND P.PART_NUMBER = '${hashMap.partNumber}'
+	</if>
+	<if test="hashMap.partName != null and hashMap.partName != ''">
+		AND P.DESCRIPTION = '${hashMap.partName}'
+	</if>
+	<if test="hashMap.showDescription != null and hashMap.showDescription == 1">
+		AND T.DESCRIPTION is null
+	</if>
+	<if test="hashMap.showDescription != null and hashMap.showDescription == 2">
+		AND T.DESCRIPTION is not null
+	</if>
+</select>
+
+<select id="getMissPartData" resultMap="BaseResultMap" parameterType="com.peg.model.MissData">
+	<![CDATA[
+		SELECT P.PART_NUMBER, P.DESCRIPTION PART_NAME, UP.MOLD_TYPE_S PRODUCT_TYPE, UP.IS_NEW_S, UP.PART_LEVEL_S, UP.PART_TYPE_S PART_TYPE FROM UDA_PART UP, PART P
+	    WHERE P.PART_KEY = UP.OBJECT_KEY
+	    AND P.PART_NUMBER not LIKE '10%' and P.PART_NUMBER not LIKE '7%'
+	    AND (UP.IS_NEW_S IS NULL OR UP.PART_LEVEL_S IS NULL OR UP.PART_TYPE_S IS NULL)
+	]]>
+	<if test="partNumber != null and partNumber != ''">
+		AND P.PART_NUMBER = '${partNumber}'
+	</if>
+	<if test="partName != null and partName != ''">
+		AND P.DESCRIPTION = '${partName}'
+	</if>
+</select>
+
+<select id="getMissPartDataByProduct" resultMap="BaseResultMap">
+	<![CDATA[
+		SELECT P.PART_NUMBER, P.DESCRIPTION PART_NAME, UP.MOLD_TYPE_S PRODUCT_TYPE, UP.product_family_s PRODUCT_FAMILY, UP. product_type_s as part_type, T.DESCRIPTION FROM UDA_PART UP, PART P, T_PRODUCT_TYPE T
+		WHERE P.PART_KEY = UP.OBJECT_KEY
+		AND P.PART_NUMBER = T.PART_NUMBER(+)
+		AND (P.PART_NUMBER LIKE '10%' or P.PART_NUMBER LIKE '7%')
+	]]>
+	<if test="sql != null and sql != ''">
+		${sql}
+	</if>
+	<if test="partNumber != null and partNumber != ''">
+		AND P.PART_NUMBER = '${partNumber}'
+	</if>
+	<if test="partName != null and partName != ''">
+		AND P.DESCRIPTION = '${partName}'
+	</if>
+	<if test="showDescription != null and showDescription == 1">
+		AND T.DESCRIPTION is null
+	</if>
+	<if test="showDescription != null and showDescription == 2">
+		AND T.DESCRIPTION is not null
+	</if>
+</select>
+
+<select id="getMissPartDataTotalNumber" resultType="int" parameterType="com.peg.model.MissData">
+	<![CDATA[
+		SELECT COUNT(1) FROM UDA_PART UP, PART P LEFT JOIN T_PRODUCT_TYPE T ON P.PART_NUMBER = T.PART_NUMBER
+		WHERE P.PART_KEY = UP.OBJECT_KEY AND P.PART_NUMBER LIKE '10%'
+		AND (UP.MOLD_TYPE_S IS NULL OR UP.PRODUCT_FAMILY_S IS NULL OR UP.PRODUCT_TYPE_S IS NULL)
+	]]>
+	<if test="showDescription != null and showDescription == 0">
+		AND T.DESCRIPTION IS NULL
+	</if>
+</select>
+
+<!-- 获取供应商残缺数据 -->
+<select id="getMissSupplierDataPage" resultMap="BaseResultMap">
+	<![CDATA[
+	SELECT ACCOUNT_NAME AS SUPPLIER_NUMBER, DESCRIPTION AS SUPPLIER_NAME, CA0_PERSON_POSITION AS PRODUCTLINE_NAME, CA0_ADDR_NAME AS FACTORY, UDA_3 AS SHORT_SUPPLIER_NAME FROM ACCOUNT WHERE UDA_3 IS NULL AND LENGTH(ACCOUNT_NAME) = '6'
+	]]>
+	<if test="hashMap.supplierNumber != null and hashMap.supplierNumber != ''">
+		AND ACCOUNT_NAME like '%${hashMap.supplierNumber}%'
+	</if>
+	<if test="hashMap.supplierName != null and hashMap.supplierName != ''">
+		AND DESCRIPTION like '%${hashMap.supplierName}%'
+	</if>
+</select>
+
+<select id="getMissSupplierData" resultMap="BaseResultMap" parameterType="com.peg.model.MissData">
+	<![CDATA[
+	SELECT ACCOUNT_NAME AS SUPPLIER_NUMBER, DESCRIPTION AS SUPPLIER_NAME, CA0_PERSON_POSITION AS PRODUCTLINE_NAME, CA0_ADDR_NAME AS FACTORY, UDA_3 AS SHORT_SUPPLIER_NAME FROM ACCOUNT WHERE UDA_3 IS NULL AND LENGTH(ACCOUNT_NAME) = '6'
+	]]>
+	<if test="supplierNumber != null and supplierNumber != ''">
+		AND ACCOUNT_NAME like '%${supplierNumber}%'
+	</if>
+	<if test="supplierName != null and supplierName != ''">
+		AND DESCRIPTION like '%${supplierName}%'
+	</if>
+</select>
+
+<select id="getMissSupplierDataTotalNumber" resultType="int" parameterType="com.peg.model.MissData">
+	<![CDATA[
+	SELECT COUNT(1) FROM ACCOUNT WHERE UDA_3 IS NULL
+	]]>
+	<if test="supplierNumber != null and supplierNumber != ''">
+		AND ACCOUNT_NAME like '%${supplierNumber}%'
+	</if>
+	<if test="supplierName != null and supplierName != ''">
+		AND DESCRIPTION like '%${supplierName}%'
+	</if>
+</select>
+
+<select id="selectMissDatabyPart" resultMap="BaseResultMap">
+	select T.PART_NUMBER,T.PART_NAME,T.DESCRIPTION from T_PRODUCT_TYPE T where 1=1 and PART_NUMBER = #{partNumber}
+</select>
+
+<update id="updateMissDatabyPart" parameterType="com.peg.model.MissData">
+	update T_PRODUCT_TYPE T set T.DESCRIPTION = #{description} where T.PART_NUMBER = #{partNumber}
+</update>
+
+</mapper>

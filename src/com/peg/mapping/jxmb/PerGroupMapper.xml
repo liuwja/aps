@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.jxmb.PerGroupMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.jxmb.PerGroup" >
+    <result column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="CHEKYEAR" property="chekyear" jdbcType="TIMESTAMP" />
+    <result column="DEPARTMENT" property="department" jdbcType="VARCHAR" />
+    <result column="TARGETCLASS" property="targetclass" jdbcType="VARCHAR" />
+    <result column="INDEXCONTENT" property="indexcontent" jdbcType="VARCHAR" />
+    <result column="PERFORMANCECONTENT" property="performancecontent" jdbcType="VARCHAR" />
+    <result column="WEIGHT" property="weight" jdbcType="VARCHAR" />
+    <result column="ASSESSMENTMETHOD" property="assessmentmethod" jdbcType="VARCHAR" />
+    <result column="RECORDTIME" property="recordtime" jdbcType="TIMESTAMP" />
+    <result column="RECORD" property="record" jdbcType="VARCHAR" />
+    <result column="COMPANY" property="company" jdbcType="VARCHAR" />
+    <result column="TARGETVALUE" property="targetvalue" jdbcType="VARCHAR" />
+    <result column="REFERENCEVALUE" property="referencevalue" jdbcType="VARCHAR" />
+    <result column="MEDIAN" property="median" jdbcType="VARCHAR" />
+    <result column="FORMULA" property="formula" jdbcType="DECIMAL" />
+    <result column="ITEM_KEY" property="itemKey" jdbcType="VARCHAR" />
+    <result column="department_name" property="departmentName" jdbcType="VARCHAR" />
+    <result column="factory_number" property="factoryNumber" jdbcType="VARCHAR" />
+    <result column="factory_name" property="factoryName" jdbcType="VARCHAR" />
+    <collection property="item" resultMap="com.peg.dao.jxmb.PerItemMapper.BaseResultMap" columnPrefix="it_"></collection>
+  </resultMap>
+  
+ 
+  <insert id="insert" parameterType="com.peg.model.jxmb.PerGroup" >
+    insert into Y_PERFORMANCECHECK (ID, CHEKYEAR, DEPARTMENT, 
+      TARGETCLASS, INDEXCONTENT, PERFORMANCECONTENT, 
+      WEIGHT, ASSESSMENTMETHOD, RECORDTIME, 
+      RECORD, COMPANY, TARGETVALUE, 
+      REFERENCEVALUE, MEDIAN, FORMULA
+      )
+    values (#{id,jdbcType=DECIMAL}, #{chekyear,jdbcType=TIMESTAMP}, #{department,jdbcType=VARCHAR}, 
+      #{targetclass,jdbcType=VARCHAR}, #{indexcontent,jdbcType=VARCHAR}, #{performancecontent,jdbcType=VARCHAR}, 
+      #{weight,jdbcType=VARCHAR}, #{assessmentmethod,jdbcType=VARCHAR}, #{recordtime,jdbcType=TIMESTAMP}, 
+      #{record,jdbcType=VARCHAR}, #{company,jdbcType=VARCHAR}, #{targetvalue,jdbcType=VARCHAR}, 
+      #{referencevalue,jdbcType=VARCHAR}, #{median,jdbcType=VARCHAR}, #{formula,jdbcType=DECIMAL}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.jxmb.PerGroup" >
+    insert into Y_PERFORMANCECHECK
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="chekyear != null" >
+        CHEKYEAR,
+      </if>
+      <if test="department != null" >
+        DEPARTMENT,
+      </if>
+      <if test="targetclass != null" >
+        TARGETCLASS,
+      </if>
+      <if test="indexcontent != null" >
+        INDEXCONTENT,
+      </if>
+      <if test="performancecontent != null" >
+        PERFORMANCECONTENT,
+      </if>
+      <if test="weight != null" >
+        WEIGHT,
+      </if>
+      <if test="assessmentmethod != null" >
+        ASSESSMENTMETHOD,
+      </if>
+      <if test="recordtime != null" >
+        RECORDTIME,
+      </if>
+      <if test="record != null" >
+        RECORD,
+      </if>
+      <if test="company != null" >
+        COMPANY,
+      </if>
+      <if test="targetvalue != null" >
+        TARGETVALUE,
+      </if>
+      <if test="referencevalue != null" >
+        REFERENCEVALUE,
+      </if>
+      <if test="median != null" >
+        MEDIAN,
+      </if>
+      <if test="formula != null" >
+        FORMULA,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="chekyear != null" >
+        #{chekyear,jdbcType=TIMESTAMP},
+      </if>
+      <if test="department != null" >
+        #{department,jdbcType=VARCHAR},
+      </if>
+      <if test="targetclass != null" >
+        #{targetclass,jdbcType=VARCHAR},
+      </if>
+      <if test="indexcontent != null" >
+        #{indexcontent,jdbcType=VARCHAR},
+      </if>
+      <if test="performancecontent != null" >
+        #{performancecontent,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=VARCHAR},
+      </if>
+      <if test="assessmentmethod != null" >
+        #{assessmentmethod,jdbcType=VARCHAR},
+      </if>
+      <if test="recordtime != null" >
+        #{recordtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record != null" >
+        #{record,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null" >
+        #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="targetvalue != null" >
+        #{targetvalue,jdbcType=VARCHAR},
+      </if>
+      <if test="referencevalue != null" >
+        #{referencevalue,jdbcType=VARCHAR},
+      </if>
+      <if test="median != null" >
+        #{median,jdbcType=VARCHAR},
+      </if>
+      <if test="formula != null" >
+        #{formula,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+   <sql id="Base_Column_List" >
+    ID, CHEKYEAR, DEPARTMENT, 
+      TARGETCLASS, INDEXCONTENT, PERFORMANCECONTENT, 
+      WEIGHT, ASSESSMENTMETHOD, RECORDTIME, 
+      RECORD, COMPANY, TARGETVALUE, 
+      REFERENCEVALUE, MEDIAN, FORMULA
+  </sql>
+  <select id="getAllGroupCategory" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from y_performancecheck
+  </select>
+  
+  <select id="getItemAllByPage" resultMap="BaseResultMap"> 
+  select
+	b.id ,b.CHEKYEAR,b.DEPARTMENT,b.TARGETCLASS,b.INDEXCONTENT,b.PERFORMANCECONTENT,
+	d.department_name, d.factory_number, s.description factory_name,
+	b.WEIGHT,b.TARGETVALUE,b.COMPANY,b.MEDIAN,
+    a.item_key it_item_key, a.id it_id,a.UPPERACTUALVALUE it_UPPERACTUALVALUE,a.UPPERHALFTARGETVALUE it_UPPERHALFTARGETVALUE,
+    a.SECONDHALFTARGETVALUE it_SECONDHALFTARGETVALUE,a.YEARTARGETVALUE it_YEARTARGETVALUE,a.MEDIAN it_MEDIAN,a.REFERENCEVALUE it_REFERENCEVALUE,
+    a.MAXIMUMVALUE it_MAXIMUMVALUE,a.TARGETVALUE it_TARGETVALUE,a.LASTUPDATETIME it_LASTUPDATETIME,a.LASTUPDATEUSER it_LASTUPDATEUSER,
+    a.RECORDTIME it_RECORDTIME,a.RECORD it_RECORD,a.FORMULA it_FORMULA   
+    from  y_item a,y_performancecheck b, department d, site s
+    where a.id(+) = b.id and b.department = d.department_number and d.factory_number = s.site_name
+    
+    	<if test="hashMap.factoryNumber != null and hashMap.factoryNumber != ''">
+           and d.factory_number = '${hashMap.factoryNumber}'
+        </if>
+    	
+    	<if test="hashMap.chekyear != null and hashMap.chekyear != ''">
+           and to_char(b.chekyear,'YYYY') = '${hashMap.chekyear}'
+        </if>
+        
+        <if test="hashMap.department != null and hashMap.department != ''">
+           and b.department like '%${hashMap.department}%'
+        </if>
+        <if test="hashMap.TARGETCLASS != null and hashMap.TARGETCLASS != ''">
+           and b.TARGETCLASS like '%${hashMap.TARGETCLASS}%'
+        </if>
+        <if test="hashMap.INDEXCONTENT != null and hashMap.INDEXCONTENT != ''">
+           and   b.INDEXCONTENT like '%${hashMap.INDEXCONTENT}%'
+        </if>
+       order by b.CHEKYEAR DESC , b.department DESC ,b.TARGETCLASS DESC, b.INDEXCONTENT DESC,a.UPPERACTUALVALUE
+  </select>
+  
+  <select id="getIndexAllByPage" resultMap="BaseResultMap" >
+    select 
+    b.id ,b.chekyear,b.department,b.TARGETCLASS ,b.INDEXCONTENT ,b.PERFORMANCECONTENT,
+    d.department_name, d.factory_number, s.description factory_name,
+	b.WEIGHT,b.TARGETVALUE,b.COMPANY,b.MEDIAN,
+    a.item_key it_item_key, a.id it_id,a.UPPERACTUALVALUE it_UPPERACTUALVALUE,a.UPPERHALFTARGETVALUE it_UPPERHALFTARGETVALUE,
+    a.SECONDHALFTARGETVALUE it_SECONDHALFTARGETVALUE,a.YEARTARGETVALUE it_YEARTARGETVALUE,a.MEDIAN it_MEDIAN,a.REFERENCEVALUE it_REFERENCEVALUE,
+    a.MAXIMUMVALUE it_MAXIMUMVALUE,a.TARGETVALUE it_TARGETVALUE,a.LASTUPDATETIME it_LASTUPDATETIME,a.LASTUPDATEUSER it_LASTUPDATEUSER,
+    a.RECORDTIME it_RECORDTIME,a.RECORD it_RECORD,a.FORMULA it_FORMULA,  
+    c.index_key it_in_index_key, c.item_key it_in_item_key,c.TARGETVALUE it_in_TARGETVALUE,c.BASEVALUE it_in_BASEVALUE,
+    c.REASONSMODIFICATION it_in_REASONSMODIFICATION,c.mainkey it_in_mainkey,c.RECORD it_in_RECORD,c.RECORDTIME it_in_RECORDTIME,
+    c.LASTUPDATETIME it_in_LASTUPDATETIME,c.LASTUPDATEUSER it_in_LASTUPDATEUSER,c.FORMULA it_in_FORMULA,c.Month it_in_Month
+    from y_ITEM a,y_performancecheck b ,y_setup c, department d, site s
+    where a.id(+) = b.id and b.department = d.department_number and d.factory_number = s.site_name
+    and a.item_key = c.item_key(+)
+    	
+    	<if test="hashMap.factoryNumber != null and hashMap.factoryNumber != ''">
+    		and d.factory_number = '${hashMap.factoryNumber}'
+    	</if>
+    	<if test="hashMap.chekyear != null and hashMap.chekyear != ''">
+           and to_char(b.chekyear,'YYYY') = '${hashMap.chekyear}'
+        </if>
+        
+        <if test="hashMap.department != null and hashMap.department != ''">
+           and b.department like '%${hashMap.department}%'
+        </if>
+        <if test="hashMap.TARGETCLASS != null and hashMap.TARGETCLASS != ''">
+           and b.TARGETCLASS like '%${hashMap.TARGETCLASS}%'
+        </if>
+        <if test="hashMap.INDEXCONTENT != null and hashMap.INDEXCONTENT != ''">
+           and   b.INDEXCONTENT like '%${hashMap.INDEXCONTENT}%'
+        </if>
+   
+       order by b.CHEKYEAR DESC , b.department DESC ,b.TARGETCLASS DESC, b.INDEXCONTENT DESC,a.UPPERACTUALVALUE,to_number(substr(replace(c.basevalue,'-',''),2,3))
+  </select>  
+  
+ <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from y_performancecheck
+    where  id = #{id,jdbcType=DECIMAL}
+  </delete>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+   SELECT    
+  PER.ID, CHEKYEAR, DEPARTMENT, 
+  d.department_name, d.factory_number, s.description factory_name,
+      TARGETCLASS, INDEXCONTENT, PERFORMANCECONTENT, 
+      WEIGHT, ASSESSMENTMETHOD, RECORDTIME, 
+      RECORD, COMPANY, TARGETVALUE, 
+      REFERENCEVALUE, MEDIAN, FORMULA
+from y_performancecheck PER, department d, site s
+  where PER.department = d.department_number and d.factory_number = s.site_name
+  AND PER.id = #{id}
+  </select>
+   
+   <select id="getAllByPage" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from y_performancecheck
+    <where>
+        <if test="hashMap.department != null">
+            department like '%${hashMap.department}%'
+        </if>
+        <if test="hashMap.targetclass != null">
+           and targetclass like '%${hashMap.targetclass}%'
+        </if>
+        <if test="hashMap.chekyear != null">
+           and to_char(chekyear,'YYYY-MM') = ${hashMap.chekyear}
+        </if>
+    </where>
+       order by recordtime desc
+  </select> 
+  
+  <select id="getMonthAllByPage" resultMap="BaseResultMap" >
+ select    
+    b.id,b.department,b.targetclass,b.indexcontent,b.performancecontent ,b.chekyear,
+    de.department_name, de.factory_number, s.description factory_name,
+    a.ITEM_KEY it_ITEM_KEY, a.id it_id,a.YEARTARGETVALUE it_YEARTARGETVALUE,a.REFERENCEVALUE it_REFERENCEVALUE,  
+    c.index_key it_in_index_key, c.item_key it_in_item_key,c.TARGETVALUE it_in_TARGETVALUE,c.BASEVALUE it_in_BASEVALUE,
+    c.month it_in_month,
+   	d.MONTH_KEY it_in_gc_MONTH_KEY, d.index_key it_in_gc_index_key, d.ACCUMULATEDMONTH it_in_gc_ACCUMULATEDMONTH,
+   	d.LASTMONTHACTUAL it_in_gc_LASTMONTHACTUAL,d.monthreality it_in_gc_monthreality,
+   	d.TARGETVALUEMONTH it_in_gc_TARGETVALUEMONTH ,d.accumumonth it_in_gc_accumumonth, d.RECORD it_in_gc_RECORD, 
+   	d.LASTUPDATETIME it_in_gc_LASTUPDATETIME , d.LASTUPDATEUSER it_in_gc_LASTUPDATEUSER,d.monthvalue it_in_gc_monthvalue
+    from y_item a,y_performancecheck b ,y_setup c, y_month d,department de, site s
+    where  a.id = b.id
+    and a.item_key = c.item_key
+   	and c.index_key=d.index_key(+)
+   	and b.department = de.department_number and de.factory_number = s.site_name
+   	
+    <if test="hashMap.chekyear != null and hashMap.chekyear != ''">
+           and to_char(b.chekyear,'YYYY') = '${hashMap.chekyear}'
+        </if>
+ 			
+ 		<if test="hashMap.factoryNumber != null and hashMap.factoryNumber != ''">
+           and de.factory_number = '${hashMap.factoryNumber}'
+        </if>
+        <if test="hashMap.department != null and hashMap.department != ''">
+           and b.department like '%${hashMap.department}%'
+        </if>
+        <if test="hashMap.TARGETCLASS != null and hashMap.TARGETCLASS != ''">
+           and b.TARGETCLASS like '%${hashMap.TARGETCLASS}%'
+        </if>
+        <if test="hashMap.INDEXCONTENT != null and hashMap.INDEXCONTENT != ''">
+           and   b.INDEXCONTENT like '%${hashMap.INDEXCONTENT}%'
+        </if>
+        <if test="hashMap.ACCUMULATEDMONTH != null and hashMap.ACCUMULATEDMONTH != ''">
+           and   d.ACCUMULATEDMONTH like '%${hashMap.ACCUMULATEDMONTH}%'
+        </if>
+ 
+   		<if test="hashMap.itemKey != null and hashMap.itemKey != ''">
+   			and a.item_Key = '${hashMap.itemKey}'
+   		</if>
+   		<if test="hashMap.indexKey != null and hashMap.indexKey != ''">
+   			and a.index_Key = '${hashMap.indexKey}'
+   		</if>
+       order by b.DEPARTMENT DESC ,b.TARGETCLASS DESC, b.INDEXCONTENT DESC,a.YEARTARGETVALUE,to_number(substr(replace(c.TARGETVALUE,'-',''),2,3)),d.ACCUMULATEDMONTH
+  </select> 
+  
+  
+</mapper>

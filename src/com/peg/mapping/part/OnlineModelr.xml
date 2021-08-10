@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.part.OnlineMapper" >
+  <resultMap id="OnlineModel" type="com.peg.model.part.OnlineModel" >
+  	<result column="record_date_t" property="record_date_t" jdbcType="TIMESTAMP"/>
+  	<result column="line_s" property="line_s" jdbcType="VARCHAR"/>
+	<result column="part_number" property="part_number" jdbcType="VARCHAR"/>
+	<result column="product_maturity_s" property="product_maturity_s" jdbcType="VARCHAR"/>
+	<result column="account_name" property="account_name" jdbcType="VARCHAR"/>
+	<result column="description_2" property="description_2" jdbcType="VARCHAR"/>
+	<result column="defect_s" property="defect_s" jdbcType="VARCHAR"/>
+	<result column="defect_qty_i" property="defect_qty_i" jdbcType="DECIMAL"/>
+	<result column="total_qty_i" property="total_qty_i" jdbcType="DECIMAL"/>
+	<result column="serial_number" property="serialNumber" jdbcType="VARCHAR"/>
+	<result column="material_old" property="materialOld" jdbcType="VARCHAR"/>
+	<result column="material_new" property="materialNew" jdbcType="VARCHAR"/>
+	<result column="abroad" property="abroad" jdbcType="VARCHAR"/>
+	<result column="product_NO" property="productNO" jdbcType="VARCHAR"/>
+	<result column="gas" property="gas" jdbcType="VARCHAR"/>
+	<result column="defect_d" property="defect_d" jdbcType="VARCHAR"/>
+	<result column="defect_res" property="defect_res" jdbcType="VARCHAR"/>
+	<result column="pl_name" property="pl_name" jdbcType="VARCHAR"/>
+	<result column="defect_b" property="defect_b" jdbcType="VARCHAR"/>
+	<result column="verifying_Con" property="verifyingCon" jdbcType="VARCHAR"/>
+	<result column="text" property="text" jdbcType="VARCHAR"/>
+	<result column="group_name" property="group_name" jdbcType="VARCHAR"/>
+	<result column="isnew_end_time_s" property="isnew_end_time_s" jdbcType="VARCHAR"/>
+ 
+    <!-- <result column="category" property="factoryS" jdbcType="VARCHAR" />
+	<result column="UDA_2" property="uda_2" jdbcType="VARCHAR" />
+	<result column="UDA_1" property="uda_1" jdbcType="VARCHAR" />
+	<result column="UDA_3" property="uda_3" jdbcType="VARCHAR" />
+	<result column="UDA_4" property="uda_4" jdbcType="VARCHAR" />
+	<result column="PART_NUMBER" property="partnumber" jdbcType="VARCHAR"/>
+	<result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
+	<result column="factoryS" property="factoryS" jdbcType="VARCHAR"/>
+	<result column="productionLine" property="productionLine" jdbcType="VARCHAR"/>
+	<result column="numbers" property="numbers" jdbcType="VARCHAR"/>
+	<result column="name" property="name" jdbcType="VARCHAR"/>
+	<result column="badcount" property="badcount" jdbcType="DECIMAL"/>
+	<result column="countnum" property="count" jdbcType="DECIMAL"/>
+	<result column="count" property="count" jdbcType="DECIMAL"/>
+	<result column="supplier" property="supplier" jdbcType="VARCHAR"/>
+	<result column="arrival" property="arrival" jdbcType="VARCHAR" />
+	<result column="partnumber" property="partnumber" jdbcType="VARCHAR" />
+	<result column="partname" property="partname" jdbcType="VARCHAR"/>
+	<result column="supcode" property="supcode" jdbcType="VARCHAR"/>	
+	<result column="supname" property="supname" jdbcType="VARCHAR"/>
+	<result column="tonum" property="tonum" jdbcType="VARCHAR"/>	
+	<result column="location" property="location" jdbcType="VARCHAR"/>	
+	<result column="moldtype" property="moldtype" jdbcType="VARCHAR"/>
+	<result column="partclass" property="partclass" jdbcType="DECIMAL"/>
+	<result column="partrevision" property="partrevision" jdbcType="DECIMAL"/>
+	<result column="category" property="category" jdbcType="VARCHAR"/>
+	<result column="date_t" property="date_t" jdbcType="VARCHAR"/>
+	<result column="date_TT" property="date_TT" jdbcType="TIMESTAMP"/>
+	<result column="return_date" property="return_date" jdbcType="TIMESTAMP"/>
+	<result column="part_name" property="part_name" jdbcType="VARCHAR"/>
+	<result column="supplier_number" property="supplier_number" jdbcType="VARCHAR"/>
+	<result column="supplier_name" property="supplier_name" jdbcType="VARCHAR"/>
+	<result column="return_number" property="return_number" jdbcType="NUMERIC"/>
+	<result column="ware_house" property="ware_house" jdbcType="VARCHAR"/>
+	<result column="account_key" property="account_key" jdbcType="VARCHAR"/>
+	<result column="part_key" property="part_key" jdbcType="VARCHAR"/> -->
+	<!--  -->
+  </resultMap>
+  <resultMap id="Location" type="com.peg.model.Location" >
+	<result column="id" property="id" jdbcType="DECIMAL"/>
+	<result column="locationCode" property="locationCode" jdbcType="VARCHAR"/>
+	<result column="location" property="location" jdbcType="VARCHAR"/>
+	<result column="province" property="province" jdbcType="VARCHAR"/> 
+  </resultMap>
+  <select id="gettablistPage" resultMap="OnlineModel">
+  	<![CDATA[${hashMap.sql}]]>
+  </select>
+  <select id="getlistPage" resultMap="Location">
+  	<![CDATA[${hashMap.sql}]]>
+  </select>
+  <select id="getEChartObj" resultMap="OnlineModel">
+  	<![CDATA[${strSql}]]>
+  </select>
+  <select id="getListStr" resultType="java.lang.String">
+  	<![CDATA[${strSql}]]>
+  </select>
+  <!-- 入库数 供应商 -->
+  <select id="getInTotal" resultType="java.lang.Integer">
+		select sum(k.uda_6) from uda_lot@mes_test_link j inner join lot@mes_test_link k on k.lot_key=j.object_key where 1=1
+		<if test="entity.startdate!=null and entity.startdate!=''">
+			and k.udt_2 &gt;= TO_DATE('${entity.startdate}','YYYY-MM-DD')
+		</if> 
+		<if test="entity.enddate!=null and entity.enddate!=''">
+			and k.udt_2 &lt; TO_DATE('${entity.enddate}','YYYY-MM-DD')
+		</if> 
+		<if test="entity.strList!=null and entity.strList.size()>0">
+			 and j.supplier_number_s in 
+			<foreach collection="entity.strList" item="sup" index="index" open="(" separator="," close=")">
+				#{sup}
+			</foreach>
+		</if>
+		<if test="entity.strList2!=null and entity.strList2.size()>0">
+			 and k.part_number in 
+			<foreach collection="entity.strList2" item="partnumber" index="index" open="(" separator="," close=")">
+				#{partnumber}
+			</foreach>
+		</if>
+  </select>
+  
+    <!-- 入库数 供应商 fjt-->
+  <select id="getUnprimaryKeyPartList" resultMap="OnlineModel">
+         <choose>
+            <when test="entity.charthid == '6'.toString() or entity.charthid == '11'.toString()">
+                 select u.supplier_number_s as account_name,sum(l.uda_6) as total_qty_i  from  lot@mes_part_link l,uda_lot@mes_part_link u,part p,uda_part up
+                 where l.lot_key = u.object_key
+                 and l.part_number = p.part_number
+                 and p.part_key = up.object_key
+            </when>
+            <when test="entity.charthid == '7'.toString() or entity.charthid == '12'.toString()">
+                 <if test="entity.partVersion == '否'.toString()">
+                     select substr(l.part_number,0,length(l.part_number)-1)  as part_number,sum(l.uda_6) as total_qty_i from   lot@mes_part_link l,uda_lot@mes_part_link u,part p,uda_part up
+                     where l.lot_key = u.object_key
+                     and l.part_number = p.part_number
+                     and p.part_key = up.object_key
+                 </if>
+                 <if test="entity.partVersion == '是'.toString()">
+	                 select l.part_number as part_number,sum(l.uda_6) as total_qty_i from   lot@mes_part_link l,uda_lot@mes_part_link u,part p,uda_part up
+	                 where l.lot_key = u.object_key
+	                 and l.part_number = p.part_number
+	                 and p.part_key = up.object_key
+                 </if>
+            </when>
+            <when test="entity.charthid == '8'.toString()">
+                select sum(l.uda_6) as total_qty_i from lot@mes_part_link l,uda_lot@mes_part_link u,part p,uda_part up
+                where l.lot_key = u.object_key
+                and l.part_number = p.part_number
+                and p.part_key = up.object_key
+            </when>
+            <when test="entity.charthid == '9'.toString() or entity.charthid == '10'.toString() or entity.charthid == '14'.toString() or entity.charthid == '15'.toString()">
+                select to_char(l.udt_2,'${entity.date_type}') as date_t,sum(l.uda_6) total_qty_i  from  lot@mes_part_link l,uda_lot@mes_part_link u,part p,uda_part up
+                where l.lot_key = u.object_key
+                and l.part_number = p.part_number
+                and p.part_key = up.object_key
+            </when>
+        </choose>
+		<if test="entity.factory != null and entity.factory !=''">
+  		   <choose>
+  		      <when test="entity.productType != null and entity.productType !=''">
+  		          and up.mold_type_s = #{entity.productType}
+  		      </when>
+  		      <otherwise>
+  		          and up.mold_type_s in (${entity.productTypes})
+  		      </otherwise>
+  		   </choose>
+  		</if>
+		<if test="entity.startdate!=null and entity.startdate!='' and entity.enddate!=null and entity.enddate!=''">
+			and to_char(l.udt_2,'yyyy-mm-dd')  between '${entity.startdate}' and  '${entity.enddate}'
+		</if> 
+		<if test="entity.partClass !=null and entity.partClass !=''">
+  		   and up.part_level_s = #{entity.partClass}
+  		</if>
+  		<if test="entity.isNew !=null and entity.isNew !=''">
+  		   and up.is_new_s = #{entity.isNew}
+  		</if>
+		<if test="entity.strList!=null and entity.strList.size()>0">
+			 and u.supplier_number_s in 
+			<foreach collection="entity.strList" item="sup" index="index" open="(" separator="," close=")">
+				#{sup}
+			</foreach>
+		</if>
+		<if test="entity.strList2!=null and entity.strList2.size()>0">
+		  <if test="entity.partVersion == '否'.toString()">
+			   and substr(l.part_number,0,length(l.part_number)-1) in
+			   <foreach collection="entity.strList2" item="partnumber" index="index" open="(" separator="," close=")">
+					#{partnumber}
+				</foreach>
+		  </if>
+		  <if test="entity.partVersion == '是'.toString()">
+			 and l.part_number in 
+			<foreach collection="entity.strList2" item="partnumber" index="index" open="(" separator="," close=")">
+				#{partnumber}
+			</foreach>
+		  </if>	
+		</if>
+		<choose>
+		     <when test="entity.charthid == '6'.toString() or entity.charthid == '11'.toString()">
+		           group by u.supplier_number_s
+		     </when>
+		     <when test="entity.charthid == '7'.toString() or entity.charthid == '12'.toString()">
+		       <if test="entity.partVersion == '否'.toString()">
+		         group by   substr(l.part_number,0,length(l.part_number)-1)
+		       </if>
+		       <if test="entity.partVersion == '是'.toString()">
+		           group by l.part_number  
+		       </if>    
+		     </when>
+		     <when test="entity.charthid == '9'.toString() or entity.charthid == '10'.toString() or entity.charthid == '14'.toString() or entity.charthid == '15'.toString()">
+		           group by to_char(l.udt_2,'${entity.date_type}')   
+		     </when>
+		</choose>
+  </select>
+
+  <!-- 绑定数 供应商 -->
+  <!-- <select id="getbingTotal" resultType="java.lang.Integer">
+  		SELECT count(1) FROM CONSUMED_PART@MES_TEST_LINK a inner join part p on a.part_number=p.part_number inner join uda_part ud on p.part_key = ud.object_key,SUPPLIER@MES_TEST_LINK b
+		where part_class_s=p.replacement_type and SUPPLIER_NO=substr(part_serial, -8,1)
+		<if test="entity.startdate!=null and entity.startdate!=''">
+			and a.creation_time_u &gt;= TO_DATE('${entity.startdate}','YYYY-MM-DD')
+		</if> 
+		<if test="entity.enddate!=null and entity.enddate!=''">
+			and a.creation_time_u &lt; TO_DATE('${entity.enddate}','YYYY-MM-DD')
+		</if> 
+		<if test="entity.strList!=null and entity.strList.size()>0">
+			 and b.erp_supplier_no in 
+			<foreach collection="entity.strList" item="sup" index="index" open="(" separator="," close=")">
+				#{sup}
+			</foreach>
+		</if>
+		<if test="entity.strList2!=null and entity.strList2.size()>0">
+			 and p.part_number in 
+			<foreach collection="entity.strList2" item="partnumber" index="index" open="(" separator="," close=")">
+				#{partnumber}
+			</foreach>
+		</if> -->
+		<select id="getbingTotal" resultType="java.lang.Integer">
+  		select count(1) from t_keypartsum where 1=1
+		<if test="entity.startdate!=null and entity.startdate!=''">
+			and creation_time_u &gt;= '${entity.startdate}'
+		</if> 
+		<if test="entity.enddate!=null and entity.enddate!=''">
+			and creation_time_u &lt;'${entity.enddate}'
+		</if> 
+		<if test="entity.strList!=null and entity.strList.size()>0">
+			 and supplier_number_n in 
+			<foreach collection="entity.strList" item="sup" index="index" open="(" separator="," close=")">
+				#{sup}
+			</foreach>
+		</if>
+		<if test="entity.strList2!=null and entity.strList2.size()>0">
+			 and part_number in 
+			<foreach collection="entity.strList2" item="partnumber" index="index" open="(" separator="," close=")">
+				#{partnumber}
+			</foreach>
+		</if>
+  </select>
+  <!-- 绑定数修改-fjt -->
+  <select id="getPrimaryPartList" resultMap="OnlineModel">
+        <choose>
+            <when test="entity.charthid == '6'.toString() or entity.charthid == '11'.toString()">
+                 select t.supplier_number_n as account_name,count(1) as total_qty_i from t_keypartsum t,part p,uda_part u  
+                 where t.part_number = p.part_number 
+                 and p.part_key = u.object_key
+            </when>
+            <when test="entity.charthid == '7'.toString() or entity.charthid == '12'.toString()">
+                 <if test="entity.partVersion == '否'.toString()">
+                     select substr(t.part_number,0,length(t.part_number)-1) as part_number,count(1) as total_qty_i from t_keypartsum t,part p,uda_part u  
+                     where t.part_number = p.part_number 
+                     and p.part_key = u.object_key
+                 </if>
+                 <if test="entity.partVersion == '是'.toString()">
+                     select t.part_number,count(1) as total_qty_i from t_keypartsum t,part p,uda_part u  
+                     where t.part_number = p.part_number 
+                     and p.part_key = u.object_key
+                 </if>
+            </when>
+            <when test="entity.charthid == '8'.toString() ">
+                select count(1) as total_qty_i from t_keypartsum t,part p,uda_part u  
+                where t.part_number = p.part_number 
+                and p.part_key = u.object_key
+            </when>
+            <when test="entity.charthid == '9'.toString() or entity.charthid == '10'.toString() or entity.charthid == '14'.toString() or entity.charthid == '15'.toString()">
+                select to_char(to_date(t.creation_time_u,'yyyy-mm-dd'),'${entity.date_type}') as date_t,count(1) total_qty_i from t_keypartsum t,part p,uda_part u  
+		        where t.part_number = p.part_number 
+		        and p.part_key = u.object_key
+            </when>
+        </choose>
+  		<if test="entity.factory != null and entity.factory !=''">
+  		   <choose>
+  		      <when test="entity.productType != null and entity.productType !=''">
+  		          and u.mold_type_s = #{entity.productType}
+  		      </when>
+  		      <otherwise>
+  		          and u.mold_type_s in (${entity.productTypes})
+  		      </otherwise>
+  		   </choose>
+  		</if>
+		<if test="entity.startdate!=null and entity.startdate!='' and entity.enddate!=null and entity.enddate!=''">
+			and t.creation_time_u between '${entity.startdate}' and  '${entity.enddate}'
+		</if> 
+		<if test="entity.partClass !=null and entity.partClass !=''">
+  		   and u.part_level_s = #{entity.partClass}
+  		</if>
+  		<if test="entity.isNew !=null and entity.isNew !=''">
+  		   and u.is_new_s = #{entity.isNew}
+  		</if>
+		<if test="entity.strList!=null and entity.strList.size()>0">
+			 and t.supplier_number_n in 
+			<foreach collection="entity.strList" item="sup" index="index" open="(" separator="," close=")">
+				#{sup}
+			</foreach>
+		</if>
+		<if test="entity.strList2!=null and entity.strList2.size()>0">
+		    <if test="entity.partVersion == '否'.toString()">
+		         and substr(t.part_number,0,length(t.part_number)-1) in 
+				<foreach collection="entity.strList2" item="partnumber" index="index" open="(" separator="," close=")">
+					#{partnumber}
+				</foreach>
+		    </if> 
+			 <if test="entity.partVersion == '是'.toString()">
+			     and t.part_number in 
+				<foreach collection="entity.strList2" item="partnumber" index="index" open="(" separator="," close=")">
+					#{partnumber}
+				</foreach>
+			 </if> 
+		</if>
+		<choose>
+		     <when test="entity.charthid == '6'.toString() or entity.charthid == '11'.toString()">
+		           group by t.supplier_number_n 
+		     </when>
+		     <when test="entity.charthid == '7'.toString() or entity.charthid == '12'.toString()">
+		         <if test="entity.partVersion == '否'.toString()">
+		            group by substr(t.part_number,0,length(t.part_number)-1)
+		         </if> 
+		         <if test="entity.partVersion == '是'.toString()">
+		           group by t.part_number  
+		         </if> 
+		     </when>
+		     <when test="entity.charthid == '9'.toString() or entity.charthid == '10'.toString() or entity.charthid == '14'.toString() or entity.charthid == '15'.toString()">
+		           group by to_char(to_date(t.creation_time_u,'yyyy-mm-dd'),'${entity.date_type}')  
+		     </when>
+		</choose>
+  </select>
+  <!-- 30个月的绑定数 -->
+  <select id="getPrimaryTotal" resultType="java.lang.Integer">
+	 select count(1) from t_keypartsum where to_date(creation_time_u,'yyyy-mm-dd') between 
+		TO_DATE('${entity.startdate}',<![CDATA['${entity.date_type}']]>) and TO_DATE('${entity.enddate}',<![CDATA['${entity.date_type}']]>)
+  </select>
+  <!-- 30个月的总生产更换 -->
+  <select id="getRTotal" resultType="java.lang.Integer">
+	 select count(1) from t_replace_part where replacetime between 
+		TO_DATE('${entity.startdate}',<![CDATA['${entity.date_type}']]>) and TO_DATE('${entity.enddate}',<![CDATA['${entity.date_type}']]>)
+  </select>
+  <!-- 30个月的总生产退次 -->
+  <select id="getTotal" resultType="java.lang.Integer">
+	 select count(1) from ERP_ASSEMBLE_PRODUCT_RETURN where return_date between 
+		TO_DATE('${entity.startdate}',<![CDATA['${entity.date_type}']]>) and TO_DATE('${entity.enddate}',<![CDATA['${entity.date_type}']]>)
+  </select>
+  <!-- 30个月的总入库数 -->
+  <select id="getStorageTotal" resultType="java.lang.Integer">
+	  select sum(k.uda_6) from uda_lot@mes_part_link j inner join lot@mes_part_link k on k.lot_key=j.object_key where k.udt_2 between 
+	  TO_DATE('${entity.startdate}',<![CDATA['${entity.date_type}']]>) and TO_DATE('${entity.enddate}',<![CDATA['${entity.date_type}']]>)
+  </select>
+  <!-- 汇总—删除 -->
+  <delete id="dateDelete">
+  	<![CDATA[${strSql}]]>
+  </delete>
+  <!-- 汇总—插入 -->
+  <insert id="dateTransfer">
+  	<![CDATA[${strSql}]]>
+  </insert>
+  <!-- 汇总—插入——定时程序（关键件绑定） -->
+<!--   <insert id="dataTkeypartsum">
+  	insert into t_keypartsum(creation_time_u,supplier_number_n,part_number,supplier_code) 
+  	select a.creation_time_u,b.supplier_number_n,b.part_number,supplier_code from CONSUMED_PART@MES_TEST_LINK a inner join 
+  	T_SUPPLIER_PART b on a.part_number=b.part_number where substr(a.part_serial, -8,1)=supplier_code and to_char(a.creation_time_u,'yyyy-MM-dd')=to_char(sysdate-1,'yyyy-MM-dd')
+  </insert> -->
+    <insert id="dataTkeypartsum">
+  	insert into t_keypartsum(creation_time_u,supplier_number_n,part_number,supplier_code) 
+	select to_char(a.creation_time_u,'yyyy-mm-dd'),nvl(b.supplier_number_n,''),nvl(b.part_number,a.part_number),nvl(b.supplier_code,substr(a.part_serial, -8,1))
+	from  CONSUMED_PART@MES_TEST_LINK a,T_SUPPLIER_PART b
+	where a.part_number=b.part_number(+)
+	and substr(a.part_serial, -8,1)=supplier_code(+)
+	and to_char(a.creation_time_u,'yyyy-MM-dd')=to_char(sysdate-1,'yyyy-MM-dd')
+  </insert> 
+  <!-- 汇总—插入——定时程序（mes退次） -->
+  <insert id="dataTreturnwaresum">
+  	insert into t_return_ware (line_s,account_key,supplier_number,description_sup,is_new_s,part_level_s,part_key,part_number,description_part,consumption_type,
+	date_t,defect_s,defect_qty_i,total_qty_i) select a.line_s,b.account_key,b.supplier_number,b.description as description_sup,d.is_new_s,d.part_level_s,c.part_key,c.part_number,
+	c.description as description_part,c.CONTROL_NUMBER_S,a.date_t,a.defect_s,defect_qty_i,a.total_qty_i
+	from at_assemblyproductback a left join (select t_a.account_key,NVL(t_b.supplier_number_n,t_a.account_name) as supplier_number,t_a.description from 
+	account t_a left join t_supplier_ref t_b on t_a.account_name=t_b.supplier_number ) b on a.supplier_number_s=b.supplier_number left join (select t_1.part_key,up.CONTROL_NUMBER_S,
+	NVL(t_2.new_part_number,t_1.part_number) as part_number,t_1.description,t_1.consumption_type from part t_1 left join new_part_ref t_2 on 
+	t_1.part_number=t_2.old_part_number left join uda_part up on t_1.part_key = up.object_key) c on a.item_number_s=c.part_number left join uda_part d on c.part_key=d.object_key
+	where 1=1 and to_char(a.date_t ,'yyyy-MM-dd')=to_char(sysdate-1,'yyyy-MM-dd')
+  </insert>
+  <!-- 查找不良批次数 -->
+  <select id="getBatchDefectRecordList" resultMap="OnlineModel">
+      <choose>
+            <when test="entity.charthid == '1'.toString()">
+                select nvl(ts.supplier_number_n,ab.supplier_number_s) supplier_number ,nvl(ts.supplier_short_name,a.description) supplier_name,count(1) badcount
+				from at_batchdefectrecord ab,account a,part p ,uda_part up,t_supplier_ref ts,new_part_ref np
+				where ab.supplier_number_s = a.account_name
+				and ab.part_number_s = p.part_number(+)
+				and p.part_key = up.object_key(+)
+				and ab.supplier_number_s = ts.supplier_number(+)
+				and ab.part_number_s = np.old_part_number(+)
+				and ab.me_s='料'
+            </when>
+            <when test="entity.charthid == '2'.toString()">
+	            select nvl(np.new_part_number,ab.part_number_s) part_number ,nvl(np.part_name,p.description)part_name,count(1) badcount
+				from at_batchdefectrecord ab,account a,part p ,uda_part up,t_supplier_ref ts,new_part_ref np
+				where ab.supplier_number_s = a.account_name(+)
+				and ab.part_number_s = p.part_number
+				and p.part_key = up.object_key
+				and ab.supplier_number_s = ts.supplier_number(+)
+				and ab.part_number_s = np.old_part_number(+)
+				and ab.me_s='料'
+            </when>
+            <when test="entity.charthid == '3'.toString()">
+                select ab.defect_s ,count(1) badcount
+				from at_batchdefectrecord ab,account a,part p ,uda_part up,t_supplier_ref ts,new_part_ref np
+				where ab.supplier_number_s = a.account_name(+)
+				and ab.part_number_s = p.part_number(+)
+				and p.part_key = up.object_key(+)
+				and ab.supplier_number_s = ts.supplier_number(+)
+				and ab.part_number_s = np.old_part_number(+)
+				and ab.me_s='料'
+            </when>
+            <when test="entity.charthid == '4'.toString() or entity.charthid == '5'.toString()">
+                select to_char(ab.record_date_t,'${entity.date_type}') date_t,count(1) badcount
+				from at_batchdefectrecord ab,account a,part p ,uda_part up,t_supplier_ref ts,new_part_ref np
+				where ab.supplier_number_s = a.account_name(+)
+				and ab.part_number_s = p.part_number(+)
+				and p.part_key = up.object_key(+)
+				and ab.supplier_number_s = ts.supplier_number(+)
+				and ab.part_number_s = np.old_part_number(+)
+				and ab.me_s='料'
+            </when>
+        </choose>
+       <if test="entity.factory != null and entity.factory !=''">
+  		   <choose>
+  		      <when test="entity.productType != null and entity.productType !=''">
+  		          and up.mold_type_s = #{entity.productType}
+  		      </when>
+  		      <otherwise>
+  		          and up.mold_type_s in (${entity.productTypes})
+  		      </otherwise>
+  		   </choose>
+  		</if>
+		<if test="entity.startdate!=null and entity.startdate!='' and entity.enddate!=null and entity.enddate!=''">
+			and to_char(ab.record_date_t,'yyyy-mm-dd')  between '${entity.startdate}' and  '${entity.enddate}'
+		</if> 
+		<if test="entity.partClass !=null and entity.partClass !=''">
+  		   and up.part_level_s = #{entity.partClass}
+  		</if>
+  		<if test="entity.isNew !=null and entity.isNew !=''">
+  		   and up.is_new_s = #{entity.isNew}
+  		</if>
+  		<if test="entity.iscrux == '0'.toString() and entity.charthid != '3'.toString()"  >
+  		   and up.CONTROL_NUMBER_S ='关键件'
+  		</if>
+  		<if test="entity.iscrux == '1'.toString() and entity.charthid != '3'.toString()">
+  		  <![CDATA[ and up.CONTROL_NUMBER_S = '非关键件' ]]>
+  		</if>
+  		<if test="entity.iscrux == '2'.toString() and entity.charthid != '3'.toString()">
+  		  <![CDATA[ and up.CONTROL_NUMBER_S = '附件' ]]>
+  		</if>
+		<if test="entity.strList!=null and entity.strList.size()>0">
+			 and nvl(ts.supplier_number_n,ab.supplier_number_s) in 
+			<foreach collection="entity.strList" item="sup" index="index" open="(" separator="," close=")">
+				#{sup}
+			</foreach>
+		</if>
+		<if test="entity.strList2!=null and entity.strList2.size()>0">
+		     <choose>
+		        <when test="entity.partVersion == '否'.toString()">
+		             and substr(nvl(np.new_part_number,ab.part_number),0,length(nvl(np.new_part_number,ab.part_number))-1) in 
+		        </when>
+		        <otherwise>
+		          nvl(np.new_part_number,ab.part_number) in
+		        </otherwise>
+		     </choose>
+			<foreach collection="entity.strList2" item="partnumber" index="index" open="(" separator="," close=")">
+				#{partnumber}
+			</foreach>
+		</if>
+		<choose>
+		     <when test="entity.charthid == '1'.toString()">
+		           group by nvl(ts.supplier_number_n,ab.supplier_number_s),nvl(ts.supplier_short_name,a.description)
+		     </when>
+		     <when test="entity.charthid == '2'.toString()">
+		           group by nvl(np.new_part_number,ab.part_number_s),nvl(np.part_name,p.description)
+		     </when>
+		     <when test="entity.charthid == '3'.toString()">
+		          group by ab.defect_s
+		     </when>
+		     <when test="entity.charthid == '4'.toString() or entity.charthid == '5'.toString()">
+		           group by to_char(ab.record_date_t,'${entity.date_type}') 
+		     </when>
+		</choose>
+		order by badcount desc
+  </select>
+</mapper>

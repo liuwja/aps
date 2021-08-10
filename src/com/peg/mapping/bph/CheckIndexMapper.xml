@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.peg.dao.bph.CheckIndexMapper">
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.CheckIndex">
+    <id column="ID" jdbcType="DECIMAL" property="id" />
+    <result column="FACTORY" jdbcType="VARCHAR" property="factory" />
+    <result column="AREA" jdbcType="VARCHAR" property="area" />
+    <result column="SHIFTGROUP_CATEGORY" jdbcType="VARCHAR" property="shiftGroupCategory" />
+    <result column="CHECK_ITEM" jdbcType="VARCHAR" property="checkItem" />
+    <result column="CHECK_INDEX" jdbcType="VARCHAR" property="checkIndex" />
+    <result column="INDEX_CODE" jdbcType="VARCHAR" property="indexCode" />
+    <result column="INDEX_DESCRIPTION" jdbcType="VARCHAR" property="indexDescription" />
+    <result column="SCALE" jdbcType="DECIMAL" property="scale" />
+    <result column="MYKEY" jdbcType="VARCHAR" property="mykey" />
+    <result column="BASE_VALUE" jdbcType="DECIMAL" property="baseValue" />
+    <result column="TARGET_VALUE" jdbcType="DECIMAL" property="targetValue" />
+    <result column="CREATE_USER" jdbcType="VARCHAR" property="createUser" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="LAST_UPDATE_USER" jdbcType="VARCHAR" property="lastUpdateUser" />
+    <result column="LAST_UPDATE_TIME" jdbcType="TIMESTAMP" property="lastUpdateTime" />
+    <result column="COL_1" jdbcType="VARCHAR" property="col1" />
+    <result column="COL_2" jdbcType="VARCHAR" property="col2" />
+    <result column="COL_3" jdbcType="VARCHAR" property="col3" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, FACTORY, AREA, SHIFTGROUP_CATEGORY,CHECK_ITEM, CHECK_INDEX,INDEX_CODE,INDEX_DESCRIPTION,SCALE,MYKEY,BASE_VALUE,TARGET_VALUE, CREATE_USER, CREATE_TIME, LAST_UPDATE_USER, 
+    LAST_UPDATE_TIME,COL_1,COL_2,COL_3
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from T_CHECK_INDEX
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from T_CHECK_INDEX
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.bph.CheckIndex">
+    <selectKey resultType="long" order="BEFORE" keyProperty="id">
+      select seq_t_check_index.nextval as id from dual
+    </selectKey> 
+    insert into T_CHECK_INDEX (ID, FACTORY, AREA, SHIFTGROUP_CATEGORY,CHECK_ITEM, CHECK_INDEX,INDEX_CODE,INDEX_DESCRIPTION,SCALE,MYKEY,BASE_VALUE,TARGET_VALUE, CREATE_USER, CREATE_TIME, LAST_UPDATE_USER, 
+    LAST_UPDATE_TIME,COL_1,COL_2,COL_3)
+    values (#{id,jdbcType=DECIMAL}, #{factory,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, 
+      #{shiftGroupCategory,jdbcType=VARCHAR}, #{checkItem,jdbcType=VARCHAR}, #{checkIndex,jdbcType=VARCHAR}, #{indexCode,jdbcType=VARCHAR}, #{indexDescription,jdbcType=VARCHAR}, #{scale,jdbcType=DECIMAL},#{mykey,jdbcType=DECIMAL},#{baseValue,jdbcType=DECIMAL},
+      #{targetValue,jdbcType=DECIMAL},#{createUser,jdbcType=VARCHAR}, SYSDATE, #{lastUpdateUser,jdbcType=VARCHAR}, 
+      #{lastUpdateTime,jdbcType=TIMESTAMP}, #{col1,jdbcType=VARCHAR}, #{col2,jdbcType=VARCHAR}, #{col3,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.bph.CheckIndex">
+    update T_CHECK_INDEX
+    <set>
+     <if test="factory != null">
+       FACTORY= #{factory,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null">
+      AREA=  #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="shiftGroupCategory != null">
+        SHIFTGROUP_CATEGORY=#{shiftGroupCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="checkItem != null">
+        CHECK_ITEM=#{checkItem,jdbcType=VARCHAR},
+      </if>
+      <if test="checkIndex != null">
+        CHECK_INDEX=#{checkIndex,jdbcType=VARCHAR},
+      </if>
+      <if test="indexCode != null">
+        INDEX_CODE=#{indexCode,jdbcType=VARCHAR},
+      </if>
+      <if test="indexDescription != null">
+        INDEX_DESCRIPTION=#{indexDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="scale != null">
+        SCALE=#{scale,jdbcType=VARCHAR},
+      </if>
+      <if test="mykey != null">
+       MYKEY=#{mykey,jdbcType=DECIMAL},
+      </if>
+       <if test="baseValue != null">
+        BASE_VALUE=#{baseValue ,jdbcType=VARCHAR},
+      </if>
+       <if test="targetValue != null">
+        TARGET_VALUE=#{targetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateUser != null">
+        LAST_UPDATE_USER=#{lastUpdateUser ,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateTime != null">
+        LAST_UPDATE_TIME=#{lastUpdateTime ,jdbcType=TIMESTAMP},
+      </if>
+      <if test="col1!= null">
+        COL_1=#{col1 ,jdbcType=VARCHAR},
+      </if>
+      <if test="col2 != null">
+        COL_2=#{col2 ,jdbcType=VARCHAR},
+      </if>
+      <if test="col3 != null">
+        COL_3=#{col3 ,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.bph.CheckIndex">
+    update T_CHECK_INDEX
+    set FACTORY = #{factory,jdbcType=VARCHAR},
+      AREA = #{area,jdbcType=VARCHAR},
+      SHIFTGROUP_CATEGORY = #{shiftGroupCategory,jdbcType=VARCHAR},
+      CHECK_ITEM = #{checkItem ,jdbcType=VARCHAR},
+      CHECK_INDEX = #{checkIndex,jdbcType=VARCHAR},
+      INDEX_CODE = #{indexCode,jdbcType=VARCHAR},
+      INDEX_DESCRIPTION=#{indexDescription,jdbcType=VARCHAR},
+      SCALE = #{scale,jdbcType=DECIMAL},
+      MYKEY = #{mykey,jdbcType=DECIMAL},
+      BASE_VALUE = #{baseValue,jdbcType=DECIMAL},
+      TARGET_VALUE  = #{targetValue,jdbcType=DECIMAL},
+      LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=VARCHAR},
+      LAST_UPDATE_TIME = #{lastUpdateTime,jdbcType=TIMESTAMP},
+      COL_1 = #{col1,jdbcType=VARCHAR},
+      COL_2 = #{col2,jdbcType=VARCHAR},
+      COL_3 = #{col3,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+ 
+   <select id="getAllByPage" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_CHECK_INDEX
+    <where>
+        <if test="hashMap.factory != null">
+            FACTORY  like '%${hashMap.factory}%'
+       </if>
+       <if test="hashMap.area != null">
+          and AREA  like '%${hashMap.area}%'
+       </if> 
+        <if test="hashMap.shiftGroupCategory != null">
+          and  SHIFTGROUP_CATEGORY like '%${hashMap.shiftGroupCategory}%'
+       </if>
+        <if test="hashMap.checkIndex != null">
+          and  CHECK_INDEX like '%${hashMap.checkIndex}%'
+       </if>      
+       <if test="hashMap.indexCode != null">
+          and  INDEX_CODE  like '%${hashMap.indexCode}%'
+       </if>     
+    </where>
+    order by FACTORY ,AREA ,SHIFTGROUP_CATEGORY 
+  </select>
+  <select id="getItem" resultMap="BaseResultMap" >
+    select  p.Item as checkItem,p.item_code as indexCode, p.scale as scale  from T_CHECK_ITEM p
+     <where>
+       <if test="hashMap.shiftGroupCategory != null">
+            SHIFTGROUP_CATEGORY  like '%${hashMap.shiftGroupCategory}%'
+       </if> 
+        <if test="hashMap.factory != null">
+           and  FACTORY like '%${hashMap.factory}%'
+       </if> 
+    </where>
+    order by CREATE_TIME ASC
+  </select>
+  
+  <select id="getCheckIndex" resultMap="BaseResultMap" >
+    select  CHECK_INDEX   from T_CHECK_INDEX 
+     <where>
+       <if test="hashMap.area != null">
+            AREA  like '%${hashMap.area}%'
+       </if> 
+        <if test="hashMap.factory != null">
+           and  FACTORY like '%${hashMap.factory}%'
+       </if> 
+       <if test="hashMap.shiftGroupCategory != null">
+           and  SHIFTGROUP_CATEGORY like (select uda_4 from app_group where description like '%${hashMap.shiftGroupCategory}%')           
+       </if> 
+       and MYKEY like '是'
+    </where>
+    order by FACTORY DESC,AREA DESC
+  </select>
+  
+  <select id="getAllIndex" resultMap="BaseResultMap" >
+     select 
+    <include refid="Base_Column_List" />
+    from T_CHECK_INDEX
+  </select>
+  
+   <select id="getCheckIndexList" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />  
+    from T_CHECK_INDEX 
+     <where>
+       <if test="hashMap.area != null">
+            AREA  like '%${hashMap.area}%'
+       </if> 
+        <if test="hashMap.factory != null">
+           and  FACTORY like '%${hashMap.factory}%'
+       </if> 
+       <if test="hashMap.checkIndex != null">
+           and  CHECK_INDEX like '%${hashMap.checkIndex}%'
+       </if> 
+       <if test="hashMap.shiftGroupCategory != null">
+           and  SHIFTGROUP_CATEGORY like (select uda_4 from app_group where description like '%${hashMap.shiftGroupCategory}%')           
+       </if> 
+    </where>
+    order by factory desc,area,shiftgroup_category,ID,check_item ,substr(index_code,2,length(index_code))
+  </select>
+  
+  <select id="getCategory" resultMap="BaseResultMap" parameterType="com.peg.model.bph.CheckIndex">
+    select distinct 
+    UDA_4 as SHIFTGROUP_CATEGORY from  app_group where category = 'SHIFT'
+    and uda_4 is not null
+    and UDA_1 = #{factory} and UDA_2 = #{area}
+  </select>
+  
+  
+  </mapper>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.jxmb.PerSetupMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.jxmb.PerSetup" >
+    <result column="INDEX_KEY" property="indexKey" jdbcType="DECIMAL" />
+    <result column="ITEM_KEY" property="itemKey" jdbcType="DECIMAL" />
+    <result column="TARGETVALUE" property="targetvalue" jdbcType="VARCHAR" />
+    <result column="BASEVALUE" property="basevalue" jdbcType="VARCHAR" />
+    <result column="REASONSMODIFICATION" property="reasonsmodification" jdbcType="VARCHAR" />
+    <result column="MAINKEY" property="mainkey" jdbcType="VARCHAR" />
+    <result column="RECORD" property="record" jdbcType="VARCHAR" />
+    <result column="RECORDTIME" property="recordtime" jdbcType="TIMESTAMP" />
+    <result column="LASTUPDATETIME" property="lastupdatetime" jdbcType="TIMESTAMP" />
+    <result column="LASTUPDATEUSER" property="lastupdateuser" jdbcType="VARCHAR" />
+    <result column="FORMULA" property="formula" jdbcType="VARCHAR" />
+    <result column="MONTH" property="month" jdbcType="VARCHAR" />
+    <collection property="uigroupCategory" resultMap="com.peg.dao.jxmb.PerMonthMapper.BaseResultMap" columnPrefix="gc_"></collection>
+  </resultMap>
+  <insert id="insert" parameterType="com.peg.model.jxmb.PerSetup" >
+    insert into Y_SETUP (INDEX_KEY, ITEM_KEY, TARGETVALUE, 
+      BASEVALUE, REASONSMODIFICATION, MAINKEY, 
+      RECORD, RECORDTIME, LASTUPDATETIME, 
+      LASTUPDATEUSER, FORMULA,MONTH)
+    values (#{indexKey,jdbcType=DECIMAL}, #{itemKey,jdbcType=DECIMAL}, #{targetvalue,jdbcType=VARCHAR}, 
+      #{basevalue,jdbcType=VARCHAR}, #{reasonsmodification,jdbcType=VARCHAR}, #{mainkey,jdbcType=VARCHAR}, 
+      #{record,jdbcType=VARCHAR}, #{recordtime,jdbcType=TIMESTAMP}, #{lastupdatetime,jdbcType=TIMESTAMP}, 
+      #{lastupdateuser,jdbcType=VARCHAR}, #{formula,jdbcType=VARCHAR},#{month,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.jxmb.PerSetup" >
+    insert into Y_SETUP
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="indexKey != null" >
+        INDEX_KEY,
+      </if>
+      <if test="itemKey != null" >
+        ITEM_KEY,
+      </if>
+      <if test="targetvalue != null" >
+        TARGETVALUE,
+      </if>
+      <if test="basevalue != null" >
+        BASEVALUE,
+      </if>
+      <if test="reasonsmodification != null" >
+        REASONSMODIFICATION,
+      </if>
+      <if test="mainkey != null" >
+        MAINKEY,
+      </if>
+      <if test="record != null" >
+        RECORD,
+      </if>
+      <if test="recordtime != null" >
+        RECORDTIME,
+      </if>
+      <if test="lastupdatetime != null" >
+        LASTUPDATETIME,
+      </if>
+      <if test="lastupdateuser != null" >
+        LASTUPDATEUSER,
+      </if>
+      <if test="formula != null" >
+        FORMULA,
+      </if>
+      <if test="month !=null">
+      MONTH,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="indexKey != null" >
+        #{indexKey,jdbcType=DECIMAL},
+      </if>
+      <if test="itemKey != null" >
+        #{itemKey,jdbcType=DECIMAL},
+      </if>
+      <if test="targetvalue != null" >
+        #{targetvalue,jdbcType=VARCHAR},
+      </if>
+      <if test="basevalue != null" >
+        #{basevalue,jdbcType=VARCHAR},
+      </if>
+      <if test="reasonsmodification != null" >
+        #{reasonsmodification,jdbcType=VARCHAR},
+      </if>
+      <if test="mainkey != null" >
+        #{mainkey,jdbcType=VARCHAR},
+      </if>
+      <if test="record != null" >
+        #{record,jdbcType=VARCHAR},
+      </if>
+      <if test="recordtime != null" >
+        #{recordtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastupdatetime != null" >
+        #{lastupdatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastupdateuser != null" >
+        #{lastupdateuser,jdbcType=VARCHAR},
+      </if>
+      <if test="formula != null" >
+        #{formula,jdbcType=VARCHAR},
+      </if>
+       <if test="month != null" >
+        #{month,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <sql id="Base_Column_List" >
+    index_key, item_key,TARGETVALUE, 
+      BASEVALUE, REASONSMODIFICATION, MAINKEY, 
+      RECORD, RECORDTIME, LASTUPDATETIME, 
+      LASTUPDATEUSER, FORMULA,MONTH
+  </sql>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.bph.Index" >
+    update Y_SETUP
+    <set >
+      <if test="itemKey != null" >
+      item_key = #{itemKey,jdbcType=DECIMAL},
+      </if>
+      <if test="targetvalue != null" >
+        targetvalue=#{targetvalue ,jdbcType=VARCHAR},
+      </if>
+      <if test="basevalue != null" >
+        basevalue=#{basevalue ,jdbcType=VARCHAR},
+      </if>
+       <if test="reasonsmodification != null" >
+        reasonsmodification =#{reasonsmodification,jdbcType=VARCHAR},
+      </if>
+      <if test="mainkey != null" >
+        mainkey =#{mainkey, jdbcType=VARCHAR},
+      </if>
+       <if test="record != null" >
+        record =#{record, jdbcType=VARCHAR},
+      </if>
+      <if test="recordtime != null" >
+        recordtime=#{recordtime,jdbcType=TIMESTAMP},
+      </if>
+       <if test="lastupdatetime != null" >
+        lastupdatetime=#{lastupdatetime ,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastupdateuser != null" >
+        lastupdateuser=#{lastupdateuser,jdbcType=VARCHAR},
+      </if>
+      <if test="formula != null" >
+        formula=#{formula ,jdbcType=VARCHAR},
+      </if>
+      <if test="month != null" >
+        month=#{month ,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where index_key = #{indexKey,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.bph.Index" >
+    update Y_SETUP
+    set item_key = #{itemKey,jdbcType=VARCHAR},
+      TARGETVALUE=#{TARGETVALUE ,jdbcType=VARCHAR},
+      BASEVALUE=#{BASEVALUE ,jdbcType=VARCHAR},
+      REASONSMODIFICATION =#{REASONSMODIFICATION,jdbcType=VARCHAR},
+      mainkey =#{mainkey, jdbcType=VARCHAR},
+      RECORD = #{RECORD,jdbcType=VARCHAR},
+      RECORDTIME = #{RECORDTIME,jdbcType=VARCHAR},
+      LASTUPDATETIME =#{LASTUPDATETIME, jdbcType=VARCHAR},
+      LASTUPDATEUSER = #{LASTUPDATEUSER,jdbcType=VARCHAR},
+      FORMULA = #{FORMULA,jdbcType=VARCHAR},
+      MONTH = #{MONTH,jdbcType=VARCHAR},
+    where index_key = #{indexKey,jdbcType=DECIMAL}
+  </update>
+  
+   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List"></include>
+    from y_setup
+    where index_key = #{indexKey,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="getIndexByItemKey" resultMap="BaseResultMap">
+     select 
+   <include refid="Base_Column_List"></include>
+    from Y_SETUP
+    where 1=1
+    <if test="itemKey != null">
+     and item_key = #{itemKey}
+    </if>
+  </select>
+  <select id="findByIndexCode" resultMap="BaseResultMap"> 
+    select 
+    ind.index_key, ind.item_key,ind.TARGETVALUE,ind.BASEVALUE,ind.REASONSMODIFICATION,ind.mainkey,
+    ind.RECORD,ind.RECORDTIME,ind.LASTUPDATETIME,ind.LASTUPDATEUSER,ind.LASTUPDATEUSER,ind.FORMULA,ind.MONTH
+    from y_setup ind,y_item it,y_performancecheck gc
+    where gc.id = it.id
+    and it.item_key  = ind.item_key 
+    <if test="department != null">
+     and gc.department = #{department}
+    </if>
+    <if test="targetclass != null">
+     and gc.targetclass = #{targetclass}
+    </if>
+     <if test="indexcontent != null">
+     and gc.indexcontent = #{indexcontent}
+    </if>
+    <if test="performancecontent != null">
+     and gc.performancecontent = #{performancecontent}
+    </if>
+    <if test="weight != null">
+     and gc.weight = #{weight}
+    </if>
+    <if test="basevalue != null">
+     and ind.basevalue = #{basevalue}
+    </if>
+    order by ind.recordtime
+  </select>
+  <delete id="deleteIndexByGcKey" parameterType="java.lang.Long" >
+    delete from Y_SETUP
+    where item_key in (select item_key from t_item where id=#{id,jdbcType=DECIMAL} ) 
+  </delete>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from Y_SETUP
+    where index_key = #{indexKey,jdbcType=DECIMAL}
+  </delete>
+  <select id="getMonthAllByPage" resultMap="BaseResultMap" >
+   select 
+    a.item_key, b.id gc_id,b.department gc_department,b.targetclass  gc_targetclass,b.indexcontent gc_indexcontent,b.performancecontent gc_performancecontent,  
+    a.ITEM_KEY gc_it_ITEM_KEY, a.id gc_it_id,a.YEARTARGETVALUE gc_it_YEARTARGETVALUE,a.REFERENCEVALUE gc_it_REFERENCEVALUE,  
+    c.index_key gc_it_in_index_key, c.item_key gc_it_in_item_key,c.TARGETVALUE gc_it_in_TARGETVALUE,
+     c.MONTH gc_it_in_MONTH,c.BASEVALUE gc_it_in_BASEVALUE,  
+    d.MONTH_KEY gc_it_in_ma_MONTH_KEY, d.index_key gc_it_in_ma_index_key, d.ACCUMULATEDMONTH gc_it_in_ma_ACCUMULATEDMONTH,
+    d.LASTMONTHACTUAL gc_it_in_ma_LASTMONTHACTUAL,d.monthreality  gc_it_in_ma_monthreality,d.TARGETVALUEMONTH  gc_it_in_ma_TARGETVALUEMONTH,
+    d.accumumonth gc_it_in_ma_accumumonth, d.RECORD gc_it_in_ma_RECORD, 
+    d.LASTUPDATETIME gc_it_in_ma_LASTUPDATETIME, d.LASTUPDATEUSER gc_it_in_ma_LASTUPDATEUSER
+    from y_item a,y_performancecheck b ,y_setup c, y_month d
+    where  a.id = b.id
+    and a.item_key = c.item_key
+   
+        <if test="hashMap.DEPARTMENT != null">
+           and b.DEPARTMENT like '%${hashMap.DEPARTMENT}%'
+        </if>
+        <if test="hashMap.TARGETCLASS != null">
+           and b.TARGETCLASS like '%${hashMap.TARGETCLASS}%'
+        </if>
+        <if test="hashMap.INDEXCONTENT != null">
+           and   b.INDEXCONTENT like '%${hashMap.INDEXCONTENT}%'
+        </if>
+        <if test="hashMap.ACCUMULATEDMONTH != null">
+           and   d.ACCUMULATEDMONTH like '%${hashMap.ACCUMULATEDMONTH}%'
+        </if>
+ 
+   		<if test="hashMap.itemKey != null">
+   			and a.item_key = '${hashMap.itemKey}'
+   		</if>
+       order by b.DEPARTMENT DESC ,b.TARGETCLASS DESC, b.INDEXCONTENT DESC,a.YEARTARGETVALUE,to_number(substr(replace(c.TARGETVALUE,'-',''),2,3)),d.ACCUMULATEDMONTH
+  </select>
+</mapper>

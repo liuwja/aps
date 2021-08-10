@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.IndexScroeMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.IndexScroe" >
+    <id column="FACTORY" property="factory" jdbcType="VARCHAR" />
+    <id column="AREA" property="area" jdbcType="VARCHAR" />
+    <id column="SHIFT_GROUP_CODE" property="shiftGroupCode" jdbcType="VARCHAR" />
+    <id column="SUM_DATE" property="sumDate" jdbcType="TIMESTAMP" />
+    <id column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+    <id column="INDEX_ID" property="indexId" jdbcType="DECIMAL" />
+    <result column="SHIFT_GROUP_NAME" property="shiftGroupName" jdbcType="VARCHAR" />
+    <result column="INDEX_ACT_VALUE" property="indexActValue" jdbcType="DECIMAL" />
+    <result column="INDEX_SCORE" property="indexScore" jdbcType="DECIMAL" />
+    <result column="INSERT_TIME" property="insertTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_UPDATE_TIME" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="CHECK_ITEM" jdbcType="VARCHAR" property="checkItem" />
+    <result column="CHECK_INDEX" jdbcType="VARCHAR" property="checkIndex" />
+    <result column="INDEX_CODE" jdbcType="VARCHAR" property="indexCode" />
+    <result column="SCALE" jdbcType="DECIMAL" property="scale" />
+    <result column="MYKEY" jdbcType="VARCHAR" property="mykey" />
+    <result column="BASE_VALUE" jdbcType="DECIMAL" property="baseValue" />
+    <result column="TARGET_VALUE" jdbcType="DECIMAL" property="targetValue" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    FACTORY, AREA, SHIFT_GROUP_CODE, SUM_DATE, ITEM_ID, INDEX_ID, SHIFT_GROUP_NAME, INDEX_ACT_VALUE, 
+    INDEX_SCORE, INSERT_TIME, LAST_UPDATE_TIME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.peg.model.bph.IndexScroeKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_ITEM_INDEX_SCROE_MONTH
+    where FACTORY = #{factory,jdbcType=VARCHAR}
+      and AREA = #{area,jdbcType=VARCHAR}
+      and SHIFT_GROUP_CODE = #{shiftGroupCode,jdbcType=VARCHAR}
+      and SUM_DATE = #{sumDate,jdbcType=TIMESTAMP}
+      and ITEM_ID = #{itemId,jdbcType=DECIMAL}
+      and INDEX_ID = #{indexId,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.peg.model.bph.IndexScroeKey" >
+    delete from T_ITEM_INDEX_SCROE_MONTH
+    where FACTORY = #{factory,jdbcType=VARCHAR}
+      and AREA = #{area,jdbcType=VARCHAR}
+      and SHIFT_GROUP_CODE = #{shiftGroupCode,jdbcType=VARCHAR}
+      and SUM_DATE = #{sumDate,jdbcType=TIMESTAMP}
+      and ITEM_ID = #{itemId,jdbcType=DECIMAL}
+      and INDEX_ID = #{indexId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.bph.IndexScroe" >
+    insert into T_ITEM_INDEX_SCROE_MONTH (FACTORY, AREA, SHIFT_GROUP_CODE, 
+      SUM_DATE, ITEM_ID, INDEX_ID, 
+      SHIFT_GROUP_NAME, INDEX_ACT_VALUE, INDEX_SCORE, 
+      INSERT_TIME, LAST_UPDATE_TIME)
+    values (#{factory,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, #{shiftGroupCode,jdbcType=VARCHAR}, 
+      #{sumDate,jdbcType=TIMESTAMP}, #{itemId,jdbcType=DECIMAL}, #{indexId,jdbcType=DECIMAL}, 
+      #{shiftGroupName,jdbcType=VARCHAR}, #{indexActValue,jdbcType=DECIMAL}, #{indexScore,jdbcType=DECIMAL}, 
+      SYSDATE, #{lastUpdateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.bph.IndexScroe" >
+    insert into T_ITEM_INDEX_SCROE_MONTH
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="factory != null" >
+        FACTORY,
+      </if>
+      <if test="area != null" >
+        AREA,
+      </if>
+      <if test="shiftGroupCode != null" >
+        SHIFT_GROUP_CODE,
+      </if>
+      <if test="sumDate != null" >
+        SUM_DATE,
+      </if>
+      <if test="itemId != null" >
+        ITEM_ID,
+      </if>
+      <if test="indexId != null" >
+        INDEX_ID,
+      </if>
+      <if test="shiftGroupName != null" >
+        SHIFT_GROUP_NAME,
+      </if>
+      <if test="indexActValue != null" >
+        INDEX_ACT_VALUE,
+      </if>
+      <if test="indexScore != null" >
+        INDEX_SCORE,
+      </if>
+      <if test="insertTime != null" >
+        INSERT_TIME,
+      </if>
+      <if test="lastUpdateTime != null" >
+        LAST_UPDATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="factory != null" >
+        #{factory,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="shiftGroupCode != null" >
+        #{shiftGroupCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sumDate != null" >
+        #{sumDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=DECIMAL},
+      </if>
+      <if test="indexId != null" >
+        #{indexId,jdbcType=DECIMAL},
+      </if>
+      <if test="shiftGroupName != null" >
+        #{shiftGroupName,jdbcType=VARCHAR},
+      </if>
+      <if test="indexActValue != null" >
+        #{indexActValue,jdbcType=DECIMAL},
+      </if>
+      <if test="indexScore != null" >
+        #{indexScore,jdbcType=DECIMAL},
+      </if>
+      <if test="insertTime != null" >
+        #{insertTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateTime != null" >
+        #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.bph.IndexScroe" >
+    update T_ITEM_INDEX_SCROE_MONTH
+    <set >
+      <if test="shiftGroupName != null" >
+        SHIFT_GROUP_NAME = #{shiftGroupName,jdbcType=VARCHAR},
+      </if>
+      <if test="indexActValue != null" >
+        INDEX_ACT_VALUE = #{indexActValue,jdbcType=DECIMAL},
+      </if>
+      <if test="indexScore != null" >
+        INDEX_SCORE = #{indexScore,jdbcType=DECIMAL},
+      </if>
+      <if test="insertTime != null" >
+        INSERT_TIME = #{insertTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateTime != null" >
+        LAST_UPDATE_TIME = #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where FACTORY = #{factory,jdbcType=VARCHAR}
+      and AREA = #{area,jdbcType=VARCHAR}
+      and SHIFT_GROUP_CODE = #{shiftGroupCode,jdbcType=VARCHAR}
+      and SUM_DATE = #{sumDate,jdbcType=TIMESTAMP}
+      and ITEM_ID = #{itemId,jdbcType=DECIMAL}
+      and INDEX_ID = #{indexId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.bph.IndexScroe" >
+    update T_ITEM_INDEX_SCROE_MONTH
+    set SHIFT_GROUP_NAME = #{shiftGroupName,jdbcType=VARCHAR},
+      INDEX_ACT_VALUE = #{indexActValue,jdbcType=DECIMAL},
+      INDEX_SCORE = #{indexScore,jdbcType=DECIMAL},
+      INSERT_TIME = #{insertTime,jdbcType=TIMESTAMP},
+      LAST_UPDATE_TIME = #{lastUpdateTime,jdbcType=TIMESTAMP}
+    where FACTORY = #{factory,jdbcType=VARCHAR}
+      and AREA = #{area,jdbcType=VARCHAR}
+      and SHIFT_GROUP_CODE = #{shiftGroupCode,jdbcType=VARCHAR}
+      and SUM_DATE = #{sumDate,jdbcType=TIMESTAMP}
+      and ITEM_ID = #{itemId,jdbcType=DECIMAL}
+      and INDEX_ID = #{indexId,jdbcType=DECIMAL}
+  </update>
+   <insert id="insertList"  parameterType="java.util.List">
+    
+       insert into T_ITEM_INDEX_SCROE_MONTH (FACTORY, AREA, SHIFT_GROUP_CODE, 
+      SUM_DATE, ITEM_ID, INDEX_ID, 
+      SHIFT_GROUP_NAME, INDEX_ACT_VALUE, INDEX_SCORE, 
+      INSERT_TIME, LAST_UPDATE_TIME)
+     <foreach collection="list" item="item" index="index" open="(" separator="union" close=")" >
+     select 
+		#{item.factory,jdbcType=VARCHAR},#{item.area,jdbcType=VARCHAR},#{item.shiftGroupCode,jdbcType=VARCHAR},#{item.sumDate,jdbcType=TIMESTAMP},#{item.itemId,jdbcType=DECIMAL},#{item.indexId,jdbcType=DECIMAL},#{item.shiftGroupName,jdbcType=VARCHAR},
+		#{item.indexActValue,jdbcType=DECIMAL},#{item.indexScore,jdbcType=DECIMAL},#{item.insertTime,jdbcType=TIMESTAMP},#{item.lastUpdateTime,jdbcType=TIMESTAMP}
+	from dual
+	</foreach>
+  </insert>
+   <insert id="insertDayList"  parameterType="java.util.List">    
+       insert into T_ITEM_INDEX_SCROE_DAY (FACTORY, AREA, SHIFT_GROUP_CODE, 
+      SUM_DATE, ITEM_ID, INDEX_ID, 
+      SHIFT_GROUP_NAME, INDEX_ACT_VALUE, INDEX_SCORE, 
+      INSERT_TIME, LAST_UPDATE_TIME)
+     <foreach collection="list" item="item" index="index" open="(" separator="union" close=")" >
+     select 
+		#{item.factory,jdbcType=VARCHAR},#{item.area,jdbcType=VARCHAR},#{item.shiftGroupCode,jdbcType=VARCHAR},#{item.sumDate,jdbcType=TIMESTAMP},#{item.itemId,jdbcType=DECIMAL},#{item.indexId,jdbcType=DECIMAL},#{item.shiftGroupName,jdbcType=VARCHAR},
+		#{item.indexActValue,jdbcType=DECIMAL},#{item.indexScore,jdbcType=DECIMAL},#{item.insertTime,jdbcType=TIMESTAMP},#{item.lastUpdateTime,jdbcType=TIMESTAMP}
+	from dual
+	</foreach>
+    
+  </insert>
+   <select id="getIndexScoreAllByPage" resultMap="BaseResultMap" >
+    select  tism.factory,tism.area,tism.shift_group_name ,tism.index_act_value,tism.index_score,tism.sum_date,
+    ci.check_item as check_item,ci.check_index as check_index,ci.base_value as base_value,ci.target_value as target_value,ci.scale as scale        
+    from T_ITEM_INDEX_SCROE_DAY tism,t_check_index ci
+    <where>
+    tism.index_id = ci.id and ci.mykey='是'
+        <if test="hashMap.factory != null">
+          and  tism.FACTORY like '%${hashMap.factory}%'
+        </if>
+        <if test="hashMap.area != null">
+           and tism.AREA like '%${hashMap.area}%'
+        </if>
+        <if test="hashMap.shiftGroupName != null">
+           and tism.SHIFT_GROUP_NAME like '%${hashMap.shiftGroupName}%'
+        </if>
+         <if test="hashMap.checkIndex != null">
+           and ci.check_index like '%${hashMap.checkIndex}%'
+        </if>
+        <if test="hashMap.startTime != null and hashMap.endTime != null">
+           and to_char(tism.SUM_DATE,'YYYY-MM-DD') BETWEEN #{hashMap.startTime} and #{hashMap.endTime}
+        </if>
+      </where>
+       order by tism.sum_date
+  </select> 
+  <!-- 获取固定指标基准值 -->
+   <select id="getIndexScoreMonthListByPage" resultMap="BaseResultMap" >
+    select tism.factory,tism.area,tism.shift_group_name ,tism.index_act_value,tism.index_score,ci.check_item,ci.check_index,
+    ci.base_value,ci.target_value,ci.scale    
+    from T_ITEM_INDEX_SCROE_MONTH tism,t_check_item citm ,t_check_index ci
+    <where>
+     tism.item_id = citm.id and tism.index_id = ci.id 
+        <if test="hashMap.factory != null">
+           and tism.FACTORY like '%${hashMap.factory}%'
+        </if>
+        <if test="hashMap.area != null">
+           and tism.AREA like '%${hashMap.area}%'
+        </if>
+        <if test="hashMap.shiftGroupName != null">
+           and tism.SHIFT_GROUP_NAME like '%${hashMap.shiftGroupName}%'
+        </if>
+        <if test="hashMap.checkIndex != null">
+           and ci.check_index like '%${hashMap.checkIndex}%'
+        </if>
+        <if test="hashMap.startTime != null ">
+           and to_char(tism.SUM_DATE,'YYYY-MM') = #{hashMap.startTime} 
+        </if>
+       </where>
+       order by tism.FACTORY DESC ,  tism.AREA DESC
+  </select> 
+  <!-- 获取当月指标基准值 -->
+  <select id="getMonthIndexScoreListByPage" resultMap="BaseResultMap" >
+    select tism.factory,tism.area,tism.shift_group_name ,tism.index_act_value,tism.index_score,ci.check_item,ci.check_index,
+    ci.base_value,ci.target_value,ci.scale    
+    from T_ITEM_INDEX_SCROE_MONTH tism,t_check_item citm ,t_setting_monthly_assessment ci
+    <where>
+     tism.item_id = citm.id and tism.index_id = ci.index_id and  ci.month = #{hashMap.startTime} 
+        <if test="hashMap.factory != null">
+           and tism.FACTORY like '%${hashMap.factory}%'
+        </if>
+        <if test="hashMap.area != null">
+           and tism.AREA like '%${hashMap.area}%'
+        </if>
+        <if test="hashMap.shiftGroupName != null">
+           and tism.SHIFT_GROUP_NAME like '%${hashMap.shiftGroupName}%'
+        </if>
+        <if test="hashMap.checkIndex != null">
+           and ci.check_index like '%${hashMap.checkIndex}%'
+        </if>
+        <if test="hashMap.startTime != null ">
+           and to_char(tism.SUM_DATE,'YYYY-MM') = #{hashMap.startTime} 
+        </if>
+       </where>
+       order by tism.FACTORY DESC ,  tism.AREA DESC
+  </select> 
+  
+   <select id="getIndexScoreByMonth" resultMap="BaseResultMap" >
+    select tism.factory,tism.area,tism.shift_group_name,tism.sum_date ,tism.SHIFT_GROUP_CODE,tism.ITEM_ID,tism.INDEX_ID,tism.index_act_value,tism.index_score,ci.check_item,ci.check_index,
+    ci.base_value,ci.target_value,ci.scale    
+    from T_ITEM_INDEX_SCROE_MONTH tism,t_check_item citm ,t_check_index ci
+    <where>
+     tism.item_id = citm.id and tism.index_id = ci.id 
+        <if test="hashMap.factory != null">
+           and tism.FACTORY like '%${hashMap.factory}%'
+        </if>
+        <if test="hashMap.area != null">
+           and tism.AREA like '%${hashMap.area}%'
+        </if>
+        <if test="hashMap.shiftGroupName != null">
+           and tism.SHIFT_GROUP_NAME like '%${hashMap.shiftGroupName}%'
+        </if>
+        <if test="hashMap.checkIndex != null">
+           and ci.check_index  like '%${hashMap.checkIndex}%'
+        </if>
+        <if test="hashMap.startTimeOne != null and hashMap.endTime != null">
+           and to_char(tism.SUM_DATE,'YYYY-MM') between #{hashMap.startTimeOne,jdbcType=VARCHAR} and #{hashMap.endTime,jdbcType=VARCHAR}
+        </if>
+       </where>
+       order by tism.FACTORY DESC ,  tism.AREA DESC
+  </select> 
+  
+    <select id="getSumIndexScore" resultMap="BaseResultMap" >
+    select sum(tism.index_score) as index_score  
+    from T_ITEM_INDEX_SCROE_MONTH tism,t_check_item citm ,t_check_index ci
+    <where>
+     tism.item_id = citm.id and tism.index_id = ci.id 
+        <if test="hashMap.factory != null">
+           and tism.FACTORY like '%${hashMap.factory}%'
+        </if>
+        <if test="hashMap.area != null">
+           and tism.AREA like '%${hashMap.area}%'
+        </if>
+        <if test="hashMap.shiftGroupName != null">
+           and tism.SHIFT_GROUP_NAME like '%${hashMap.shiftGroupName}%'
+        </if>
+        <if test="hashMap.startTime != null ">
+           and to_char(tism.SUM_DATE,'YYYY-MM') = #{hashMap.startTime} 
+        </if>
+       </where>
+  </select> 
+  
+</mapper>

@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.MarketRepairRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.MarketRepairRecord" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="RAW_SERVICE_CENTER" property="rawServiceCenter" jdbcType="VARCHAR" />
+    <result column="SERVICE_CENTER" property="serviceCenter" jdbcType="VARCHAR" />
+    <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+    <result column="PART_CODE" property="partCode" jdbcType="VARCHAR" />
+    <result column="PART_NAME" property="partName" jdbcType="VARCHAR" />
+    <result column="PART_NUMBER" property="partNumber" jdbcType="VARCHAR" />
+    <result column="INVOICE_DATE" property="invoiceDate" jdbcType="TIMESTAMP" />
+    <result column="FINISH_DATE" property="finishDate" jdbcType="TIMESTAMP" />
+    <result column="SERVICE_SITE" property="serviceSite" jdbcType="VARCHAR" />
+    <result column="SERVICE_ENGINEER" property="serviceEngineer" jdbcType="VARCHAR" />
+    <result column="SETTLEMENT_DESC" property="settlementDesc" jdbcType="VARCHAR" />
+    <result column="HOME_PHONE" property="homePhone" jdbcType="VARCHAR" />
+    <result column="CELLPHONE" property="cellphone" jdbcType="VARCHAR" />
+    <result column="RECORD_TIME" property="recordTime" jdbcType="TIMESTAMP" />
+    <result column="BUY_TYPE" property="buyType" jdbcType="VARCHAR" />
+    <result column="FAULT_TYPE_CODE" property="faultTypeCode" jdbcType="VARCHAR" />
+    <result column="FAULT_TYPE_NAME" property="faultTypeName" jdbcType="VARCHAR" />
+    <result column="FAULT_REASON_CODE" property="faultReasonCode" jdbcType="VARCHAR" />
+    <result column="FAULT_REASON_NAME" property="faultReasonName" jdbcType="VARCHAR" />
+    <result column="FAULT_DESC" property="faultDesc" jdbcType="VARCHAR" />
+    <result column="FAULT_CURRENT_DESC" property="faultCurrentDesc" jdbcType="VARCHAR" />
+    <result column="INFO_DESC" property="infoDesc" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="PRODUCT_TYPE" property="productType" jdbcType="VARCHAR" />
+    <result column="PRODUCT_FAMILY" property="productFamily" jdbcType="VARCHAR" />
+    <result column="PART_TYPE" property="partType" jdbcType="VARCHAR" />
+    <result column="IS_SETTLEMENT" property="isSettlement" jdbcType="VARCHAR" />
+    <result column="INTALL_DATE" property="intallDate" jdbcType="TIMESTAMP" />
+    <result column="DOWNLINE_DATE" property="downlineDate" jdbcType="VARCHAR" />
+    <result column="gas" property="gas" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, SERVICE_CENTER, ORDER_NUMBER, PART_CODE, PART_NAME, PART_NUMBER, INVOICE_DATE, 
+    FINISH_DATE, SERVICE_SITE, SERVICE_ENGINEER, SETTLEMENT_DESC, HOME_PHONE, CELLPHONE, 
+    RECORD_TIME, BUY_TYPE, FAULT_TYPE_CODE, FAULT_TYPE_NAME, FAULT_REASON_CODE, FAULT_REASON_NAME,RAW_SERVICE_CENTER,
+    FAULT_DESC, FAULT_CURRENT_DESC, INFO_DESC, CREATE_TIME, PRODUCT_TYPE, PRODUCT_FAMILY, PART_TYPE,IS_SETTLEMENT,INTALL_DATE,DOWNLINE_DATE
+  </sql>
+  
+  <select id="findAllRepair" resultMap="BaseResultMap">
+    select * from ( 
+       select temp.*, rownum row_id from ( 
+  	select tr.gas,
+  	tr.ID, tr.SERVICE_CENTER,tr.RAW_SERVICE_CENTER,tr.ORDER_NUMBER, tr.PART_CODE, tr.PART_NAME, tr.PART_NUMBER, tr.INVOICE_DATE, 
+    tr.FINISH_DATE, tr.SERVICE_SITE, tr.SERVICE_ENGINEER, tr.SETTLEMENT_DESC, tr.HOME_PHONE, tr.CELLPHONE, 
+    tr.RECORD_TIME, tr.BUY_TYPE, tr.FAULT_TYPE_CODE, tr.FAULT_TYPE_NAME, tr.FAULT_REASON_CODE, tr.FAULT_REASON_NAME, 
+    tr.FAULT_DESC, tr.FAULT_CURRENT_DESC, tr.INFO_DESC, tr.CREATE_TIME, tr.PRODUCT_TYPE, tr.PRODUCT_FAMILY, tr.PART_TYPE,tr.IS_OVER,tr.IS_SETTLEMENT, 
+    tr.INTALL_DATE,tr.DOWNLINE_DATE from T_MARKET_REPAIR_RECORD tr,t_fault_reason tf,t_fault_type ty 
+	where tr.fault_reason_code = tf.code(+) and tr.fault_type_code = ty.code(+) 
+    <include refid="sql_ops"></include>
+        order by tr.finish_date
+     <![CDATA[) temp where rownum <= #{end}) where row_id > #{start} ]]>
+  </select>
+   
+  <!-- 根据条件不分页查询 -->
+  <select id="findAll" resultMap="BaseResultMap">
+  	select  
+  	tr.ID, tr.RAW_SERVICE_CENTER, tr.SERVICE_CENTER, tr.ORDER_NUMBER, tr.PART_CODE, tr.PART_NAME, tr.PART_NUMBER, tr.INVOICE_DATE, 
+    tr.FINISH_DATE, tr.SERVICE_SITE, tr.SERVICE_ENGINEER, tr.SETTLEMENT_DESC, tr.HOME_PHONE, tr.CELLPHONE, 
+    tr.RECORD_TIME, tr.BUY_TYPE, tr.FAULT_TYPE_CODE, tr.FAULT_TYPE_NAME, tr.FAULT_REASON_CODE, tr.FAULT_REASON_NAME, 
+    tr.FAULT_DESC, tr.FAULT_CURRENT_DESC, tr.INFO_DESC, tr.CREATE_TIME, tr.PRODUCT_TYPE, tr.PRODUCT_FAMILY, tr.PART_TYPE,tr.IS_OVER,tr.IS_SETTLEMENT,
+    tr.INTALL_DATE,tr.DOWNLINE_DATE from T_MARKET_REPAIR_RECORD tr,t_fault_reason tf 
+	where tr.fault_reason_code = tf.code(+)
+      <include refid="sql_ops"></include>
+    order by tr.finish_date
+  </select>
+  <!-- 查询总数 -->
+  <select id="getTotalNumber" resultType="int">
+  	select count(1)
+    from T_MARKET_REPAIR_RECORD tr,t_fault_reason tf,t_fault_type ty  
+	where tr.fault_reason_code = tf.code(+) and tr.fault_type_code = ty.code(+)  
+     <include refid="sql_ops"></include>
+  </select>
+  
+  <sql id="sql_ops">
+  		<if test="repair.codeRepeat!=null and repair.codeRepeat==1">
+			and tr.part_id in (select t1.part_id from T_MARKET_REPAIR_RECORD t1 group by t1.part_id having count(t1.part_id) > 1) 
+	   		and length(tr.part_id)=lengthb(tr.part_id)
+	   </if>
+  	   <if test="repair.partNumber != null and repair.partNumber!=''">
+       		and tr.PART_NUMBER like '%${repair.partNumber}%'
+       </if>
+       <if test="repair.partName != null and repair.partName!=''" >
+       		and tr.PART_NAME like '%${repair.partName}%'
+       </if>
+       <if test="repair.partCode != null and repair.partCode!=''" >
+       		and tr.PART_CODE like '%${repair.partCode}%'
+       </if>
+     	<if test="repair.productType != null and repair.productType!=''" >
+       		and tr.PRODUCT_TYPE like '%${repair.productType}%'
+     	</if>
+     	<if test="repair.productFamily != null and repair.productFamily!=''" >
+       		and tr.PRODUCT_FAMILY like '%${repair.productFamily}%'
+     	</if>
+     	<if test="repair.isOver != null and repair.isOver!=''">
+     		and tr.IS_OVER = #{repair.isOver}
+     	</if>
+     	<if test="repair.isSettlement != null and repair.isSettlement!=''">
+     		and tr.IS_SETTLEMENT = #{repair.isSettlement}
+     	</if>
+     	<if test="repair.faultReasonValid != null and repair.faultReasonValid!=''">
+     		and tf.valid = #{repair.faultReasonValid}
+     	</if>
+     	<if test="repair.meshfaultReasonCodeList != null">
+	    	 and tf.meshfaultcode in 
+			<foreach collection="repair.meshfaultReasonCodeList" item="item" index="index" 
+				open="(" separator="," close=")">#{item}
+			</foreach>
+	    </if>
+		<if test="repair.faultReasonCodeList != null">
+	    	 and tr.FAULT_REASON_CODE in 
+			<foreach collection="repair.faultReasonCodeList" item="item" index="index" 
+				open="(" separator="," close=")">#{item}
+			</foreach>
+	    </if>
+	    <if test="repair.faultTypeCodeList != null">
+	    	 and tr.FAULT_TYPE_CODE in 
+			<foreach collection="repair.faultTypeCodeList" item="item" index="index" 
+				open="(" separator="," close=")">#{item}
+			</foreach>
+	    </if>
+	    <if test="repair.regionList != null">
+	    	 and tr.RAW_SERVICE_CENTER in 
+			<foreach collection="repair.regionList" item="item" index="index" 
+				open="(" separator="," close=")">#{item}
+			</foreach>
+	    </if>
+	     <if test="repair.mergeRegionList != null">
+	    	 and tr.SERVICE_CENTER in 
+			<foreach collection="repair.mergeRegionList" item="item" index="index" 
+				open="(" separator="," close=")">#{item}
+			</foreach>
+	    </if>
+	    <if test="repair.productFamilyList != null">
+	    	 and tr.PRODUCT_FAMILY in 
+			<foreach collection="repair.productFamilyList" item="item" index="index" 
+				open="(" separator="," close=")">#{item}
+			</foreach>
+	    </if>
+	    <if test="repair.partTypeList != null">
+	    	 and tr.PART_TYPE in 
+			<foreach collection="repair.partTypeList" item="item" index="index" 
+				open="(" separator="," close=")">#{item}
+			</foreach>
+	    </if>
+	    <if test="repair.faultTypeName != null and repair.faultTypeName !=''">
+	    	and ty.name = #{repair.faultTypeName}
+	    </if>
+	     <if test="repair.meshFaultReasonName != null and repair.meshFaultReasonName !=''">
+	    	and tf.meshfaultname = #{repair.meshFaultReasonName}
+	    </if>
+	    <if test="repair.startTime != null and repair.startTime!=''" >
+	    	<![CDATA[ and to_char(tr.FINISH_DATE,'yyyy-MM-dd') >= #{repair.startTime} ]]>
+        </if>
+        <if test="repair.endTime != null and repair.endTime!=''" >
+        	<![CDATA[ and to_char(tr.FINISH_DATE,'yyyy-MM-dd') <= #{repair.endTime} ]]>
+        </if>
+         <if test="repair.createStartTime != null and repair.createStartTime!=''" >
+	    	<![CDATA[ and tr.DOWNLINE_DATE >= #{repair.createStartTime} ]]>
+        </if>
+        <if test="repair.createEndTime != null and repair.createEndTime!=''" >
+        	<![CDATA[ and tr.DOWNLINE_DATE <= #{repair.createEndTime} ]]>
+        </if>
+        <if test="repair.insStartTime != null and repair.insStartTime != ''">
+	   		<![CDATA[ and trunc(tr.INTALL_DATE) >= TO_DATE(#{repair.insStartTime}, 'yyyy-MM-dd') ]]>
+	   </if>
+	   <if test="repair.insEndTime != null and repair.insEndTime != ''">
+	   		<![CDATA[ and trunc(tr.INTALL_DATE) <= TO_DATE(#{repair.insEndTime}, 'yyyy-MM-dd') ]]>
+	   </if>
+	   <if test="repair.gas != null and repair.gas != ''">
+	   		<![CDATA[ and tr.gas = #{repair.gas} ]]>
+	   </if>
+	   <if test="repair.vocTypeList != null">
+	   	 and tr.voc_type_key in 
+			<foreach collection="repair.vocTypeList" item="item" index="index" 
+				open="(" separator="," close=")">#{item}
+			</foreach>
+	   </if>
+	   <if test='repair.isConsumed == "是"'>
+	   	 AND TR.ORDER_NUMBER IN (SELECT JOB_NUMBER FROM CRM_ACCESSORIES_LIST)
+	   </if>
+	   <if test='repair.isConsumed == "否"'>
+	   	 AND TR.ORDER_NUMBER NOT IN (SELECT JOB_NUMBER FROM CRM_ACCESSORIES_LIST)
+	   </if>
+  </sql>
+ 
+	<select id="findAllRepairIntermediate" resultMap="BaseResultMap" parameterType="com.peg.model.MarketRepairRecord">
+		SELECT SERVICE_CENTER, REPAIR_ORDER_NUMBER AS ORDER_NUMBER, SERIAL_NUMBER AS PART_CODE, PART_DESCRIPTION AS PART_NAME, INVOICE_TIME AS INVOICE_DATE,
+		COMPLETE_TIME AS FINISH_DATE, SERVICE_POINT AS SERVICE_SITE, SERVICE_PERSON AS SERVICE_ENGINEER, SETTLEMENT AS SETTLEMENT_DESC,
+		TELEPHONE AS HOME_PHONE, MOBILEPHONE AS CELLPHONE, CREATION_TIME AS RECORD_TIME, DEFECT_DESCRIPTION AS FAULT_DESC, BUY_THE_WAY AS BUY_TYPE,
+		DEFECT_TYPE AS FAULT_TYPE_CODE, DEFECT_COMMENT AS FAULT_TYPE_NAME, DEFECT_CODE AS FAULT_REASON_CODE, DEFECT_REASON AS FAULT_REASON_NAME,
+		DEFECT_LOCAL_DESCRIPTION AS FAULT_CURRENT_DESC, DETAIL_DESCRIPTION AS INFO_DESC
+		FROM CRM_REPAIR_CONTENT WHERE 1 = 1
+		<if test="partCode != null and partCode !=''">
+			AND SERIAL_NUMBER = '${partCode}'
+		</if>
+		<if test="orderNumber != null and orderNumber !=''">
+			AND REPAIR_ORDER_NUMBER = '${orderNumber}'
+		</if>
+		<if test="startTime != null and startTime !='' and endTime != null and endTime != ''">
+			AND COMPLETE_TIME BETWEEN TO_DATE('${startTime}', 'yyyy-mm-dd') AND TO_DATE('${endTime}', 'yyyy-mm-dd')
+		</if>
+		<if test="faultTypeCodeList != null">
+			AND DEFECT_TYPE IN
+			<foreach collection="faultTypeCodeList" item="item" index="index" 
+				open="(" separator="," close=")">#{item}
+			</foreach>
+		</if>
+		<if test="faultReasonCodeList != null">
+			AND DEFECT_CODE IN
+			<foreach collection="faultTypeCodeList" item="item" index="index" 
+				open="(" separator="," close=")">#{item}
+			</foreach>
+		</if>
+  	</select>
+  	
+  	<select id="findAllRepairIntermediatePage" resultMap="BaseResultMap">
+		SELECT SERVICE_CENTER, REPAIR_ORDER_NUMBER AS ORDER_NUMBER, SERIAL_NUMBER AS PART_CODE, PART_DESCRIPTION AS PART_NAME, INVOICE_TIME AS INVOICE_DATE,
+		COMPLETE_TIME AS FINISH_DATE, SERVICE_POINT AS SERVICE_SITE, SERVICE_PERSON AS SERVICE_ENGINEER, SETTLEMENT AS SETTLEMENT_DESC,
+		TELEPHONE AS HOME_PHONE, MOBILEPHONE AS CELLPHONE, CREATION_TIME AS RECORD_TIME, DEFECT_DESCRIPTION AS FAULT_DESC, BUY_THE_WAY AS BUY_TYPE,
+		DEFECT_TYPE AS FAULT_TYPE_CODE, DEFECT_COMMENT AS FAULT_TYPE_NAME, DEFECT_CODE AS FAULT_REASON_CODE, DEFECT_REASON AS FAULT_REASON_NAME,
+		DEFECT_LOCAL_DESCRIPTION AS FAULT_CURRENT_DESC, DETAIL_DESCRIPTION AS INFO_DESC FROM CRM_REPAIR_CONTENT WHERE 1 = 1
+		<if test="repair.partCode != null and repair.partCode !=''">
+			AND SERIAL_NUMBER = '${repair.partCode}'
+		</if>
+		<if test="repair.orderNumber != null and repair.orderNumber !=''">
+			AND REPAIR_ORDER_NUMBER = '${repair.orderNumber}'
+		</if>
+		<if test="repair.startTime != null and repair.startTime !='' and repair.endTime != null and repair.endTime != ''">
+			AND COMPLETE_TIME BETWEEN TO_DATE('${repair.startTime}', 'yyyy-mm-dd hh24:mi:ss') AND TO_DATE('${repair.endTime}', 'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="repair.recordTimeStart != null and repair.recordTimeStart!=''">
+			AND TO_CHAR(CREATION_TIME,'YYYY-MM-DD') &gt;= '${repair.recordTimeStart}'
+		</if>
+		<if test="repair.recordTimeEnd != null and repair.recordTimeEnd!=''">
+			AND TO_CHAR(CREATION_TIME,'YYYY-MM-DD') &lt;='${repair.recordTimeEnd}'
+		</if>
+		<if test="repair.faultTypeCodeList != null">
+			AND DEFECT_TYPE IN
+			<foreach collection="repair.faultTypeCodeList" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+			</foreach>
+		</if>
+		<if test="repair.faultReasonCodeList != null">
+			AND DEFECT_CODE IN
+			<foreach collection="repair.faultReasonCodeList" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+			</foreach>
+		</if>
+  	</select>
+</mapper>

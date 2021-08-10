@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.QualityImprovementRfpMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.QualityImprovementRfp" >
+    <id column="ATR_KEY" property="atrKey" jdbcType="DECIMAL" />
+    <id column="SITE_NUM" property="siteNum" jdbcType="DECIMAL" />
+    <result column="ATR_NAME" property="atrName" jdbcType="VARCHAR" />
+    <result column="PURGE_STATUS" property="purgeStatus" jdbcType="DECIMAL" />
+    <result column="CREATION_TIME" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="CREATION_TIME_U" property="creationTimeU" jdbcType="TIMESTAMP" />
+    <result column="CREATION_TIME_Z" property="creationTimeZ" jdbcType="VARCHAR" />
+    <result column="LAST_MODIFIED_TIME" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME_U" property="lastModifiedTimeU" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME_Z" property="lastModifiedTimeZ" jdbcType="VARCHAR" />
+    <result column="XFR_INSERT_PID" property="xfrInsertPid" jdbcType="DECIMAL" />
+    <result column="XFR_UPDATE_PID" property="xfrUpdatePid" jdbcType="DECIMAL" />
+    <result column="TRX_ID" property="trxId" jdbcType="CHAR" />
+    <result column="PARENT_KEY" property="parentKey" jdbcType="DECIMAL" />
+    <result column="AREA_S" property="areaS" jdbcType="VARCHAR" />
+    <result column="CHANGED_S" property="changedS" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION_S" property="descriptionS" jdbcType="VARCHAR" />
+    <result column="DUTY_GROUP_S" property="dutyGroupS" jdbcType="VARCHAR" />
+    <result column="FACTORY_S" property="factoryS" jdbcType="VARCHAR" />
+    <result column="FINDER_S" property="finderS" jdbcType="VARCHAR" />
+    <result column="GROUP_LEADER_S" property="groupLeaderS" jdbcType="VARCHAR" />
+    <result column="METHOD_S" property="methodS" jdbcType="VARCHAR" />
+    <result column="PHOTO_AFTER_S" property="photoAfterS" jdbcType="VARCHAR" />
+    <result column="PHOTO_FRONT_S" property="photoFrontS" jdbcType="VARCHAR" />
+    <result column="QC_CHECKED_S" property="qcCheckedS" jdbcType="VARCHAR" />
+    <result column="REASON_S" property="reasonS" jdbcType="VARCHAR" />
+    <result column="RECORD_DATE_T" property="recordDateT" jdbcType="TIMESTAMP" />
+    <result column="RECORD_DATE_U" property="recordDateU" jdbcType="TIMESTAMP" />
+    <result column="RECORD_DATE_Z" property="recordDateZ" jdbcType="VARCHAR" />
+    <result column="RECORD_MAN_S" property="recordManS" jdbcType="VARCHAR" />
+    <result column="RFP_NAME_S" property="rfpNameS" jdbcType="VARCHAR" />
+    <result column="RFP_SCORE_I" property="rfpScoreI" jdbcType="DECIMAL" />
+    <result column="TOTAL_SCORE_I" property="totalScoreI" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ATR_KEY, SITE_NUM, ATR_NAME, PURGE_STATUS, CREATION_TIME, CREATION_TIME_U, CREATION_TIME_Z, 
+    LAST_MODIFIED_TIME, LAST_MODIFIED_TIME_U, LAST_MODIFIED_TIME_Z, XFR_INSERT_PID, XFR_UPDATE_PID, 
+    TRX_ID, PARENT_KEY, AREA_S, CHANGED_S, DESCRIPTION_S, DUTY_GROUP_S, FACTORY_S, FINDER_S, 
+    GROUP_LEADER_S, METHOD_S, PHOTO_AFTER_S, PHOTO_FRONT_S, QC_CHECKED_S, REASON_S, RECORD_DATE_T, 
+    RECORD_DATE_U, RECORD_DATE_Z, RECORD_MAN_S, RFP_NAME_S, RFP_SCORE_I, TOTAL_SCORE_I
+  </sql>
+   <select id="getQualityAllByPage" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from at_QualityImprovementRfp
+    <where>
+       <if test="hashMap.factoryS != null">
+            FACTORY_S  like '%${hashMap.factoryS}%'
+       </if> 
+       <if test="hashMap.areaS != null">
+         and   AREA_S  like '%${hashMap.areaS}%'
+       </if> 
+       <if test="hashMap.dutyGroupS!= null">
+         and   DUTY_GROUP_S  like '%${hashMap.dutyGroupS}%'
+       </if> 
+        <if test="hashMap.rfpNameS!= null">
+         and   RFP_NAME_S like '%${hashMap.rfpNameS}%'
+       </if> 
+       <if test="hashMap.finderS != null">
+         and   FINDER_S  like '%${hashMap.finderS}%'
+       </if>
+       <if test="hashMap.totalScoreI!= null">
+         and   TOTAL_SCORE_I  like '%${hashMap.totalScoreI}%'
+       </if>
+       <if test="hashMap.startTime != null and hashMap.endTime !=null">
+
+            and record_date_t BETWEEN #{hashMap.startTime,jdbcType=TIMESTAMP} and  #{hashMap.endTime,jdbcType=TIMESTAMP}
+
+       </if>
+    </where>
+    order by record_date_t DESC
+  </select>
+  
+  <select id="getQualityImp" resultMap="BaseResultMap" parameterType="com.peg.model.bph.QualityImprovementRfp">
+    select 
+    <include refid="Base_Column_List" />
+    from at_QualityImprovementRfp
+    <where>
+       <if test="factoryS != null and factoryS != ''">
+            FACTORY_S  like #{factoryS}
+       </if> 
+       <if test="areaS != null and areaS !=''">
+         and   AREA_S  like #{areaS}
+       </if> 
+       <if test="dutyGroupS!= null and dutyGroupS!=''">
+         and   DUTY_GROUP_S  like #{dutyGroupS}
+       </if> 
+        <if test="rfpNameS!= null and rfpNameS!=''">
+         and   RFP_NAME_S like #{rfpNameS}
+       </if> 
+       <if test="finderS != null and finderS !=''">
+         and   FINDER_S  like #{finderS}
+       </if>
+       <if test="totalScoreI!= null and totalScoreI!=''">
+         and   TOTAL_SCORE_I  like #{totalScoreI}
+       </if>
+       <if test="startTime != null and endTime !=null">
+
+            and record_date_t BETWEEN #{startTime,jdbcType=TIMESTAMP} and  #{endTime,jdbcType=TIMESTAMP}
+
+       </if>
+    </where>
+    order by record_date_t DESC
+  </select>
+</mapper>

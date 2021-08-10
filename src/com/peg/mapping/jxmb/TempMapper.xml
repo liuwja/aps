@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.jxmb.TempMapper" >
+<resultMap id="BaseResultMap" type="com.peg.model.jxmb.TempVo" >
+	<id column="id" property="id" jdbcType="DECIMAL" />
+	<result column="TARGETCLASS" property="targetClass" jdbcType="VARCHAR" />
+	<result column="INDEXCONTENT" property="indexContent" jdbcType="VARCHAR" />
+	<result column="PERFORMANCECONTENT" property="performanceContent" jdbcType="VARCHAR" />
+	<result column="REFERENCEVALUE" property="referenceValue" jdbcType="VARCHAR" />
+	<result column="YEARTARGETVALUE" property="yearTargetValue" jdbcType="VARCHAR" />
+	<result column="BASEVALUE" property="baseValue" jdbcType="VARCHAR" />
+	<result column="TARGETVALUE" property="targetValue" jdbcType="VARCHAR" />
+	<result column="ACCUMULATEDMONTH" property="accumulatedMonth" jdbcType="VARCHAR" />
+	<result column="LASTMONTHACTUAL" property="lastMonthActual" jdbcType="VARCHAR" />
+	<result column="MONTHREALITY" property="monthReality" jdbcType="VARCHAR" />
+	<result column="TARGETVALUEMONTH" property="targetValueMonth" jdbcType="VARCHAR" />
+	<result column="ACCUMUMONTH" property="accumuMonth" jdbcType="VARCHAR" />
+	<result column="RECORD" property="record" jdbcType="VARCHAR" />
+	<result column="MONTHVALUE" property="monthValue" jdbcType="VARCHAR" />
+	<result column="LASTUPDATEUSER" property="lastUpdateUser" jdbcType="VARCHAR" />
+</resultMap>
+
+<select id="tempGetMonthPage" resultMap="BaseResultMap">
+	SELECT M.MONTH_KEY AS ID, P.TARGETCLASS, P.INDEXCONTENT, P.PERFORMANCECONTENT, ITEM.REFERENCEVALUE, ITEM.YEARTARGETVALUE,
+		S.BASEVALUE, S.TARGETVALUE, M.ACCUMULATEDMONTH, M.LASTMONTHACTUAL, M.MONTHREALITY, M.TARGETVALUEMONTH,
+		M.ACCUMUMONTH, M.RECORD, M.MONTHVALUE, M.LASTUPDATEUSER
+				
+	FROM Y_ITEM ITEM, Y_PERFORMANCECHECK P, Y_SETUP S, Y_MONTH M
+	WHERE ITEM.ID = P.ID AND ITEM.ITEM_KEY = S.ITEM_KEY AND S.INDEX_KEY = M.INDEX_KEY
+      	
+	<if test="hashMap.DEPARTMENT != null">
+		and P.DEPARTMENT like '%${hashMap.DEPARTMENT}%'
+	</if>
+	<if test="hashMap.TARGETCLASS != null">
+		and P.TARGETCLASS like '%${hashMap.TARGETCLASS}%'
+	</if>
+	<if test="hashMap.INDEXCONTENT != null">
+		and P.INDEXCONTENT like '%${hashMap.INDEXCONTENT}%'
+	</if>
+	<if test="hashMap.ACCUMULATEDMONTH != null">
+		and M.ACCUMULATEDMONTH like '%${hashMap.ACCUMULATEDMONTH}%'
+	</if>
+	<if test="hashMap.itemKey != null">
+		and a.item_key = '${hashMap.itemKey}'
+	</if>
+</select>
+
+<select id="tempGetMonth" resultMap="BaseResultMap">
+	SELECT M.MONTH_KEY AS ID, P.TARGETCLASS, P.INDEXCONTENT, P.PERFORMANCECONTENT, ITEM.REFERENCEVALUE, ITEM.YEARTARGETVALUE,
+		S.BASEVALUE, S.TARGETVALUE, M.ACCUMULATEDMONTH, M.LASTMONTHACTUAL, M.MONTHREALITY, M.TARGETVALUEMONTH,
+		M.ACCUMUMONTH, M.RECORD, M.MONTHVALUE, M.LASTUPDATEUSER
+				
+	FROM Y_ITEM ITEM, Y_PERFORMANCECHECK P, Y_SETUP S, Y_MONTH M
+	WHERE ITEM.ID = P.ID AND ITEM.ITEM_KEY = S.ITEM_KEY AND S.INDEX_KEY = M.INDEX_KEY
+      	
+	<if test="hashMap.DEPARTMENT != null">
+		and P.DEPARTMENT like '%${hashMap.DEPARTMENT}%'
+	</if>
+	<if test="hashMap.TARGETCLASS != null">
+		and P.TARGETCLASS like '%${hashMap.TARGETCLASS}%'
+	</if>
+	<if test="hashMap.INDEXCONTENT != null">
+		and P.INDEXCONTENT like '%${hashMap.INDEXCONTENT}%'
+	</if>
+	<if test="hashMap.ACCUMULATEDMONTH != null">
+		and M.ACCUMULATEDMONTH like '%${hashMap.ACCUMULATEDMONTH}%'
+	</if>
+	<if test="hashMap.itemKey != null">
+		and a.item_key = '${hashMap.itemKey}'
+	</if>
+</select>
+</mapper>
+
+
+  

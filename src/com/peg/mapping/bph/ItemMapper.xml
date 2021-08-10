@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.ItemMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.Item" >
+    <id column="item_key" property="itemKey" jdbcType="DECIMAL" />
+    <result column="gc_key" property="gcKey" jdbcType="DECIMAL" />
+    <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR" />
+    <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_UPDATE_TIME" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_UPDATE_User" property="lastUpdateUser" jdbcType="VARCHAR" />
+    <result column="item_score" property="itemScore" jdbcType="DECIMAL" />
+    <collection property="uiindexs" resultMap="com.peg.dao.bph.IndexMapper.BaseResultMap" columnPrefix="in_"></collection>
+
+  </resultMap>
+  <sql id="Base_Column_List" >
+    item_key, gc_key,ITEM_CODE,ITEM_NAME,CREATE_USER,CREATE_TIME,LAST_UPDATE_TIME,LAST_UPDATE_User
+  </sql>
+  
+  <select id="getAllItems" resultMap="BaseResultMap" >
+    select 
+    a.item_key, a.gc_key,ITEM_CODE,a.ITEM_NAME,a.CREATE_USER,a.CREATE_TIME,a.LAST_UPDATE_TIME,a.LAST_UPDATE_User
+    from T_ITEM a,t_group_category b
+    where a.gc_key = b.gc_key
+    and b.gc_key=(
+    select gc_key from t_group_category 
+    where factory = #{factory,jdbcType=VARCHAR}
+    and area = #{area,jdbcType=VARCHAR}
+    and category = #{category,jdbcType=VARCHAR}
+    )
+  </select>
+  
+  <select id="getItemByGckey" resultMap="BaseResultMap"  parameterType="java.lang.Long" >
+    select 
+    a.item_key, a.gc_key,ITEM_CODE,a.ITEM_NAME,a.CREATE_USER,a.CREATE_TIME,a.LAST_UPDATE_TIME,a.LAST_UPDATE_User
+    from T_ITEM a,t_group_category b
+    where a.gc_key = b.gc_key
+    and b.gc_key=#{gcKey}
+  </select>
+
+   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List"></include>
+    from T_ITEM
+    where item_key = #{itemKey,jdbcType=DECIMAL}
+  </select>
+   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from T_ITEM
+    where item_key = #{itemKey,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.bph.Item" >
+    insert into T_ITEM ( gc_key,ITEM_CODE,ITEM_NAME,CREATE_USER,CREATE_TIME,
+    LAST_UPDATE_TIME,LAST_UPDATE_USER )
+    values (#{gcKey,jdbcType=DECIMAL}, #{itemCode,jdbcType=VARCHAR}, 
+    #{itemName,jdbcType=VARCHAR},#{createUser,jdbcType=VARCHAR},SYSDATE,
+     #{lastUpdateTime,jdbcType=TIMESTAMP},#{lastUpdateUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.bph.Item" >
+    insert into T_ITEM
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="gcKey != null" >
+        gc_key,
+      </if>
+      <if test="itemCode != null" >
+       ITEM_CODE,
+      </if>
+      <if test="itemName != null" >
+        ITEM_NAME,
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="lastUpdateTime != null" >
+        LAST_UPDATE_TIME,
+      </if>
+       <if test="LastUpdateUser != null" >
+        LAST_UPDATE_USER,
+      </if>
+      
+    </trim>
+
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.bph.Item" >
+    update T_ITEM
+    <set >
+      <if test="gcKey != null" >
+      gc_key = #{gcKey,jdbcType=DECIMAL},
+      </if>
+      <if test="itemCode != null" >
+        ITEM_CODE=#{itemCode ,jdbcType=VARCHAR},
+      </if>
+      <if test="itemName != null" >
+        ITEM_NAME=#{itemName ,jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateTime != null" >
+        LAST_UPDATE_TIME=#{lastUpdateTime  ,jdbcType=TIMESTAMP},
+      </if>
+       <if test="lastUpdateUser != null" >
+        LAST_UPDATE_USER=#{lastUpdateUser ,jdbcType=VARCHAR},
+      </if>
+      
+    </set>
+    where item_key = #{itemKey,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.bph.Item" >
+    update T_ITEM
+    set gc_key = #{gcKey,jdbcType=VARCHAR},
+      ITEM_CODE = #{itemCode,jdbcType=VARCHAR},
+      ITEM_NAME = #{itemName,jdbcType=VARCHAR},
+      LAST_UPDATE_TIME = #{lastUpdateTime,jdbcType=VARCHAR},
+      LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=VARCHAR},
+    where item_key = #{itemKey,jdbcType=DECIMAL}
+  </update>
+   <delete id="deleItemsByGckey" parameterType="java.lang.Long" >
+    delete from T_ITEM
+    where gc_key = #{gcKey,jdbcType=DECIMAL}
+  </delete>
+ </mapper>

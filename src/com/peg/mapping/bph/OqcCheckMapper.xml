@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.peg.dao.bph.OqcCheckMapper">
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.OqcCheck">
+    <id column="TEST_INSTANCE_KEY" jdbcType="DECIMAL" property="testInstanceKey" />
+    <id column="SITE_NUM" jdbcType="DECIMAL" property="siteNum" />
+    <result column="TEST_DEFINITION_KEY" jdbcType="DECIMAL" property="testDefinitionKey" />
+    <result column="OBJECT_KEY" jdbcType="DECIMAL" property="objectKey" />
+    <result column="OBJECT_NAME" jdbcType="VARCHAR" property="objectName" />
+    <result column="OBJECT_TYPE" jdbcType="VARCHAR" property="objectType" />
+    <result column="DSCOMMENT" jdbcType="VARCHAR" property="dscomment" />
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
+    <result column="ROUTE_NAME" jdbcType="VARCHAR" property="routeName" />
+    <result column="ROUTE_KEY" jdbcType="DECIMAL" property="routeKey" />
+    <result column="ROUTE_STEP_NAME" jdbcType="VARCHAR" property="routeStepName" />
+    <result column="OP_NAME" jdbcType="VARCHAR" property="opName" />
+    <result column="TOBJ_HISTORY_KEY" jdbcType="DECIMAL" property="tobjHistoryKey" />
+    <result column="COMPLETE_COUNT" jdbcType="DECIMAL" property="completeCount" />
+    <result column="P_LINE_NAME" jdbcType="VARCHAR" property="pLineName" />
+    <result column="LOCATION" jdbcType="VARCHAR" property="location" />
+    <result column="TEST_EQUIP_KEY" jdbcType="DECIMAL" property="testEquipKey" />
+    <result column="TEST_PASSED" jdbcType="DECIMAL" property="testPassed" />
+    <result column="TEST_VALID" jdbcType="DECIMAL" property="testValid" />
+    <result column="TEST_START_TIME" jdbcType="TIMESTAMP" property="testStartTime" />
+    <result column="TEST_START_TIME_U" jdbcType="TIMESTAMP" property="testStartTimeU" />
+    <result column="TEST_START_TIME_Z" jdbcType="VARCHAR" property="testStartTimeZ" />
+    <result column="TEST_END_TIME" jdbcType="TIMESTAMP" property="testEndTime" />
+    <result column="TEST_END_TIME_U" jdbcType="TIMESTAMP" property="testEndTimeU" />
+    <result column="TEST_END_TIME_Z" jdbcType="VARCHAR" property="testEndTimeZ" />
+    <result column="CREATION_TIME" jdbcType="VARCHAR" property="creationTime" />
+    <result column="CREATION_TIME_U" jdbcType="TIMESTAMP" property="creationTimeU" />
+    <result column="CREATION_TIME_Z" jdbcType="VARCHAR" property="creationTimeZ" />
+    <result column="LAST_MODIFIED_TIME" jdbcType="TIMESTAMP" property="lastModifiedTime" />
+    <result column="LAST_MODIFIED_TIME_U" jdbcType="TIMESTAMP" property="lastModifiedTimeU" />
+    <result column="LAST_MODIFIED_TIME_Z" jdbcType="VARCHAR" property="lastModifiedTimeZ" />
+    <result column="XFR_INSERT_PID" jdbcType="DECIMAL" property="xfrInsertPid" />
+    <result column="XFR_UPDATE_PID" jdbcType="DECIMAL" property="xfrUpdatePid" />
+    <result column="TRX_ID" jdbcType="CHAR" property="trxId" />
+    <result column="UDA_0" jdbcType="VARCHAR" property="uda0" />
+    <result column="UDA_1" jdbcType="VARCHAR" property="uda1" />
+    <result column="UDA_2" jdbcType="VARCHAR" property="uda2" />
+    <result column="UDA_3" jdbcType="VARCHAR" property="uda3" />
+    <result column="UDA_4" jdbcType="VARCHAR" property="uda4" />
+    <result column="UDA_5" jdbcType="VARCHAR" property="uda5" />
+    <result column="UDA_6" jdbcType="VARCHAR" property="uda6" />
+    <result column="UDA_7" jdbcType="VARCHAR" property="uda7" />
+    <result column="UDA_8" jdbcType="VARCHAR" property="uda8" />
+    <result column="UDA_9" jdbcType="VARCHAR" property="uda9" />
+    <result column="UDT_0" jdbcType="TIMESTAMP" property="udt0" />
+    <result column="UDT_0_U" jdbcType="TIMESTAMP" property="udt0U" />
+    <result column="UDT_0_Z" jdbcType="VARCHAR" property="udt0Z" />
+    <result column="UDT_1" jdbcType="TIMESTAMP" property="udt1" />
+    <result column="UDT_1_U" jdbcType="TIMESTAMP" property="udt1U" />
+    <result column="UDT_1_Z" jdbcType="VARCHAR" property="udt1Z" />
+    <result column="UDT_2" jdbcType="TIMESTAMP" property="udt2" />
+    <result column="UDT_2_U" jdbcType="TIMESTAMP" property="udt2U" />
+    <result column="UDT_2_Z" jdbcType="VARCHAR" property="udt2Z" />
+    <result column="CREATOR_KEY" jdbcType="DECIMAL" property="creatorKey" />
+    <result column="LAST_MODIFIER_KEY" jdbcType="DECIMAL" property="lastModifierKey" />
+    <result column="CATEGORY" jdbcType="VARCHAR" property="category" />
+    <result column="DESCRIPTION" jdbcType="VARCHAR" property="description" />
+    <result column="PASS_COUNT" jdbcType="DECIMAL" property="passCount" />
+    <result column="TEST_INSTANCE_NAME" jdbcType="VARCHAR" property="testInstanceName" />
+    <result column="r_factory" jdbcType="VARCHAR" property="factoryS" />
+    <result column="r_plinename" jdbcType="VARCHAR" property="plineNames" />
+    <result column="r_productionlinename" jdbcType="VARCHAR" property="productoinLine" />
+    <result column="r_ordernumber" jdbcType="VARCHAR" property="orderNumber" />
+    <result column="r_defectcode" jdbcType="VARCHAR" property="defectCode" />
+    <result column="r_uda1" jdbcType="VARCHAR" property="ruda1" />
+    <result column="r_defectcomment" jdbcType="VARCHAR" property="defectComment" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    TEST_INSTANCE_KEY, SITE_NUM, TEST_DEFINITION_KEY, OBJECT_KEY, OBJECT_NAME, OBJECT_TYPE, 
+    DSCOMMENT, USER_NAME, ROUTE_NAME, ROUTE_KEY, ROUTE_STEP_NAME, OP_NAME, TOBJ_HISTORY_KEY, 
+    COMPLETE_COUNT, P_LINE_NAME, LOCATION, TEST_EQUIP_KEY, TEST_PASSED, TEST_VALID, TEST_START_TIME, 
+    TEST_START_TIME_U, TEST_START_TIME_Z, TEST_END_TIME, TEST_END_TIME_U, TEST_END_TIME_Z, 
+    CREATION_TIME, CREATION_TIME_U, CREATION_TIME_Z, LAST_MODIFIED_TIME, LAST_MODIFIED_TIME_U, 
+    LAST_MODIFIED_TIME_Z, XFR_INSERT_PID, XFR_UPDATE_PID, 
+    TRX_ID, UDA_0, UDA_1, UDA_2, UDA_3, UDA_4, UDA_5, UDA_6, UDA_7, UDA_8, UDA_9, UDT_0, 
+    UDT_0_U, UDT_0_Z, UDT_1, UDT_1_U, UDT_1_Z, UDT_2, UDT_2_U, UDT_2_Z, CREATOR_KEY, 
+    LAST_MODIFIER_KEY, CATEGORY, DESCRIPTION, PASS_COUNT, TEST_INSTANCE_NAME
+  </sql>
+ <select id="getOqcCheckAllByPage" resultMap="BaseResultMap" >
+    select 
+    p.uda_1 r_factory,p.description r_plinename,up.mold_type_s r_productionlinename,w.order_number r_ordernumber,
+    t.OBJECT_NAME,t.CREATION_TIME,t.UDA_9,t.OP_NAME,t.TEST_PASSED,t.uda_5,t.UDT_0,dr.defect_code r_defectcode,woi.uda_1 r_uda1,
+    dr.defect_comment,dr.defect_user_name
+    from (
+     select ti.test_instance_key, ti.object_key, ti.OBJECT_NAME,ti.CREATION_TIME,ti.UDA_9, ti.OP_NAME,ti.TEST_PASSED,ti.uda_5,ti.UDT_0 from test_instance_uda_7@mes_test_link ti where  
+         ti.test_passed=0
+        <if test="hashMap.startTime != null and hashMap.endTime !=null">        
+        and to_char(ti.creation_time,'YYYY-MM-DD') BETWEEN to_char(#{hashMap.startTime},'YYYY-MM-DD') and  to_char(#{hashMap.endTime},'YYYY-MM-DD')
+       </if>
+       <if test="hashMap.group != null">
+         and   substr(ti .uda_5,0,instr(ti .uda_5||',',',')-1)  like '%${hashMap.group}%' or 
+         substr(ti .uda_5,instr(ti .uda_5,',')+1,instr(ti .uda_5||',',',',1,2)-instr(ti .uda_5||',',',')-1) like '%${hashMap.group}%'
+         or  substr(ti .uda_5,instr(ti .uda_5,',',1,2)+1,instr(ti .uda_5||',',',',1,3)-instr(ti .uda_5||',',',',1,2)-1) like '%${hashMap.group}%'
+       </if> 
+    ) t,unit u,work_order w,work_order_items woi,production_line p ,part pa ,uda_part up,defect_repair_entry dr
+    where
+      t.object_key=u.unit_key 
+        and t.test_instance_key = dr.test_instance_key(+)  
+        and woi.order_item_key=u.order_item_key 
+        and w.order_key=woi.order_key(+)
+		and p.p_line_name(+)=woi.planned_line 
+		and pa.part_number=u.part_number
+		and pa.trx_id = up.trx_id 
+       <if test="hashMap.factoryS != null ">        
+         and    p.uda_1 like #{hashMap.factoryS}
+       </if>
+    order by t.creation_time DESC
+  </select>
+  
+  <select id="getOqcCheck" resultMap="BaseResultMap" parameterType="com.peg.model.bph.OqcCheck">
+   select 
+    p.uda_1 r_factory,p.description r_plinename,up.mold_type_s r_productionlinename,w.order_number r_ordernumber,
+    t.OBJECT_NAME,t.CREATION_TIME,t.UDA_9,t.OP_NAME,t.TEST_PASSED,t.uda_5,t.UDT_0,dr.defect_code r_defectcode,woi.uda_1 r_uda1, 
+    dr.defect_comment,dr.defect_user_name
+    from (
+     select * from test_instance_uda_7@mes_test_link  ti where  
+         ti.test_passed=0
+        <if test="startTime != null and endTime !=null">        
+          and to_char(ti.creation_time,'YYYY-MM-DD') BETWEEN to_char(#{startTime},'YYYY-MM-DD') and  to_char(#{endTime},'YYYY-MM-DD')
+       </if>
+       
+       <if test="group != null and group !=''">
+         and   substr(ti .uda_5,0,instr(ti .uda_5||',',',')-1)  like #{group} or 
+         substr(ti .uda_5,instr(ti .uda_5,',')+1,instr(ti .uda_5||',',',',1,2)-instr(ti .uda_5||',',',')-1) like #{group}
+         or  substr(ti .uda_5,instr(ti .uda_5,',',1,2)+1,instr(ti .uda_5||',',',',1,3)-instr(ti .uda_5||',',',',1,2)-1) like #{group}
+       </if> 
+    ) t,unit u,work_order w,work_order_items woi,production_line p ,part pa ,uda_part up,defect_repair_entry dr
+    where
+        t.object_key=u.unit_key 
+        and t.test_instance_key = dr.test_instance_key(+) 
+        and woi.order_item_key=u.order_item_key 
+        and w.order_key=woi.order_key(+)
+		and p.p_line_name(+)=woi.planned_line 
+		and pa.part_number=u.part_number
+		and pa.trx_id = up.trx_id 
+       <if test="factoryS != null and factoryS !=''">        
+         and    p.uda_1 like #{factoryS}
+       </if>
+    order by t.creation_time DESC
+  </select>
+</mapper>

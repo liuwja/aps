@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.system.SysLoginHistoryMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.system.SysLoginHistory" >
+    <result column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="SESSIONID" property="sessionid" jdbcType="VARCHAR" />
+    <result column="USER_KEY" property="userKey" jdbcType="DECIMAL" />
+    <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+    <result column="USER_DESCRIPTION" property="userDescription" jdbcType="VARCHAR" />
+    <result column="LOGIN_IP" property="loginIp" jdbcType="VARCHAR" />
+    <result column="LOGOUT_TYPE" property="logoutType" jdbcType="DECIMAL" />
+    <result column="LOGIN_TIME" property="loginTime" jdbcType="TIMESTAMP" />
+    <result column="LOGOUT_TIME" property="logoutTime" jdbcType="TIMESTAMP" />
+    <result column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    ID, SESSIONID, USER_KEY, USER_NAME,USER_DESCRIPTION, LOGIN_IP,LOGOUT_TYPE,LOGIN_TIME,LOGOUT_TIME
+  </sql>
+  <insert id="insert" parameterType="com.peg.model.system.SysLoginHistory" >
+    insert into SYS_LOGIN_HISTORY (ID, SESSIONID, USER_KEY, 
+      USER_NAME, USER_DESCRIPTION, LOGIN_IP, 
+      LOGOUT_TYPE, LOGIN_TIME, LOGOUT_TIME
+      )
+    values (#{id,jdbcType=DECIMAL}, #{sessionid,jdbcType=VARCHAR}, #{userKey,jdbcType=DECIMAL}, 
+      #{userName,jdbcType=VARCHAR}, #{userDescription,jdbcType=VARCHAR}, #{loginIp,jdbcType=VARCHAR}, 
+      #{logoutType,jdbcType=DECIMAL}, sysdate, #{logoutTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.system.SysLoginHistory" >
+    insert into SYS_LOGIN_HISTORY
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="sessionid != null" >
+        SESSIONID,
+      </if>
+      <if test="userKey != null" >
+        USER_KEY,
+      </if>
+      <if test="userName != null" >
+        USER_NAME,
+      </if>
+      <if test="userDescription != null" >
+        USER_DESCRIPTION,
+      </if>
+      <if test="loginIp != null" >
+        LOGIN_IP,
+      </if>
+      <if test="logoutType != null" >
+        LOGOUT_TYPE,
+      </if>
+      <if test="loginTime != null" >
+        LOGIN_TIME,
+      </if>
+      <if test="logoutTime != null" >
+        LOGOUT_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="sessionid != null" >
+        #{sessionid,jdbcType=VARCHAR},
+      </if>
+      <if test="userKey != null" >
+        #{userKey,jdbcType=DECIMAL},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userDescription != null" >
+        #{userDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="loginIp != null" >
+        #{loginIp,jdbcType=VARCHAR},
+      </if>
+      <if test="logoutType != null" >
+        #{logoutType,jdbcType=DECIMAL},
+      </if>
+      <if test="loginTime != null" >
+        #{loginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="logoutTime != null" >
+        #{logoutTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+   <select id="findALLByPage" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from SYS_LOGIN_HISTORY
+    where 1=1
+    <if test="hashMap.username != null " >
+    and USER_NAME like '%${hashMap.username}%'
+    </if>
+    <if test="hashMap.name != null " >
+    and USER_DESCRIPTION like '%${hashMap.name}%'
+    </if>
+    <if test="hashMap.startDate != null " >
+     <![CDATA[
+    and LOGIN_TIME >=  to_date('${hashMap.startDate}', 'yyyy-mm-dd')
+    ]]>
+    </if>       
+    order by LOGIN_TIME desc 
+  </select>  
+  
+  <update id="updateLogoutTimeBySessionId" >
+    update SYS_LOGIN_HISTORY
+    set LOGOUT_TIME = sysdate
+    where SESSIONID = #{sessionid,jdbcType=VARCHAR}
+  </update>  
+</mapper>

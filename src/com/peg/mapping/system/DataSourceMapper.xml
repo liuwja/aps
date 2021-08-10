@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.peg.dao.system.DataSourceMapper">
+<resultMap id="BaseResultMap" type="com.peg.model.system.DataSource">
+	<id column="ID" property="id" jdbcType="DECIMAL" />
+	<result column="accordion" property="accordion" jdbcType="VARCHAR" />
+	<result column="folder" property="folder" jdbcType="VARCHAR" />
+	<result column="menu" property="menu" jdbcType="VARCHAR" />
+	<result column="description" property="description" jdbcType="VARCHAR"/>
+	<result column="CHART_TYPE" property="chartType" jdbcType="VARCHAR"/>	
+</resultMap>
+	
+<select id="findPage" resultMap="BaseResultMap">
+	SELECT ID,accordion, folder, menu, description, CHART_TYPE FROM T_CHART_SOURCE
+</select>
+
+<select id="findAll" resultMap="BaseResultMap">
+	SELECT ID,accordion, folder, menu, description, CHART_TYPE FROM T_CHART_SOURCE
+</select>
+
+<select id="findByName" resultMap="BaseResultMap" parameterType="com.peg.model.system.DataSource">
+	SELECT ID,accordion, folder, menu, description, CHART_TYPE FROM T_CHART_SOURCE where 1 = 1
+	<if test="accordion != null and accordion != ''">
+		and accordion = '${accordion}'
+	</if>
+	<if test="folder != null and folder != ''">
+		and folder = '${folder}'
+	</if>
+	<if test="menu != null and menu != ''">
+		and menu = '${menu}'
+	</if>
+	<if test="chartType != null and chartType != ''">
+		and CHART_TYPE = '${chartType}'
+	</if>
+</select>
+
+<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+	<![CDATA[
+		SELECT ID, accordion, folder, menu, description, CHART_TYPE FROM T_CHART_SOURCE where ID = #{id,jdbcType=DECIMAL}
+	]]>
+</select>
+
+<insert id="insert" parameterType="com.peg.model.system.DataSource">
+	<![CDATA[
+		INSERT INTO T_CHART_SOURCE(accordion, folder, menu, description, CHART_TYPE)
+		VALUES(#{accordion, jdbcType=VARCHAR}, #{folder, jdbcType=VARCHAR}, #{menu, jdbcType=VARCHAR}, #{description, jdbcType=VARCHAR}, #{chartType, jdbcType=VARCHAR})
+	]]>
+</insert>
+
+<update id="update" parameterType="com.peg.model.system.DataSource">
+	<![CDATA[
+		UPDATE T_CHART_SOURCE SET accordion = #{accordion, jdbcType=VARCHAR}, folder = #{folder, jdbcType=VARCHAR},
+			menu = #{menu, jdbcType=VARCHAR}, description = #{description, jdbcType=VARCHAR}, chart_Type = #{chartType, jdbcType=VARCHAR}
+		WHERE ID = #{id, jdbcType=DECIMAL}
+	]]>
+</update>
+
+<delete id="delete" parameterType="com.peg.model.system.DataSource"> 
+	<![CDATA[
+		DELETE FROM T_CHART_SOURCE WHERE ID = #{id, jdbcType=DECIMAL}
+	]]>
+</delete>
+</mapper>

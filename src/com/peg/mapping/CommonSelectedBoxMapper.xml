@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.CommonSelectedBoxMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.CommonSelectedBox" >
+    <result column="factory" property="factory" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="shift_group" property="shiftGroup" jdbcType="VARCHAR" />
+    <result column="shift_group_category" property="shiftGroupCategory" jdbcType="VARCHAR" />
+    <result column="check_index" property="checkIndex" jdbcType="VARCHAR" />
+    <result column="check_item" property="checkItem" jdbcType="VARCHAR" />
+    <result column="col_1" property="col1" jdbcType="VARCHAR" />
+    <result column="col_2" property="col2" jdbcType="VARCHAR" />
+    <result column="col_3" property="col3" jdbcType="VARCHAR" />
+    <result column="col_4" property="col4" jdbcType="VARCHAR" />
+    <result column="col_5" property="col5" jdbcType="VARCHAR" />
+    <result column="col_6" property="col6" jdbcType="VARCHAR" /> 
+    <result column="col_7" property="col7" jdbcType="VARCHAR" />
+    <result column="col_8" property="col8" jdbcType="VARCHAR" />
+    <result column="col_9" property="col9" jdbcType="DECIMAL" />
+    <result column="col_10" property="col10" jdbcType="DECIMAL" /> 
+    <result column="col_11" property="col11" jdbcType="DECIMAL" />
+    <result column="col_12" property="col12" jdbcType="DECIMAL" />  
+    <result column="col_13" property="col13" jdbcType="DECIMAL" />
+    <result column="col_14" property="col14" jdbcType="DECIMAL" /> 
+    <result column="col_15" property="col15" jdbcType="DECIMAL" />  
+    <result column="col_16" property="col16" jdbcType="DECIMAL" />
+    <result column="col_17" property="col17" jdbcType="DECIMAL" /> 
+    <result column="col_18" property="col18" jdbcType="DECIMAL" />  
+    <result column="col_19" property="col19" jdbcType="DECIMAL" />
+    <result column="col_20" property="col20" jdbcType="DECIMAL" />    
+  </resultMap>
+  <sql id="Base_Column_List" >
+    factory,area,shift_group,shift_group_category,col_1,col_2,col_3,col_4,col_5,col_6,col_7,
+    col_8,col_9,col_10,col_11,col_12,col_13,col_14,col_15,col_16,col_17,col_18,col_19,col_20
+  </sql>
+  
+   <select id="getCommonArea" resultMap="BaseResultMap"   >
+    select a.DESCRIPTION as area from site s,area a,site_area sa
+    where sa.child_key=a.area_key
+    and sa.parent_key=s.site_key and s.description= #{param1}
+  </select>
+  
+  <select id="getAreaS" resultMap="BaseResultMap"   >
+    select s.description as factory, a.DESCRIPTION as area from site s,area a,site_area sa
+    where sa.child_key=a.area_key
+    and sa.parent_key=s.site_key 
+  </select>
+ 
+   <select id="getCommonShiftGroup" resultMap="BaseResultMap"   >
+    select a.description as shift_group from APP_GROUP a where a.UDA_1 like #{param1} and a.UDA_2 like #{param2} and a.category='SHIFT'
+    and a.description is not null
+  </select>
+  
+  <select id="getShiftGroup" resultMap="BaseResultMap"   >
+    select a.description as shift_group from APP_GROUP a where a.UDA_1 like #{param1}  and a.category='SHIFT' and a.uda_4 is not null
+    and a.description is not null
+    order by a.description
+  </select>
+  
+  <select id="getCommonShiftGroupCategory" resultMap="BaseResultMap"  >
+     select distinct a.UDA_4 as shift_group_category from APP_GROUP a where a.UDA_1 like #{param1}  and a.category='SHIFT'
+     and a.UDA_4 is not null
+  </select>
+  
+  <select id="getCommonCheckIndex" resultMap="BaseResultMap"  >
+     select  CHECK_INDEX   from T_CHECK_INDEX where   AREA  like #{param1}
+     and  FACTORY like #{param2} and  SHIFTGROUP_CATEGORY like #{param3} 
+     and check_index is not null         
+    order by CHECK_INDEX
+  </select>
+  
+  <select id="getCommonGroupCategoryByFacAr" resultMap="BaseResultMap"  >
+     select distinct a.UDA_4 as shift_group_category from APP_GROUP a where a.UDA_1 like #{param1}  
+     and UDA_2 like #{param2}  and a.category='SHIFT'   and  a.UDA_4 is not null 
+  </select>
+  
+        <!-- 获取工厂 -->
+  <select id="getCommonFactory" resultMap="BaseResultMap"  >
+	<![CDATA[	    
+	  select distinct p.uda_1 as factory from PRODUCTION_LINE p
+	  where 1=1
+	]]>
+  </select>
+  <!-- 根据工厂车间获取班组类别 -->
+   <select id="getCommonCheckIndexByFac" resultMap="BaseResultMap"  >
+     select  CHECK_INDEX   from T_CHECK_INDEX where  FACTORY like #{param1} and AREA like#{param2}
+  </select>
+  
+  <select id="getCommonCheckItem" resultMap="BaseResultMap"  >
+     select distinct CHECK_ITEM   from T_CHECK_INDEX where  FACTORY like #{param1} and AREA like#{param2}
+  </select>
+  <!-- 获取班组项目得分 
+  <select id="getItemScore" resultMap="BaseResultMap">
+    select s.shift_group_name as col_1, t.item_code as col_2,t.item as col_3,t.scale as col_12, s.item_score as col_13 from t_check_item t, t_item_scroe s where 
+   t.id = s.item_id and s.sum_date = to_date(#{param1},'YYYY-MM') and s.shift_group_name = #{param2}
+  </select>
+  -->
+  <!-- 获取班组指标得分
+   <select id="getIndexScore" resultMap="BaseResultMap">
+  select t.index_code as col_1,t.check_index as col_2,t.scale as col_12,t.base_value as col_13,t.target_value as col_14,s.index_act_value as col_15,
+  s.index_score as col_16 from t_setting_monthly_assessment t,t_item_index_scroe_month s 
+  where t.index_id = s.index_id and s.sum_date = to_date(#{param1},'YYYY-MM')
+   and s.shift_group_name = #{param2}
+  </select>
+   -->
+   <!-- 获取班组得分 -->
+  <select id="getGroupScore" resultMap="BaseResultMap">
+  select s.shift_group_name as col_1, t.item_code col_2,t.item as col_3,t.scale as col_14,
+  f.index_code as col_4,f.check_index as col_5,f.scale as col_15,f.base_value as col_16,f.target_value as col_17,
+  g.index_act_value as col_18,g.index_score as col_19, s.item_score as col_20 
+   from t_check_item t, t_item_scroe s,t_setting_monthly_assessment f,t_item_index_scroe_month g
+  where t.id = s.item_id and t.id = g.item_id and t.id = f.col_1 and f.index_id = g.index_id 
+  and s.item_id = g.item_id and f.col_2 = #{param2} and f.month = #{param1}
+  and s.sum_date =to_date(#{param1},'YYYY-MM') and g.sum_date = to_date(#{param1},'YYYY-MM')
+  and s.shift_group_name = #{param2} and g.shift_group_name = #{param2}
+  and f.factory = #{param3} and s.factory = #{param3}
+  order by substr(t.item_code,2,4),to_number(substr(f.index_code,2))
+  </select>
+  <!-- 如果该月考核基准未设置，获取固定显示 -->
+  <select id="getFixGroupScore" resultMap="BaseResultMap">
+  select s.shift_group_name as col_1, t.item_code as col_2,t.item as col_3,t.scale as col_14,
+  f.index_code as col_4,f.check_index as col_5,f.scale as col_15,f.base_value as col_16,f.target_value as col_17
+  from t_check_item t, t_item_scroe s,t_check_index f,t_item_index_scroe_month g
+  where t.id = s.item_id and t.id = g.item_id  and f.id = g.index_id 
+  and s.item_id = g.item_id 
+  and s.sum_date =to_date(#{param1},'YYYY-MM') and g.sum_date = to_date(#{param1},'YYYY-MM')
+  and s.shift_group_name = #{param2} and g.shift_group_name = #{param2}
+  and g.factory = #{param3} and f.factory = #{param3}
+  order by substr(t.item_code,2,4),f.index_code
+  </select>
+
+ <select id="getFacAreaByGroup" resultMap="BaseResultMap">
+ select uda_1 as factory,uda_2 as area from app_group a 
+ where 1=1
+ <if test="group !=null">
+  and a.description=#{group}   
+ </if>
+ <if test="factory != null">
+  and a.uda_1 =#{factory}
+ </if>
+ and a.category ='SHIFT'
+ </select>
+ 
+ <select id="getCategoryS" resultMap="BaseResultMap">
+  select a.uda_1 as factory,a.uda_2 as area , a.UDA_4 as shift_group_category from APP_GROUP a where  a.category='SHIFT'
+  and a.UDA_4 is not null 
+  group by 
+  a.uda_1,a.uda_2,a.UDA_4
+  order by a.UDA_4 desc
+ </select> 
+ 
+ <select id="getGroupS" resultMap="BaseResultMap">
+  select a.uda_1 as factory,a.uda_2 as area , a.description as shift_group from APP_GROUP a where a.category='SHIFT'
+  and a.UDA_4 is not null 
+  and a.description is not null
+  order by a.description 
+ </select>
+ 
+ <select id="getCheckItemS" resultMap="BaseResultMap">
+ select a.factory as factory,a.area as area,a.shiftGroup_Category as shift_group_category, a.CHECK_ITEM as check_item from T_CHECK_INDEX  a
+ group by 
+ a.CHECK_ITEM ,a.factory,a.area,a.shiftGroup_Category
+ </select>
+  <!-- 查询uda_part表中的物料级别，物料类别 -->
+  <select id="getUdaPart" resultMap="BaseResultMap">
+  select p.uda_0 as col1,u.part_level_s as col2,u.is_new_s as col3,p.part_key as col4,p.consumption_type as col5,u.mold_type_s as col6 from part p,uda_part u where p.part_key = u.object_key
+  and p.part_number= #{partNumber} and rownum = 1
+  </select>
+  <!-- 根据供应商编号找供应商对象 -->
+  <select id="getAccount" resultMap="BaseResultMap">
+  	select account_key as col1,account_name as col2 from account where account_name=#{accountnumber} 
+  </select>
+</mapper>

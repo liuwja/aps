@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.BoxDefectRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.BoxDefectRecord" >
+    <id column="ATR_KEY" property="atrKey" jdbcType="DECIMAL" />
+    <id column="SITE_NUM" property="siteNum" jdbcType="DECIMAL" />
+    <result column="ATR_NAME" property="atrName" jdbcType="VARCHAR" />
+    <result column="PURGE_STATUS" property="purgeStatus" jdbcType="DECIMAL" />
+    <result column="CREATION_TIME" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="CREATION_TIME_U" property="creationTimeU" jdbcType="TIMESTAMP" />
+    <result column="CREATION_TIME_Z" property="creationTimeZ" jdbcType="VARCHAR" />
+    <result column="LAST_MODIFIED_TIME" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME_U" property="lastModifiedTimeU" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME_Z" property="lastModifiedTimeZ" jdbcType="VARCHAR" />
+    <result column="XFR_INSERT_PID" property="xfrInsertPid" jdbcType="DECIMAL" />
+    <result column="XFR_UPDATE_PID" property="xfrUpdatePid" jdbcType="DECIMAL" />
+    <result column="TRX_ID" property="trxId" jdbcType="CHAR" />
+    <result column="PARENT_KEY" property="parentKey" jdbcType="DECIMAL" />
+    <result column="FACTORY_S" property="factoryS" jdbcType="VARCHAR" />
+    <result column="RECORD_MAN_S" property="recordManS" jdbcType="VARCHAR" />
+    <result column="DEFECT_SOURCE_S" property="defectSourceS" jdbcType="VARCHAR" />
+    <result column="DEFECT_TYPE_S" property="defectTypeS" jdbcType="VARCHAR" />
+    <result column="PRODUCT_NUMBER_S" property="productNumberS" jdbcType="VARCHAR" />
+    <result column="DEFECT_S" property="defectS" jdbcType="VARCHAR" />
+    <result column="DEFECT_REASON_S" property="defectReasonS" jdbcType="VARCHAR" />
+    <result column="GROUP1_S" property="group1S" jdbcType="VARCHAR" />
+    <result column="GROUP2_S" property="group2S" jdbcType="VARCHAR" />
+    <result column="GROUP3_S" property="group3S" jdbcType="VARCHAR" />
+    <result column="RECORD_DATE_T" property="recordDateT" jdbcType="TIMESTAMP" />
+    <result column="RECORD_DATE_U" property="recordDateU" jdbcType="TIMESTAMP" />
+    <result column="RECORD_DATE_Z" property="recordDateZ" jdbcType="VARCHAR" />
+    <result column="PROCESS_NODE_S" property="processNodeS" jdbcType="VARCHAR" />
+    <result column="QUALITY_RESULT_S" property="qualityResultS" jdbcType="VARCHAR" />
+    <result column="QUALITY_SCORE_F" property="qualityScoreI" jdbcType="DECIMAL" />
+    <result column="LOT_QTY_S" property="lotQtyS" jdbcType="VARCHAR" />
+    <result column="DEFECT_CATEGORY_S" property="defectCategoryS" jdbcType="VARCHAR" />
+    <result column="DEFECT_SPARE_NAME_S" property="defectSpareNameS" jdbcType="VARCHAR" />
+    <result column="PRIMARY_DUTY_S" property="primaryDutyS" jdbcType="VARCHAR" />
+    <result column="PRIMARY_MAN_S" property="primaryManS" jdbcType="VARCHAR" />
+    <result column="ULTIMATE_DUTY_S" property="ultimateDutyS" jdbcType="VARCHAR" />
+    <result column="ULTIMATE_MAN_S" property="ultimateManS" jdbcType="VARCHAR" />
+    <result column="Time" property="timeS" jdbcType="VARCHAR" />
+    <result column="COUNT_MONTH" property="sum" jdbcType="DECIMAL" />
+  </resultMap>
+  <resultMap id="newResultMap" type="com.peg.model.BoxdefectrecordNew" >
+    <id column="ATR_KEY" property="atrKey" jdbcType="DECIMAL" />
+	<result column="BACK_NUM" property="backNum" jdbcType="VARCHAR" />
+	<result column="BILL_TYPE" property="billType" jdbcType="VARCHAR" />
+	<result column="REGION" property="region" jdbcType="VARCHAR" />
+	<result column="REGION_CORE" property="regionCore" jdbcType="VARCHAR" />
+	<result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+	<result column="USER_PHONE" property="userPhone" jdbcType="VARCHAR" />
+	<result column="BACK_TYPE" property="backType" jdbcType="VARCHAR" />
+	<result column="FAULT_TYPE" property="faultType" jdbcType="VARCHAR" />
+	<result column="FAULT_REASON" property="faultReason" jdbcType="VARCHAR" />
+	<result column="BILL_THEME" property="billTheme" jdbcType="VARCHAR" />
+	<result column="PRODUCT_TYPE" property="productType" jdbcType="VARCHAR" />
+	<result column="PART_TYPE" property="partType" jdbcType="VARCHAR" />
+	<result column="PRODUCT_NUM" property="productNum" jdbcType="VARCHAR" />
+	<result column="USE_TIME" property="useTime" jdbcType="DECIMAL" />
+	<result column="FIND_PLACE" property="findPlace" jdbcType="VARCHAR" />
+	<result column="DESCRIBE" property="describe" jdbcType="VARCHAR" />
+	<result column="PLACE_DESCRIBE" property="placeDescribe" jdbcType="VARCHAR" />
+	<result column="DISPOSAL_SITUATION" property="disposalSituation" jdbcType="VARCHAR" />
+	<result column="CAUSE_ANALYSIS" property="causeAnalysis" jdbcType="VARCHAR" />
+	<result column="SUGGEST" property="suggest" jdbcType="VARCHAR" />
+	<result column="MECHANIC_NAME" property="mechanicName" jdbcType="VARCHAR" />
+	<result column="MECHANIC_PHONE" property="mechanicPhone" jdbcType="VARCHAR" />
+	<result column="POINT" property="point" jdbcType="VARCHAR" />
+	<result column="STATE" property="state" jdbcType="VARCHAR" />
+	<result column="BACT_TIME" property="bactTime" jdbcType="TIMESTAMP" />
+	<result column="INSTALL_TIME" property="installTime" jdbcType="TIMESTAMP" />
+	<result column="PRODUCTION" property="production" jdbcType="TIMESTAMP" />
+	<result column="DUTY1" property="duty1" jdbcType="VARCHAR" />
+	<result column="DUTY2" property="duty2" jdbcType="VARCHAR" />
+	<result column="DUTY3" property="duty3" jdbcType="VARCHAR" />
+	<result column="DUTY1_NAME" property="duty1Name" jdbcType="VARCHAR" />
+	<result column="DUTY2_NAME" property="duty2Name" jdbcType="VARCHAR" />
+	<result column="ENGINEER_CONFIRM" property="engineerConfirm" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ATR_KEY, SITE_NUM, ATR_NAME, PURGE_STATUS, CREATION_TIME, CREATION_TIME_U, CREATION_TIME_Z, 
+    LAST_MODIFIED_TIME, LAST_MODIFIED_TIME_U, LAST_MODIFIED_TIME_Z, XFR_INSERT_PID, XFR_UPDATE_PID, 
+    TRX_ID, PARENT_KEY, FACTORY_S, RECORD_MAN_S, DEFECT_SOURCE_S, DEFECT_TYPE_S, PRODUCT_NUMBER_S, 
+    DEFECT_S, DEFECT_REASON_S, GROUP1_S, GROUP2_S, GROUP3_S, RECORD_DATE_T, RECORD_DATE_U, 
+    RECORD_DATE_Z, PROCESS_NODE_S, QUALITY_RESULT_S, QUALITY_SCORE_F, LOT_QTY_S,DEFECT_CATEGORY_S,DEFECT_SPARE_NAME_S
+  </sql>
+  <sql id="Base_Column_List_New">
+  ATR_KEY,BACK_NUM,BILL_TYPE,REGION,REGION_CORE,USER_NAME,USER_PHONE,BACK_TYPE,FAULT_TYPE,FAULT_REASON,BILL_THEME,PRODUCT_TYPE,PART_TYPE,
+	PRODUCT_NUM,USE_TIME,FIND_PLACE,DESCRIBE,PLACE_DESCRIBE,DISPOSAL_SITUATION,CAUSE_ANALYSIS,SUGGEST,MECHANIC_NAME,MECHANIC_PHONE,
+	POINT,STATE,BACT_TIME,INSTALL_TIME,PRODUCTION,DUTY1,DUTY2,DUTY3,DUTY1_NAME,DUTY2_NAME,ENGINEER_CONFIRM
+  </sql>
+   <select id="getBoxDefectAllByPage" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from AT_BOXDEFECTRECORD
+    <where>
+        <if test="hashMap.lowRistScore != null and hashMap.topRistScore  != null">
+
+            QUALITY_SCORE_F BETWEEN #{hashMap.lowRistScore,jdbcType=DECIMAL} and #{hashMap.topRistScore,jdbcType=DECIMAL}
+
+        </if>
+       <if test="hashMap.factoryS != null">
+           and  FACTORY_S  like '%${hashMap.factoryS}%'
+       </if>        
+       <if test="hashMap.group!= null">
+       <![CDATA[
+         and   GROUP1_S  like '%${hashMap.group}%' or GROUP2_S like '%${hashMap.group}%' or  GROUP3_S  like '%${hashMap.group}%'
+       ]]>
+       </if> 
+        <if test="hashMap.defectSourceS != null">
+         and  DEFECT_SOURCE_S like '%${hashMap.defectSourceS}%'
+       </if> 
+       <if test="hashMap.defectTypeS != null">
+         and   DEFECT_TYPE_S  like '%${hashMap.defectTypeS}%'
+       </if>
+       <if test="hashMap.productNumberS != null">
+         and   PRODUCT_NUMBER_S  like '%${hashMap.productNumberS}%'
+       </if>
+       <if test="hashMap.startTime != null and hashMap.endTime !=null">
+
+            and RECORD_DATE_T BETWEEN #{hashMap.startTime,jdbcType=TIMESTAMP} and  #{hashMap.endTime,jdbcType=TIMESTAMP}
+
+       </if>
+        <if test="hashMap.processNodeS != null">
+         and   substr(PROCESS_NODE_S,0,1)  like '%${hashMap.processNodeS}%'
+       </if>
+       <if test="hashMap.lotQtyS != null">
+         and   substr(LOT_QTY_S,0,1)  like '%${hashMap.lotQtyS}%'
+       </if>
+       <if test="hashMap.qualityResultS != null">
+         and   substr(QUALITY_RESULT_S,0,1)  like '%${hashMap.qualityResultS}%'
+       </if>
+       
+    </where>
+    order by RECORD_DATE_T DESC
+  </select>
+  <!-- 开箱不良 -->
+  <select id="getNewBoxDefectAllByPage" resultMap="newResultMap">
+    select 
+    <include refid="Base_Column_List_New" />
+    from MES_BOXDEFECTRECORD
+    where 1=1
+        <if test="hashMap.startTime != null and hashMap.endTime !=null">
+            and BACT_TIME BETWEEN to_date('${hashMap.startTime}','yyyy-mm-dd') and  to_date('${hashMap.endTime}','yyyy-mm-dd')
+       </if>
+       <if test="hashMap.partType !=null and hashMap.partType !=''">
+       		and PART_TYPE LIKE '%${hashMap.partType}%'
+       </if>
+       <if test="hashMap.productNum != null and hashMap.productNum != ''">
+       		and PRODUCT_NUM like '%${hashMap.productNum}%'
+       </if>
+       <if test="hashMap.factory != null">
+       		and duty1 = '${hashMap.factory}'
+       </if> 
+       <if test="hashMap.group != null">
+       		and duty3 = '${hashMap.group}'
+       </if>
+    
+  </select>
+  
+  <select id="getBoxDefect" resultMap="BaseResultMap" parameterType="com.peg.model.bph.BoxDefectRecord">
+    select 
+    <include refid="Base_Column_List" />
+    from MES_BOXDEFECTRECORD
+    <where>
+      <if test="lowRistScore != null and lowRistScore !='' and topRistScore != null and topRistScore !=''">
+
+            QUALITY_SCORE_F BETWEEN #{lowRistScore,jdbcType=DECIMAL} and #{topRistScore,jdbcType=DECIMAL}
+
+        </if>
+       <if test="factoryS != null and factoryS !=''">
+           and  FACTORY_S  like #{factoryS}
+       </if>        
+       <if test="group!= null and group!= ''">
+       <![CDATA[
+         and   GROUP1_S  like #{group} or GROUP2_S like #{group} or  GROUP3_S  like #{group}
+       ]]>
+       </if> 
+        <if test="defectSourceS != null and defectSourceS !=''">
+         and  DEFECT_SOURCE_S like #{defectSourceS}
+       </if> 
+       <if test="defectTypeS != null and defectTypeS !=''">
+         and   DEFECT_TYPE_S  like #{defectTypeS}
+       </if>
+       <if test="productNumberS != null and productNumberS != ''">
+         and   PRODUCT_NUMBER_S  like #{productNumberS}
+       </if>
+       <if test="startTime != null and endTime !=null ">
+
+            and RECORD_DATE_T BETWEEN #{startTime,jdbcType=TIMESTAMP} and  #{endTime,jdbcType=TIMESTAMP}
+
+       </if>
+        <if test="processNodeS != null and processNodeS !=''">
+         and   substr(PROCESS_NODE_S,0,1)  like #{processNodeS}
+       </if>
+       <if test="lotQtyS != null and lotQtyS !=''">
+         and   substr(LOT_QTY_S,0,1)  like #{lotQtyS}
+       </if>
+       <if test="qualityResultS != null and qualityResultS !=''">
+         and   substr(QUALITY_RESULT_S,0,1)  like #{qualityResultS}
+       </if>
+    </where>
+  </select>
+  
+  
+  
+  
+  
+  <select id="findOne" resultMap="newResultMap" parameterType="com.peg.model.BoxdefectrecordNew">
+   select 
+    <include refid="Base_Column_List_New" />
+    from MES_BOXDEFECTRECORD
+    where back_num=#{backNum} and rownum = 1
+  	
+  </select>
+  <update id="saveDuty" parameterType="com.peg.model.BoxdefectrecordNew">
+  update MES_BOXDEFECTRECORD set 
+  <if test="duty1 !=null and duty1 !=''">
+  DUTY1 = #{duty1,jdbcType=VARCHAR},
+  DUTY1_NAME = #{duty1Name,jdbcType=VARCHAR}
+  </if>
+  <if test="duty2 !=null and duty2 !=''">
+  DUTY2 = #{duty2,jdbcType=VARCHAR},
+  DUTY3 = #{duty3,jdbcType=VARCHAR},
+  DUTY2_NAME = #{duty2Name,jdbcType=VARCHAR}
+  </if>
+  where back_num = #{backNum}
+  </update>
+  
+  <select id="findAll" resultMap="BaseResultMap" parameterType="com.peg.model.bph.BoxDefectRecord">
+  
+  SELECT to_char(BACT_TIME,'yyyy-mm') Time,count(1) COUNT_MONTH FROM MES_BOXDEFECTRECORD WHERE 1=1
+   <if test="factoryS != null and factoryS !=''">
+           and  DUTY1  like #{factoryS}
+       </if>     
+  <if test="startTime != null and endTime !=null ">
+
+            and to_char(RECORD_DATE_T,'yyyy-mm') BETWEEN ${startTimeS} and ${endTimeS}
+
+       </if>
+  		group by to_char(BACT_TIME,'yyyy-mm')
+  		order by to_char(BACT_TIME,'yyyy-mm')
+  </select>
+</mapper>

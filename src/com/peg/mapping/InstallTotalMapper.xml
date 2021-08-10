@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.InstallTotalMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.InstallTotal" >
+    <id column="PRODUCT_TYPE" property="productType" jdbcType="VARCHAR" />
+    <id column="INSTALL_MONTH" property="installMonth" jdbcType="VARCHAR" />
+    <id column="REPAIR_MONTH" property="repairMonth" jdbcType="VARCHAR" />
+    
+    <result column="SERIAL_NUMBER" property="serialNumber" jdbcType="VARCHAR" />
+    <result column="SERVICE_ORDER" property="serviceOrder" jdbcType="VARCHAR" />
+    <result column="PART_NUMBER" property="partNumber" jdbcType="VARCHAR" />
+    <result column="PART_FAMILY" property="partFamily" jdbcType="VARCHAR" />
+    
+    <result column="INSTALL_COUNT" property="installCount" jdbcType="DECIMAL" />
+    <result column="REPAIR_COUNT" property="repairCount" jdbcType="DECIMAL" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    
+    <result column="part_type" property="partType" jdbcType="VARCHAR" />
+    <result column="region" property="region" jdbcType="VARCHAR" />
+    <result column="fault_type_code" property="faultTypeCode" jdbcType="VARCHAR" />
+    <result column="fault_reason_code" property="faultReasonCode" jdbcType="VARCHAR" />
+    <result column="is_over" property="isOver" jdbcType="VARCHAR" />
+    <result column="valid" property="valid" jdbcType="VARCHAR" />
+    <result column="COL1" property="col1" jdbcType="VARCHAR" />
+    <result column="COL2" property="col2" jdbcType="VARCHAR" />
+    <result column="COL3" property="col3" jdbcType="VARCHAR" />
+    <result column="COL4" property="col4" jdbcType="VARCHAR" />
+  
+  </resultMap>
+  <sql id="Base_Column_List" >
+    PRODUCT_TYPE, INSTALL_MONTH, REPAIR_MONTH, INSTALL_COUNT, REPAIR_COUNT, CREATE_TIME, 
+    part_type,region,fault_type_code,fault_reason_code,is_over,valid,
+    COL1, COL2, COL3, COL4
+  </sql>
+
+<!-- 安装汇总 -->
+<select id="findAllRecord" resultMap="BaseResultMap">
+	select * from (
+		select temp.*, rownum row_id from (
+			SELECT SERIAL_NUMBER, SERVICE_ORDER, PRODUCT_TYPE, PART_NUMBER, PART_FAMILY, PART_TYPE, REGION, INSTALL_MONTH FROM T_INSTALL WHERE 1 = 1
+			<include refid="install_mul_ops_sql"></include>
+		<![CDATA[) temp where rownum <= #{end}) where row_id > #{start} ]]> 
+</select>
+
+<!-- 安装总数 -->
+<select id="sumInstall" resultType="java.lang.Integer">
+	SELECT COUNT(1) AS INSTALL_COUNT FROM T_INSTALL WHERE 1 = 1
+	<include refid="install_mul_ops_sql"></include>
+</select>
+
+<!-- 查询总数 -->
+<select id="getTotalNumber" resultType="int">
+	SELECT COUNT(1) AS INSTALL_COUNT FROM T_INSTALL WHERE 1 = 1
+	<include refid="install_mul_ops_sql"></include>
+</select>
+
+<select id="findAll" resultMap="BaseResultMap">
+	SELECT SERIAL_NUMBER, SERVICE_ORDER, PRODUCT_TYPE, PART_NUMBER, PART_FAMILY, PART_TYPE, REGION, INSTALL_MONTH FROM T_INSTALL WHERE 1 = 1
+	<include refid="install_mul_ops_sql"></include>
+</select>
+
+<sql id="install_mul_ops_sql">
+	<if test="comVo.productType != null and comVo.productType!=''">
+   		and product_type like '%${comVo.productType}%'
+	</if>
+ 	<if test="comVo.regions != null">
+   	 	and region in 
+		<foreach collection="comVo.regions" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+   	</if>
+   	<if test="comVo.partTypes != null">
+   	 	and PART_TYPE in 
+		<foreach collection="comVo.partTypes" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+   	</if>
+	<if test="comVo.insStartTime != null and comVo.insStartTime!=''"  >
+		<![CDATA[ and INSTALL_MONTH >= #{comVo.insStartTime,jdbcType=VARCHAR}]]>
+	</if>
+	<if test="comVo.insEndTime != null and comVo.insEndTime !=''"  >
+		<![CDATA[ and INSTALL_MONTH <= #{comVo.insEndTime,jdbcType=VARCHAR}]]>
+	</if>
+</sql>
+
+  <!--现安装汇总表 -->
+<!-- 
+  <select id="findAllRecord" resultMap="BaseResultMap">
+  	select * from ( 
+       select temp.*, rownum row_id from ( 
+  	select <include refid="Base_Column_List" /> from T_INSTALL_TOTAL_RECORD ins 
+    where ins.valid = '是' 
+	<include refid="mul_ops_sql"></include>
+	order by ins.install_month,ins.product_type,ins.repair_month
+	<![CDATA[) temp where rownum <= #{end}) where row_id > #{start} ]]>
+ </select>
+-->
+
+<!-- 查询总数 -->
+<!-- 
+  <select id="getTotalNumber" resultType="int">
+  	select count(1) from T_INSTALL_TOTAL_RECORD ins 
+    where ins.valid = '是' 
+	<include refid="mul_ops_sql"></include>
+  </select>
+ -->
+
+  <!--现安装汇总表 ，不分页-->
+<!-- 
+  <select id="findAll" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from T_INSTALL_TOTAL_RECORD ins 
+    where ins.valid = '是' 
+ 	<include refid="mul_ops_sql"></include> 
+		order by ins.install_month,ins.product_type,ins.repair_month
+  </select>
+-->
+   <!-- 安装总数 -->
+<!--    <select id="sumInstall" resultType="java.lang.Integer"> -->
+<!--    	  select nvl(sum(st.install_count),0) from ( -->
+<!-- 		select ins.install_count  from t_install_total_record ins  -->
+<!-- 		 where 1=1    -->
+<!-- 		 <include refid="mul_ops_sql"></include> -->
+<!-- 		group by ins.product_type,ins.install_month,ins.install_count -->
+<!-- 		) st -->
+<!--    </select> -->
+   
+   <!-- 安装维修总数 -->
+   <select id="sumInsRepire" resultType="java.lang.Integer">
+   	  select nvl(sum(ins.repair_count),0) from t_install_total_record ins
+   	     where ins.valid = '是' 
+		 <include refid="mul_ops_sql"></include>
+   </select>
+   
+   <sql id="mul_ops_sql" >
+   		<if test="comVo.productType != null and comVo.productType!=''" >
+		   and ins.product_type like '%${comVo.productType}%'
+		</if>
+		 <if test="comVo.regions != null">
+	    	 and ins.region in 
+			<foreach collection="comVo.regions" item="item" index="index" 
+				open="(" separator="," close=")">#{item}
+			</foreach>
+	    </if>
+	    <if test="comVo.partTypes != null">
+	    	 and ins.PART_TYPE in 
+			<foreach collection="comVo.partTypes" item="item" index="index" 
+				open="(" separator="," close=")">#{item}
+			</foreach>
+	    </if>
+	    <if test="comVo.faultReasons != null">
+	    	 and ins.FAULT_REASON_CODE in 
+			<foreach collection="comVo.faultReasons" item="item" index="index" 
+				open="(" separator="," close=")">#{item}
+			</foreach>
+	    </if>
+	    <if test="comVo.faultTypes != null">
+	    	 and ins.FAULT_TYPE_CODE in 
+			<foreach collection="comVo.faultTypes" item="item" index="index" 
+				open="(" separator="," close=")">#{item}
+			</foreach>
+	    </if>
+		<if test="comVo.isOver != null and comVo.isOver!=''" >
+			   ins.isover like '%${install.isOver}%'
+		</if>
+		<if test="comVo.insStartTime != null and comVo.insStartTime!=''"  >
+			<![CDATA[ and ins.install_month >= #{comVo.insStartTime,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="comVo.insEndTime != null and comVo.insEndTime !=''"  >
+			<![CDATA[ and ins.install_month <= #{comVo.insEndTime,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="comVo.startTime != null and comVo.startTime !=''"  >
+			<![CDATA[ and ins.repair_month >= #{comVo.startTime,jdbcType=VARCHAR} ]]>
+		</if>
+		<if test="comVo.endTime != null and comVo.endTime !=''"  >
+			<![CDATA[ and ins.repair_month <=  #{comVo.endTime,jdbcType=VARCHAR} ]]>
+		</if>
+   </sql>
+ 
+</mapper>

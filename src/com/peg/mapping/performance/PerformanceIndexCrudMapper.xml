@@ -1,0 +1,702 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.performance.PerformanceIndexCrudMapper" >
+  <!-- 基础映射类型，映射到绩效指标类 -->
+  <resultMap id="BaseResultMap" type="com.peg.model.performance.PerformanceIndex" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="CHECKYEAR" property="checkYear" jdbcType="TIMESTAMP" />
+    <result column="FACTORYNUMBER" property="factoryNumber" jdbcType="VARCHAR" />
+    <result column="FACTORYNAME" property="factoryName" jdbcType="VARCHAR" />
+    <result column="DEPARTMENTNUMBER" property="departmentNumber" jdbcType="VARCHAR" />
+    <result column="DEPARTMENTNAME" property="departmentName" jdbcType="VARCHAR" />
+    <result column="PERFORMANCETARGETCLASS" property="performanceTargetClass" jdbcType="VARCHAR" />
+    <result column="PERFORMANCETYPE" property="performanceType" jdbcType="VARCHAR" />
+    <result column="INDEXCONTENT" property="indexContent" jdbcType="VARCHAR" />
+    <result column="INDEXTYPE" property="indexType" jdbcType="VARCHAR" />
+    <result column="WEIGHT" property="weight" jdbcType="VARCHAR" />
+    <result column="COMPANY" property="company" jdbcType="VARCHAR" />
+    <result column="REFERENCEVALUE" property="referenceValue" jdbcType="VARCHAR" />
+    <result column="TARGETVALUE" property="targetValue" jdbcType="VARCHAR" />
+    <result column="MIDDLEVALUE" property="middleValue" jdbcType="VARCHAR" />
+    <result column="FORMULA" property="formula" jdbcType="VARCHAR" />
+    <result column="UPDATEREASON" property="updateReason" jdbcType="VARCHAR" />
+    <result column="ASSESSMENTMETHOD" property="assessmentMethod" jdbcType="VARCHAR" />
+    <result column="CREATEUSER" property="createUser" jdbcType="VARCHAR" />
+    <result column="CREATETIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATEUSER" property="updateUser" jdbcType="VARCHAR" />
+    <result column="UPDATETIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="COLUMN1" property="column1" jdbcType="VARCHAR" />
+    <result column="COLUMN2" property="column2" jdbcType="VARCHAR" />
+    <result column="COLUMN3" property="column3" jdbcType="VARCHAR" />
+    <association property="yearPerformance" column="id" javaType="com.peg.model.performance.YearPerformance" select="com.peg.dao.performance.YearPerformanceMapper.selectByPiid">
+    </association>
+    <collection property="monthList" resultMap="com.peg.dao.performance.MonthPerformanceMapper.BaseResultMap">
+    </collection>
+  </resultMap>
+  
+  <resultMap id="BaseResultMap1" type="com.peg.model.performance.PerformanceIndex" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="CHECKYEAR" property="checkYear" jdbcType="TIMESTAMP" />
+    <result column="FACTORYNUMBER" property="factoryNumber" jdbcType="VARCHAR" />
+    <result column="FACTORYNAME" property="factoryName" jdbcType="VARCHAR" />
+    <result column="DEPARTMENTNUMBER" property="departmentNumber" jdbcType="VARCHAR" />
+    <result column="DEPARTMENTNAME" property="departmentName" jdbcType="VARCHAR" />
+    <result column="PERFORMANCETARGETCLASS" property="performanceTargetClass" jdbcType="VARCHAR" />
+    <result column="PERFORMANCETYPE" property="performanceType" jdbcType="VARCHAR" />
+    <result column="INDEXCONTENT" property="indexContent" jdbcType="VARCHAR" />
+    <result column="INDEXTYPE" property="indexType" jdbcType="VARCHAR" />
+    <result column="WEIGHT" property="weight" jdbcType="VARCHAR" />
+    <result column="COMPANY" property="company" jdbcType="VARCHAR" />
+    <result column="REFERENCEVALUE" property="referenceValue" jdbcType="VARCHAR" />
+    <result column="TARGETVALUE" property="targetValue" jdbcType="VARCHAR" />
+    <result column="MIDDLEVALUE" property="middleValue" jdbcType="VARCHAR" />
+    <result column="FORMULA" property="formula" jdbcType="VARCHAR" />
+    <result column="UPDATEREASON" property="updateReason" jdbcType="VARCHAR" />
+    <result column="ASSESSMENTMETHOD" property="assessmentMethod" jdbcType="VARCHAR" />
+    <result column="CREATEUSER" property="createUser" jdbcType="VARCHAR" />
+    <result column="CREATETIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATEUSER" property="updateUser" jdbcType="VARCHAR" />
+    <result column="UPDATETIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="COLUMN1" property="column1" jdbcType="VARCHAR" />
+    <result column="COLUMN2" property="column2" jdbcType="VARCHAR" />
+    <result column="COLUMN3" property="column3" jdbcType="VARCHAR" />
+    <association property="yearPerformance" column="id" javaType="com.peg.model.performance.YearPerformance" select="com.peg.dao.performance.YearPerformanceMapper.selectByPiid">
+    </association>
+  </resultMap>
+
+
+  <select id="getAllPerformanceIndexByPage" resultMap="BaseResultMap" >
+	SELECT a.ID,a.CHECKYEAR,a.FACTORYNUMBER,a.FACTORYNAME,a.DEPARTMENTNUMBER,a.DEPARTMENTNAME,
+	a.PERFORMANCETARGETCLASS,a.PERFORMANCETYPE,a.INDEXCONTENT,a.INDEXTYPE,a.WEIGHT,a.COMPANY,
+	a.REFERENCEVALUE,a.TARGETVALUE,a.MIDDLEVALUE,a.FORMULA,a.UPDATEREASON,a.ASSESSMENTMETHOD,
+	a.CREATEUSER,a.CREATETIME,a.UPDATEUSER,a.UPDATETIME,a.COLUMN1,a.COLUMN2,a.COLUMN3
+	from Y_PERFORMANCE_INDEX where 1 = 1
+	<if test="hashMap.factoryNumber != null and hashMap.factoryNumber != ''">
+        and FACTORYNUMBER like '%${hashMap.factoryNumber}%'
+    </if>
+    <if test="hashMap.factoryName != null and hashMap.factoryName!= ''">
+        and FACTORYNAME like '%${hashMap.factoryName}%'
+    </if>
+    <if test="hashMap.departmentName != null and hashMap.departmentName != ''">
+        and DEPARTMENTNAME like '%${hashMap.departmentName}%'
+    </if>
+    <if test="hashMap.departmentNumber != null and hashMap.departmentNumber != ''">
+        and DEPARTMENTNUMBER like '%${hashMap.departmentNumber}%'
+    </if>
+    <if test="hashMap.performanceTargetClass != null and hashMap.performanceTargetClass != ''">
+       and PERFORMANCETARGETCLASS like '%${hashMap.performanceTargetClass}%'
+    </if>
+    <if test="hashMap.indexContent != null and hashMap.indexContent != ''">
+       and INDEXCONTENT like '%${hashMap.indexContent}%'
+    </if>
+    <if test="hashMap.indexType != null and hashMap.indexType != ''">
+       and INDEXTYPE like '%${hashMap.indexType}%'
+    </if>
+    <if test="hashMap.performanceType != null and hashMap.performanceType != ''">
+       and PERFORMANCETYPE like '%${hashMap.performanceType}%'
+    </if>
+    <if test="hashMap.checkYear != null and hashMap.checkYear != ''">
+       and to_char(CHECKYEAR,'YYYY') = '${hashMap.checkYear}'
+    </if>
+    ORDER BY a.CHECKYEAR DESC
+  </select> 
+  
+  <!-- 获取年度绩效指标 -->
+  <select id="getYearPerformanceIndex" resultMap="BaseResultMap" parameterType="java.lang.Long">
+  	select * from Y_PERFORMANCE_INDEX where id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getMonthPerformanceAll" resultMap="BaseResultMap" >
+	SELECT a.ID,a.CHECKYEAR,a.FACTORYNUMBER,a.FACTORYNAME,a.DEPARTMENTNUMBER,a.DEPARTMENTNAME,
+	a.PERFORMANCETARGETCLASS,a.PERFORMANCETYPE,a.INDEXCONTENT,a.INDEXTYPE,a.WEIGHT,a.COMPANY,
+	a.REFERENCEVALUE,a.TARGETVALUE,a.MIDDLEVALUE,a.FORMULA,a.UPDATEREASON,a.ASSESSMENTMETHOD,
+	a.CREATEUSER,a.CREATETIME,a.UPDATEUSER,a.UPDATETIME,a.COLUMN1,a.COLUMN2,a.COLUMN3,
+	b.ID YEAR_ID,b.PI_ID YEAR_PI_ID,b.LASTYEARREALITYVALUE YEAR_LASTYEARREALITYVALUE,b.FirstYearReferenceValue YEAR_FIRSTYEARREFERENCEVALUE,
+	b.REFERENCEVALUE YEAR_REFERENCEVALUE,b.TARGETVALUE YEAR_TARGETVALUE,b.FIRSTYEARTARGETVALUE YEAR_FIRSTYEARTARGETVALUE,
+	b.SECONDYEARTARGETVALUE YEAR_SECONDYEARTARGETVALUE,b.CREATETIME YEAR_CREATETIME,b.CREATEUSER YEAR_CREATEUSER,
+	b.UPDATETIME YEAR_UPDATETIME,b.UPDATEUSER YEAR_UPDATEUSER,b.column1 YEAR_COLUMN1,b.column2 YEAR_COLUMN2,
+	c.ID MON_ID,c.PI_ID MON_PI_ID,myMonth,monTargetValue,monTotalTargetValue,monChallengeTargetValue,
+	monRealityTargetValue,monRealityTotalTargetValue,monRealityChallengeTargetValue,
+	checkMethod,checkResult,createTime1,createUser1,createTime2,createUser2,c.column1 moncolumn1,c.column2 moncolumn2 FROM Y_PERFORMANCE_INDEX a,Y_YEAR_PERFORMANCE b,Y_MONTH_PERFORMANCE c 
+	where a.ID = b.PI_ID(+) and a.ID = c.PI_ID(+)
+	<if test="hashMap.factoryNumber != null and hashMap.factoryNumber != ''">
+           and FACTORYNUMBER like '%${hashMap.factoryNumber}%'
+       </if>
+       <if test="hashMap.factoryName != null and hashMap.factoryName!= ''">
+           and FACTORYNAME like '%${hashMap.factoryName}%'
+       </if>
+       <if test="hashMap.departmentName != null and hashMap.departmentName != ''">
+           and DEPARTMENTNAME like '%${hashMap.departmentName}%'
+       </if>
+       <if test="hashMap.departmentNumber != null and hashMap.departmentNumber != ''">
+           and DEPARTMENTNUMBER like '%${hashMap.departmentNumber}%'
+       </if>
+       <if test="hashMap.performanceTargetClass != null and hashMap.performanceTargetClass != ''">
+          and PERFORMANCETARGETCLASS like '%${hashMap.performanceTargetClass}%'
+       </if>
+       <if test="hashMap.indexContent != null and hashMap.indexContent != ''">
+	      and INDEXCONTENT like '%${hashMap.indexContent}%'
+	   </if>
+	   <if test="hashMap.indexType != null and hashMap.indexType != ''">
+	      and INDEXTYPE like '%${hashMap.indexType}%'
+	   </if>
+       <if test="hashMap.performanceType != null and hashMap.performanceType != ''">
+       	and PERFORMANCETYPE like '%${hashMap.performanceType}%'
+       </if>
+       <if test="hashMap.checkYear != null and hashMap.checkYear != ''">
+          and to_char(CHECKYEAR,'YYYY') = '${hashMap.checkYear}'
+       </if>
+       ORDER BY a.CHECKYEAR DESC,c.MYMONTH ASC
+  </select> 
+  
+  <select id="getMonthPerformanceByPage" resultMap="BaseResultMap" >
+	SELECT a.ID,a.CHECKYEAR,a.FACTORYNUMBER,a.FACTORYNAME,a.DEPARTMENTNUMBER,a.DEPARTMENTNAME,
+	a.PERFORMANCETARGETCLASS,a.PERFORMANCETYPE,a.INDEXCONTENT,a.INDEXTYPE,a.WEIGHT,a.COMPANY,
+	a.REFERENCEVALUE,a.TARGETVALUE,a.MIDDLEVALUE,a.FORMULA,a.UPDATEREASON,a.ASSESSMENTMETHOD,
+	a.CREATEUSER,a.CREATETIME,a.UPDATEUSER,a.UPDATETIME,a.COLUMN1,a.COLUMN2,a.COLUMN3,
+	b.ID YEAR_ID,b.PI_ID YEAR_PI_ID,b.LASTYEARREALITYVALUE YEAR_LASTYEARREALITYVALUE,b.FirstYearReferenceValue YEAR_FIRSTYEARREFERENCEVALUE,
+	b.REFERENCEVALUE YEAR_REFERENCEVALUE,b.TARGETVALUE YEAR_TARGETVALUE,b.FIRSTYEARTARGETVALUE YEAR_FIRSTYEARTARGETVALUE,
+	b.SECONDYEARTARGETVALUE YEAR_SECONDYEARTARGETVALUE,b.CREATETIME YEAR_CREATETIME,b.CREATEUSER YEAR_CREATEUSER,
+	b.UPDATETIME YEAR_UPDATETIME,b.UPDATEUSER YEAR_UPDATEUSER,b.column1 YEAR_COLUMN1,b.column2 YEAR_COLUMN2,
+	c.ID MON_ID,c.PI_ID MON_PI_ID,myMonth,monTargetValue,monTotalTargetValue,monChallengeTargetValue,
+	monRealityTargetValue,monRealityTotalTargetValue,monRealityChallengeTargetValue,
+	checkMethod,checkResult,createTime1,createUser1,createTime2,createUser2,c.column1 moncolumn1,c.column2 moncolumn2 FROM Y_PERFORMANCE_INDEX a,Y_YEAR_PERFORMANCE b,Y_MONTH_PERFORMANCE c 
+	where a.ID = b.PI_ID(+) and a.ID = c.PI_ID(+)
+	<if test="hashMap.factoryNumber != null and hashMap.factoryNumber != ''">
+           and FACTORYNUMBER like '%${hashMap.factoryNumber}%'
+       </if>
+       <if test="hashMap.factoryName != null and hashMap.factoryName!= ''">
+           and FACTORYNAME like '%${hashMap.factoryName}%'
+       </if>
+       <if test="hashMap.departmentName != null and hashMap.departmentName != ''">
+           and DEPARTMENTNAME like '%${hashMap.departmentName}%'
+       </if>
+       <if test="hashMap.departmentNumber != null and hashMap.departmentNumber != ''">
+           and DEPARTMENTNUMBER like '%${hashMap.departmentNumber}%'
+       </if>
+       <if test="hashMap.performanceTargetClass != null and hashMap.performanceTargetClass != ''">
+          and PERFORMANCETARGETCLASS like '%${hashMap.performanceTargetClass}%'
+       </if>
+       <if test="hashMap.indexContent != null and hashMap.indexContent != ''">
+	      and INDEXCONTENT like '%${hashMap.indexContent}%'
+	   </if>
+	   <if test="hashMap.indexType != null and hashMap.indexType != ''">
+	      and INDEXTYPE like '%${hashMap.indexType}%'
+	   </if>
+       <if test="hashMap.performanceType != null and hashMap.performanceType != ''">
+       	and PERFORMANCETYPE like '%${hashMap.performanceType}%'
+       </if>
+       <if test="hashMap.checkYear != null and hashMap.checkYear != ''">
+          and to_char(CHECKYEAR,'YYYY') = '${hashMap.checkYear}'
+       </if>
+       ORDER BY a.CHECKYEAR DESC,c.MYMONTH ASC
+  </select> 
+  
+  <!-- 查询一条月度绩效指标明细信息 -->
+  <select id="getOneMonthPerformanceById" resultMap="BaseResultMap" >
+	SELECT a.ID,a.CHECKYEAR,a.FACTORYNUMBER,a.FACTORYNAME,a.DEPARTMENTNUMBER,a.DEPARTMENTNAME,
+	a.PERFORMANCETARGETCLASS,a.PERFORMANCETYPE,a.INDEXCONTENT,a.INDEXTYPE,a.WEIGHT,a.COMPANY,
+	a.REFERENCEVALUE,a.TARGETVALUE,a.MIDDLEVALUE,a.FORMULA,a.UPDATEREASON,a.ASSESSMENTMETHOD,
+	a.CREATEUSER,a.CREATETIME,a.UPDATEUSER,a.UPDATETIME,a.COLUMN1,a.COLUMN2,a.COLUMN3,
+	b.ID YEAR_ID,b.PI_ID YEAR_PI_ID,b.LASTYEARREALITYVALUE YEAR_LASTYEARREALITYVALUE,b.FirstYearReferenceValue YEAR_FIRSTYEARREFERENCEVALUE,
+	b.REFERENCEVALUE YEAR_REFERENCEVALUE,b.TARGETVALUE YEAR_TARGETVALUE,b.FIRSTYEARTARGETVALUE YEAR_FIRSTYEARTARGETVALUE,
+	b.SECONDYEARTARGETVALUE YEAR_SECONDYEARTARGETVALUE,b.CREATETIME YEAR_CREATETIME,b.CREATEUSER YEAR_CREATEUSER,
+	b.UPDATETIME YEAR_UPDATETIME,b.UPDATEUSER YEAR_UPDATEUSER,b.column1 YEAR_COLUMN1,b.column2 YEAR_COLUMN2,
+	c.ID MON_ID,c.PI_ID MON_PI_ID,myMonth,monTargetValue,monTotalTargetValue,monChallengeTargetValue,
+	monRealityTargetValue,monRealityTotalTargetValue,monRealityChallengeTargetValue,
+	checkMethod,checkResult,createTime1,createUser1,createTime2,createUser2,c.column1 moncolumn1,c.column2 moncolumn2 FROM Y_PERFORMANCE_INDEX a,Y_YEAR_PERFORMANCE b,Y_MONTH_PERFORMANCE c 
+	where a.ID = b.PI_ID(+) and a.ID = c.PI_ID(+) and a.ID = #{id,jdbcType=DECIMAL}
+	ORDER BY c.MYMONTH ASC
+  </select>  
+  <!-- 查询绩效明细 -->
+  <select id="getTotalPerformanceByPage" resultMap="BaseResultMap" >
+	SELECT a.ID,a.CHECKYEAR,a.FACTORYNUMBER,a.FACTORYNAME,a.DEPARTMENTNUMBER,a.DEPARTMENTNAME,
+	a.PERFORMANCETARGETCLASS,a.PERFORMANCETYPE,a.INDEXCONTENT,a.INDEXTYPE,a.WEIGHT,a.COMPANY,
+	a.REFERENCEVALUE,a.TARGETVALUE,a.MIDDLEVALUE,a.FORMULA,a.UPDATEREASON,a.ASSESSMENTMETHOD,
+	a.CREATEUSER,a.CREATETIME,a.UPDATEUSER,a.UPDATETIME,a.COLUMN1,a.COLUMN2,a.COLUMN3,
+	b.ID YEAR_ID,b.PI_ID YEAR_PI_ID,b.LASTYEARREALITYVALUE YEAR_LASTYEARREALITYVALUE,b.FirstYearReferenceValue YEAR_FIRSTYEARREFERENCEVALUE,
+	b.REFERENCEVALUE YEAR_REFERENCEVALUE,b.TARGETVALUE YEAR_TARGETVALUE,b.FIRSTYEARTARGETVALUE YEAR_FIRSTYEARTARGETVALUE,
+	b.SECONDYEARTARGETVALUE YEAR_SECONDYEARTARGETVALUE,b.CREATETIME YEAR_CREATETIME,b.CREATEUSER YEAR_CREATEUSER,
+	b.UPDATETIME YEAR_UPDATETIME,b.UPDATEUSER YEAR_UPDATEUSER,b.column1 YEAR_COLUMN1,b.column2 YEAR_COLUMN2,
+	c.ID MON_ID,c.PI_ID MON_PI_ID,myMonth,monTargetValue,monTotalTargetValue,monChallengeTargetValue,
+	monRealityTargetValue,monRealityTotalTargetValue,monRealityChallengeTargetValue,
+	checkMethod,checkResult,createTime1,createUser1,createTime2,createUser2,c.column1 moncolumn1,c.column2 moncolumn2 FROM Y_PERFORMANCE_INDEX a,Y_YEAR_PERFORMANCE b,Y_MONTH_PERFORMANCE c 
+	where a.ID = b.PI_ID(+) and a.ID = c.PI_ID(+)
+	<if test="hashMap.factoryNumber != null and hashMap.factoryNumber != ''">
+           and FACTORYNUMBER like '%${hashMap.factoryNumber}%'
+       </if>
+       <if test="hashMap.factoryName != null and hashMap.factoryName!= ''">
+           and FACTORYNAME like '%${hashMap.factoryName}%'
+       </if>
+       <if test="hashMap.departmentName != null and hashMap.departmentName != ''">
+           and DEPARTMENTNAME like '%${hashMap.departmentName}%'
+       </if>
+       <if test="hashMap.departmentNumber != null and hashMap.departmentNumber != ''">
+           and DEPARTMENTNUMBER like '%${hashMap.departmentNumber}%'
+       </if>
+       <if test="hashMap.performanceTargetClass != null and hashMap.performanceTargetClass != ''">
+          and PERFORMANCETARGETCLASS like '%${hashMap.performanceTargetClass}%'
+       </if>
+       <if test="hashMap.indexContent != null and hashMap.indexContent != ''">
+          and INDEXCONTENT like '%${hashMap.indexContent}%'
+       </if>
+       <if test="hashMap.indexType != null and hashMap.indexType != ''">
+	      and INDEXTYPE like '%${hashMap.indexType}%'
+	   </if>
+       <if test="hashMap.performanceType != null and hashMap.performanceType != ''">
+          and PERFORMANCETYPE like '%${hashMap.performanceType}%'
+       </if>
+       <if test="hashMap.checkYear != null and hashMap.checkYear != ''">
+          and to_char(a.CHECKYEAR,'YYYY') = '${hashMap.checkYear}'
+       </if>
+       ORDER BY a.CHECKYEAR DESC,c.MYMONTH ASC
+  </select> 
+  
+   
+  
+  <!-- <select id="getMonthPerformance" resultMap="BaseResultMap1" >
+	SELECT a.ID,a.CHECKYEAR,a.FACTORYNUMBER,a.FACTORYNAME,a.DEPARTMENTNUMBER,a.DEPARTMENTNAME,
+	a.PERFORMANCETARGETCLASS,a.PERFORMANCETYPE,a.INDEXCONTENT,a.INDEXTYPE,a.WEIGHT,a.COMPANY,
+	a.REFERENCEVALUE,a.TARGETVALUE,a.MIDDLEVALUE,a.FORMULA,a.UPDATEREASON,a.ASSESSMENTMETHOD,
+	a.CREATEUSER,a.CREATETIME,a.UPDATEUSER,a.UPDATETIME,a.COLUMN1,a.COLUMN2,a.COLUMN3,
+	c.ID MON_ID,c.PI_ID MON_PI_ID,myMonth,monTargetValue,monTotalTargetValue,monChallengeTargetValue,
+	monRealityTargetValue,monRealityTotalTargetValue,monRealityChallengeTargetValue,
+	checkMethod,checkResult,createTime1,createUser1,createTime2,createUser2,c.column1 moncolumn1,c.column2 moncolumn2,
+	b.ID YEAR_ID,b.PI_ID YEAR_PI_ID,b.LASTYEARREALITYVALUE YEAR_LASTYEARREALITYVALUE,
+		b.REFERENCEVALUE YEAR_REFERENCEVALUE,b.TARGETVALUE YEAR_TARGETVALUE,b.FIRSTYEARTARGETVALUE YEAR_FIRSTYEARTARGETVALUE,
+		b.SECONDYEARTARGETVALUE YEAR_SECONDYEARTARGETVALUE,b.CREATETIME YEAR_CREATETIME,b.CREATEUSER YEAR_CREATEUSER,
+		b.UPDATETIME YEAR_UPDATETIME,b.UPDATEUSER YEAR_UPDATEUSER 
+	FROM Y_PERFORMANCE_INDEX a,Y_YEAR_PERFORMANCE b,Y_MONTH_PERFORMANCE c WHERE a.ID = b.PI_ID AND a.ID = c.PI_ID(+) 
+	<if test="hashMap.factoryNumber != null and hashMap.factoryNumber != ''">
+           and FACTORYNUMBER like '%${hashMap.factoryNumber}%'
+       </if>
+       <if test="hashMap.factoryName != null and hashMap.factoryName!= ''">
+           and FACTORYNAME like '%${hashMap.factoryName}%'
+       </if>
+       <if test="hashMap.departmentName != null and hashMap.departmentName != ''">
+           and DEPARTMENTNAME like '%${hashMap.departmentName}%'
+       </if>
+       <if test="hashMap.departmentNumber != null and hashMap.departmentNumber != ''">
+           and DEPARTMENTNUMBER like '%${hashMap.departmentNumber}%'
+       </if>
+       <if test="hashMap.performanceTargetClass != null and hashMap.performanceTargetClass != ''">
+          and PERFORMANCETARGETCLASS like '%${hashMap.performanceTargetClass}%'
+       </if>
+       <if test="hashMap.checkYear != null and hashMap.checkYear != ''">
+          and to_char(CHECKYEAR,'YYYY') = '${hashMap.checkYear}'
+       </if>
+       ORDER BY CREATETIME DESC
+  </select>  -->
+  
+  <insert id="insert" parameterType="com.peg.model.performance.PerformanceIndex" >
+    insert into Y_PERFORMANCECHECK (ID, CHEKYEAR, DEPARTMENT, 
+      TARGETCLASS, INDEXCONTENT, PERFORMANCECONTENT, 
+      WEIGHT, ASSESSMENTMETHOD, RECORDTIME, 
+      RECORD, COMPANY, TARGETVALUE, 
+      REFERENCEVALUE, MEDIAN, FORMULA, FACTORY_NUMBER
+      )
+    values (#{id,jdbcType=DECIMAL}, #{chekyear,jdbcType=TIMESTAMP}, #{department,jdbcType=VARCHAR}, 
+      #{targetclass,jdbcType=VARCHAR}, #{indexcontent,jdbcType=VARCHAR}, #{performancecontent,jdbcType=VARCHAR}, 
+      #{weight,jdbcType=VARCHAR}, #{assessmentmethod,jdbcType=VARCHAR}, #{recordtime,jdbcType=TIMESTAMP}, 
+      #{record,jdbcType=VARCHAR}, #{company,jdbcType=VARCHAR}, #{targetvalue,jdbcType=VARCHAR}, 
+      #{referencevalue,jdbcType=VARCHAR}, #{median,jdbcType=VARCHAR}, #{formula,jdbcType=VARCHAR}, #{factoryNumber,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.performance.PerformanceIndex" >
+  	<selectKey resultType="long" order="AFTER" keyProperty="id">
+      select QMS_PERFORMANCE_INDEX_SEQUENCE.currval as ID from dual
+    </selectKey> 
+    insert into Y_PERFORMANCE_INDEX
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="checkYear != null and checkYear != ''" >
+        CHECKYEAR,
+      </if>
+      <if test="factoryNumber != null and factoryNumber != ''" >
+        FACTORYNUMBER,
+      </if>
+      <if test="factoryName != null and factoryName != ''" >
+        FACTORYNAME,
+      </if>
+      <if test="departmentNumber != null and departmentNumber != ''" >
+        DEPARTMENTNUMBER,
+      </if>
+      <if test="departmentName != null and departmentName != ''" >
+        DEPARTMENTNAME,
+      </if>
+      <if test="performanceTargetClass != null and performanceTargetClass != ''" >
+        PERFORMANCETARGETCLASS,
+      </if>
+      <if test="performanceType != null and performanceType != ''" >
+        PERFORMANCETYPE,
+      </if>
+      <if test="indexContent != null and indexContent != ''" >
+        INDEXCONTENT,
+      </if>
+      <if test="indexType != null and indexType != ''" >
+        INDEXTYPE,
+      </if>
+      <if test="weight != null and weight != ''" >
+        WEIGHT,
+      </if>
+      <if test="company != null and company != ''" >
+        COMPANY,
+      </if>
+      <if test="referenceValue != null and referenceValue != ''" >
+        REFERENCEVALUE,
+      </if>
+      <if test="targetValue != null and targetValue != ''" >
+        TARGETVALUE,
+      </if>
+      <if test="middleValue != null and middleValue != ''" >
+        MIDDLEVALUE,
+      </if>
+      <if test="formula != null and formula != ''" >
+        FORMULA,
+      </if>
+      <if test="updateReason != null and updateReason != ''" >
+        UPDATEREASON,
+      </if>
+      <if test="assessmentMethod != null and assessmentMethod != ''" >
+        ASSESSMENTMETHOD,
+      </if>
+      <if test="createUser != null and createUser != ''" >
+        CREATEUSER,
+      </if>
+      <if test="createTime != null and createTime != ''" >
+        CREATETIME,
+      </if>
+      <if test="updateUser != null and updateUser != ''" >
+        UPDATEUSER,
+      </if>
+      <if test="updateTime != null and updateTime != ''" >
+        UPDATETIME,
+      </if>
+      <if test="column1 != null and column1 != ''" >
+        COLUMN1,
+      </if>
+      <if test="column2 != null and column2 != ''" >
+        COLUMN2,
+      </if>
+      <if test="column3 != null and column3 != ''" >
+        COLUMN3,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="checkYear != null and checkYear != ''" >
+        #{checkYear,jdbcType=TIMESTAMP},
+      </if>
+      <if test="factoryNumber != null and factoryNumber != ''" >
+        #{factoryNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryName != null and factoryName != ''" >
+        #{factoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentNumber != null and departmentNumber != ''" >
+        #{departmentNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentName != null and departmentName != ''" >
+        #{departmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="performanceTargetClass != null and performanceTargetClass != ''" >
+        #{performanceTargetClass,jdbcType=VARCHAR},
+      </if>
+      <if test="performanceType != null and performanceType != ''" >
+        #{performanceType,jdbcType=VARCHAR},
+      </if>
+      <if test="indexContent != null and indexContent != ''" >
+        #{indexContent,jdbcType=VARCHAR},
+      </if>
+      <if test="indexType != null and indexType != ''" >
+        #{indexType,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null and weight != ''" >
+        #{weight,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null and company != ''" >
+        #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="referenceValue != null and referenceValue != ''" >
+        #{referenceValue,jdbcType=VARCHAR},
+      </if>
+      <if test="targetValue != null and targetValue != ''" >
+        #{targetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="middleValue != null and middleValue != ''" >
+        #{middleValue,jdbcType=VARCHAR},
+      </if>
+      <if test="formula != null and formula != ''" >
+        #{formula,jdbcType=VARCHAR},
+      </if>
+      <if test="updateReason != null and updateReason != ''" >
+        #{updateReason,jdbcType=VARCHAR},
+      </if>
+      <if test="assessmentMethod != null and assessmentMethod != ''" >
+        #{assessmentMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null and createUser != ''" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null and createTime != ''" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null and updateUser != ''" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null and updateTime != ''" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="column1 != null and column1 != ''" >
+        #{column1,jdbcType=VARCHAR},
+      </if>
+      <if test="column2 != null and column2 != ''" >
+        #{column2,jdbcType=VARCHAR},
+      </if>
+      <if test="column3 != null and column3 != ''" >
+        #{column3,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <sql id="Base_Column_List" >
+	ID,CHECKYEAR,FACTORYNUMBER,FACTORYNAME,DEPARTMENTNUMBER,DEPARTMENTNAME,
+	PERFORMANCETARGETCLASS,PERFORMANCETYPE,INDEXCONTENT,INDEXTYPE,WEIGHT,COMPANY,
+	REFERENCEVALUE,TARGETVALUE,MIDDLEVALUE,FORMULA,UPDATEREASON,ASSESSMENTMETHOD,
+	CREATEUSER,CREATETIME,UPDATEUSER,UPDATETIME,COLUMN1,COLUMN2,COLUMN3
+  </sql>
+  
+  <select id="getAllByPage" resultMap="BaseResultMap1" >
+	SELECT ID,CHECKYEAR,FACTORYNUMBER,FACTORYNAME,DEPARTMENTNUMBER,DEPARTMENTNAME,
+	PERFORMANCETARGETCLASS,PERFORMANCETYPE,INDEXCONTENT,INDEXTYPE,WEIGHT,COMPANY,
+	REFERENCEVALUE,TARGETVALUE,MIDDLEVALUE,FORMULA,UPDATEREASON,ASSESSMENTMETHOD,
+	CREATEUSER,CREATETIME,UPDATEUSER,UPDATETIME,COLUMN1,COLUMN2,COLUMN3 FROM Y_PERFORMANCE_INDEX WHERE 1 = 1 
+	<if test="hashMap.factoryNumber != null and hashMap.factoryNumber != ''">
+        and FACTORYNUMBER like '%${hashMap.factoryNumber}%'
+    </if>
+    <if test="hashMap.factoryName != null and hashMap.factoryName!= ''">
+        and FACTORYNAME like '%${hashMap.factoryName}%'
+    </if>
+    <if test="hashMap.departmentName != null and hashMap.departmentName != ''">
+        and DEPARTMENTNAME like '%${hashMap.departmentName}%'
+    </if>
+    <if test="hashMap.departmentNumber != null and hashMap.departmentNumber != ''">
+        and DEPARTMENTNUMBER like '%${hashMap.departmentNumber}%'
+    </if>
+    <if test="hashMap.performanceTargetClass != null and hashMap.performanceTargetClass != ''">
+       and PERFORMANCETARGETCLASS like '%${hashMap.performanceTargetClass}%'
+    </if>
+    <if test="hashMap.indexContent != null and hashMap.indexContent != ''">
+       and INDEXCONTENT like '%${hashMap.indexContent}%'
+    </if>
+    <if test="hashMap.indexType != null and hashMap.indexType != ''">
+       and INDEXTYPE like '%${hashMap.indexType}%'
+    </if>
+    <if test="hashMap.performanceType != null and hashMap.performanceType != ''">
+    	and PERFORMANCETYPE like '%${hashMap.performanceType}%'
+    </if>
+    <if test="hashMap.checkYear != null and hashMap.checkYear != ''">
+       and to_char(CHECKYEAR,'YYYY') = '${hashMap.checkYear}'
+    </if>
+    ORDER BY CREATETIME DESC
+  </select> 
+  <select id="getAll" resultMap="BaseResultMap" >
+<!-- 	SELECT 
+	<include refid="Base_Column_List"></include> 
+	FROM Y_PERFORMANCE_INDEX WHERE 1 = 1  -->
+	SELECT ID,CHECKYEAR,FACTORYNUMBER,FACTORYNAME,DEPARTMENTNUMBER,DEPARTMENTNAME,
+	PERFORMANCETARGETCLASS,PERFORMANCETYPE,INDEXCONTENT,INDEXTYPE,WEIGHT,COMPANY,
+	REFERENCEVALUE,TARGETVALUE,MIDDLEVALUE,FORMULA,UPDATEREASON,ASSESSMENTMETHOD,
+	CREATEUSER,CREATETIME,UPDATEUSER,UPDATETIME,COLUMN1,COLUMN2,COLUMN3 FROM Y_PERFORMANCE_INDEX WHERE 1 = 1
+       <if test="hashMap.factoryNumber != null and hashMap.factoryNumber != ''">
+           and FACTORYNUMBER like '%${hashMap.factoryNumber}%'
+       </if>
+       <if test="hashMap.factoryName != null and hashMap.factoryName!= ''">
+           and FACTORYNAME like '%${hashMap.factoryName}%'
+       </if>
+       <if test="hashMap.departmentName != null and hashMap.departmentName != ''">
+           and DEPARTMENTNAME like '%${hashMap.departmentName}%'
+       </if>
+       <if test="hashMap.departmentNumber != null and hashMap.departmentNumber != ''">
+           and DEPARTMENTNUMBER like '%${hashMap.departmentNumber}%'
+       </if>
+       <if test="hashMap.performanceTargetClass != null and hashMap.performanceTargetClass != ''">
+          and PERFOAMANCETARGETCLASS like '%${hashMap.performanceTargetClass}%'
+       </if>
+       <if test="hashMap.indexContent != null and hashMap.indexContent != ''">
+	       and INDEXCONTENT like '%${hashMap.indexContent}%'
+	    </if>
+	    <if test="hashMap.indexType != null and hashMap.indexType != ''">
+	       and INDEXTYPE like '%${hashMap.indexType}%'
+	    </if>
+       <if test="hashMap.performanceType != null and hashMap.performanceType != ''">
+       	and PERFORMANCETYPE like '%${hashMap.performanceType}%'
+       </if>
+       <if test="hashMap.checkYear != null and hashMap.checkYear != ''">
+          and to_char(CHECKYEAR,'YYYY') = '${hashMap.checkYear}'
+       </if>
+       ORDER BY CREATETIME DESC
+  </select> 
+  
+  <!-- 查询指标信息，同时查出年度指标值 -->
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap1" parameterType="java.lang.Long" >
+    SELECT a.ID,a.CHECKYEAR,a.FACTORYNUMBER,a.FACTORYNAME,a.DEPARTMENTNUMBER,a.DEPARTMENTNAME,
+	a.PERFORMANCETARGETCLASS,a.PERFORMANCETYPE,a.INDEXCONTENT,a.INDEXTYPE,a.WEIGHT,a.COMPANY,
+	a.REFERENCEVALUE,a.TARGETVALUE,a.MIDDLEVALUE,a.FORMULA,a.UPDATEREASON,a.ASSESSMENTMETHOD,
+	a.CREATEUSER,a.CREATETIME,a.UPDATEUSER,a.UPDATETIME,a.COLUMN1,a.COLUMN2,a.COLUMN3,
+	b.ID YEAR_ID,b.PI_ID YEAR_PI_ID,b.LASTYEARREALITYVALUE YEAR_LASTYEARREALITYVALUE,b.FIRSTYEARREFERENCEVALUE  YEAR_FIRSTYEARREFERENCEVALUE,
+	b.REFERENCEVALUE YEAR_REFERENCEVALUE,b.TARGETVALUE YEAR_TARGETVALUE,b.FIRSTYEARTARGETVALUE YEAR_FIRSTYEARTARGETVALUE,
+	b.SECONDYEARTARGETVALUE YEAR_SECONDYEARTARGETVALUE,b.CREATETIME YEAR_CREATETIME,b.CREATEUSER YEAR_CREATEUSER,
+	b.UPDATETIME YEAR_UPDATETIME,b.UPDATEUSER YEAR_UPDATEUSER,b.COLUMN1 YEAR_COLUMN1,b.COLUMN2 YEAR_COLUMN2
+	FROM Y_PERFORMANCE_INDEX a,Y_YEAR_PERFORMANCE b WHERE a.ID = b.PI_ID(+) and a.ID = #{id,jdbcType=DECIMAL}
+  </select>
+      
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.performance.PerformanceIndex" >
+    update Y_PERFORMANCE_INDEX
+    <set >
+      <if test="checkYear != null and checkYear !=''" >
+        CHECKYEAR = #{checkYear,jdbcType=TIMESTAMP},
+      </if>
+      <if test="factoryNumber != null and factoryNumber != ''" >
+        factoryNumber = #{factoryNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryName != null and factoryName != ''" >
+        factoryName = #{factoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentNumber != null and departmentNumber != ''" >
+        departmentNumber = #{departmentNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentName != null and departmentName != ''" >
+        departmentName = #{departmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="performanceTargetClass != null and performanceTargetClass != ''" >
+        performanceTargetClass = #{performanceTargetClass,jdbcType=VARCHAR},
+      </if>
+      <if test="performanceType != null and performanceType != ''" >
+        performanceType = #{performanceType,jdbcType=VARCHAR},
+      </if>
+      <if test="indexContent != null and indexContent != ''" >
+        indexContent = #{indexContent,jdbcType=VARCHAR},
+      </if>
+      <if test="indexType != null and indexType != ''" >
+        indexType = #{indexType,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null and weight != ''" >
+        weight = #{weight,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null and company != ''" >
+        company = #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="referenceValue != null and referenceValue != ''" >
+        referenceValue = #{referenceValue,jdbcType=VARCHAR},
+      </if>
+      <if test="targetValue != null and targetValue != ''" >
+        targetValue = #{targetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="middleValue != null and middleValue != ''" >
+        middleValue = #{middleValue,jdbcType=VARCHAR},
+      </if>
+      <if test="formula != null and formula != ''" >
+        formula = #{formula,jdbcType=VARCHAR},
+      </if>
+      <if test="updateReason != null and updateReason != ''" >
+        updateReason = #{updateReason,jdbcType=VARCHAR},
+      </if>
+      <if test="assessmentMethod != null and assessmentMethod != ''" >
+        assessmentMethod = #{assessmentMethod,jdbcType=VARCHAR},
+      </if>
+      <!-- <if test="createUser != null and createUser != ''" >
+        createUser = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null and createTime != ''" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if> -->
+      <if test="updateUser != null and updateUser != ''" >
+        updateUser = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null and updateTime != ''" >
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="column1 != null and column1 != ''" >
+        column1 = #{column1,jdbcType=VARCHAR},
+      </if>
+      <if test="column2 != null and column2 != ''" >
+        column2 = #{column2,jdbcType=VARCHAR},
+      </if>
+      <if test="column3 != null and column3 != ''" >
+        column3 = #{column3,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.jxmb.PerformanceCheck" >
+    update y_performancecheck
+    set chekyear = #{chekyear,jdbcType=TIMESTAMP},
+      department = #{department,jdbcType=VARCHAR},
+      targetclass = #{targetclass,jdbcType=VARCHAR},
+      indexcontent = #{indexcontent,jdbcType=VARCHAR},
+      performancecontent = #{performancecontent,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=VARCHAR},
+      assessmentmethod = #{assessmentmethod,jdbcType=VARCHAR},
+      recordtime = #{recordtime,jdbcType=TIMESTAMP},
+      record = #{record,jdbcType=VARCHAR},
+      company = #{company,jdbcType=VARCHAR},
+      targetvalue = #{targetvalue,jdbcType=VARCHAR},
+      
+      referencevalue = #{referencevalue,jdbcType=VARCHAR},
+      company = #{company,jdbcType=VARCHAR},
+      formula = #{formula,jdbcType=VARCHAR}
+      
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from Y_PERFORMANCE_INDEX
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  
+  <select id="getByid" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List"></include>
+    from Y_PERFORMANCE_INDEX
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  
+  <!-- 批量导入数据时使用的查询语句 -->
+  
+  <select id="getOnePerformanceByObject" resultMap="BaseResultMap" >
+	SELECT a.ID,a.CHECKYEAR,a.FACTORYNUMBER,a.FACTORYNAME,a.DEPARTMENTNUMBER,a.DEPARTMENTNAME,
+	a.PERFORMANCETARGETCLASS,a.PERFORMANCETYPE,a.INDEXCONTENT,a.INDEXTYPE,a.WEIGHT,a.COMPANY,
+	a.REFERENCEVALUE,a.TARGETVALUE,a.MIDDLEVALUE,a.FORMULA,a.UPDATEREASON,a.ASSESSMENTMETHOD,
+	a.CREATEUSER,a.CREATETIME,a.UPDATEUSER,a.UPDATETIME,a.COLUMN1,a.COLUMN2,a.COLUMN3,
+	b.ID YEAR_ID,b.PI_ID YEAR_PI_ID,b.LASTYEARREALITYVALUE YEAR_LASTYEARREALITYVALUE,b.FirstYearReferenceValue YEAR_FIRSTYEARREFERENCEVALUE,
+	b.REFERENCEVALUE YEAR_REFERENCEVALUE,b.TARGETVALUE YEAR_TARGETVALUE,b.FIRSTYEARTARGETVALUE YEAR_FIRSTYEARTARGETVALUE,
+	b.SECONDYEARTARGETVALUE YEAR_SECONDYEARTARGETVALUE,b.CREATETIME YEAR_CREATETIME,b.CREATEUSER YEAR_CREATEUSER,
+	b.UPDATETIME YEAR_UPDATETIME,b.UPDATEUSER YEAR_UPDATEUSER,b.column1 YEAR_COLUMN1,b.column2 YEAR_COLUMN2,
+	c.ID MON_ID,c.PI_ID MON_PI_ID,myMonth,monTargetValue,monTotalTargetValue,monChallengeTargetValue,
+	monRealityTargetValue,monRealityTotalTargetValue,monRealityChallengeTargetValue,
+	checkMethod,checkResult,createTime1,createUser1,createTime2,createUser2,c.column1 moncolumn1,c.column2 moncolumn2 FROM Y_PERFORMANCE_INDEX a,Y_YEAR_PERFORMANCE b,Y_MONTH_PERFORMANCE c 
+	where a.ID = b.PI_ID(+) and a.ID = c.PI_ID(+)
+       <if test="hashMap.factoryName != null and hashMap.factoryName!= ''">
+           and FACTORYNAME = '${hashMap.factoryName}'
+       </if>
+       <if test="hashMap.departmentName != null and hashMap.departmentName != ''">
+           and DEPARTMENTNAME = '${hashMap.departmentName}'
+       </if>
+       <if test="hashMap.performanceTargetClass != null and hashMap.performanceTargetClass != ''">
+          and PERFORMANCETARGETCLASS = '${hashMap.performanceTargetClass}'
+       </if>
+       <if test="hashMap.indexContent != null and hashMap.indexContent != ''">
+          and INDEXCONTENT = '${hashMap.indexContent}'
+       </if>
+       <if test="hashMap.indexType != null and hashMap.indexType != ''">
+	      and INDEXTYPE = '${hashMap.indexType}'
+	   </if>
+       <if test="hashMap.performanceType != null and hashMap.performanceType != ''">
+          and PERFORMANCETYPE = '${hashMap.performanceType}'
+       </if>
+       <if test="hashMap.checkYear != null and hashMap.checkYear != ''">
+          and to_char(a.CHECKYEAR,'YYYY') = '${hashMap.checkYear}'
+       </if>
+       ORDER BY a.CHECKYEAR DESC,c.MYMONTH ASC
+  </select> 
+</mapper>

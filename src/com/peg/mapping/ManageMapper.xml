@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.ManageMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.Manage" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="CODE" property="code" jdbcType="VARCHAR" />
+    <result column="CODE_NAME" property="codeName" jdbcType="VARCHAR" />
+    <result column="CODE_VALUE" property="codeValue" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="VARCHAR" />
+    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="VARCHAR" />
+    <result column="UPDATE_USER" property="updateUser" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, CODE,CODE_NAME,CODE_VALUE,CREATE_TIME,CREATE_USER,
+    UPDATE_TIME,UPDATE_USER
+  </sql>
+    <select id="getAll" resultMap="BaseResultMap"  >
+    select 
+    <include refid="Base_Column_List" />
+    from T_MANAGE
+    
+  </select>   
+   <select id="getAllByPage" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_MANAGE
+    where 1=1 
+      <if test="hashMap.code != null" >
+        and CODE like '%${hashMap.code}%'
+      </if>
+      <if test="hashMap.codeName != null" >
+        and CODE_NAME like '%${hashMap.codeName}%'
+      </if>
+      <if test="hashMap.codeValue != null" >
+        and CODE_VALUE like '%${hashMap.codeValue}%'
+      </if>
+      
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_MANAGE
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from T_MANAGE
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.Manage" >
+    <selectKey resultType="long" order="BEFORE" keyProperty="id">
+      select seq_t_manage.nextval as id from dual
+    </selectKey>   
+    insert into T_MANAGE (ID, CODE,CODE_NAME,CODE_VALUE,CREATE_TIME,
+     CREATE_USER,UPDATE_TIME,UPDATE_USER )
+    values (#{id,jdbcType=DECIMAL},#{code,jdbcType=VARCHAR}, #{codeName,jdbcType=VARCHAR}, 
+    #{codeValue,jdbcType=VARCHAR},SYSDATE,#{createUser,jdbcType=VARCHAR},
+     null,#{updateUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.Manage" >
+    insert into T_Manage
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="code != null" >
+        CODE,
+      </if>
+      <if test="codeName != null" >
+        CODE_NAME,
+      </if>
+      <if test="codeValue != null" >
+        CODE_VALUE,
+      </if>
+      
+      <if test="createUser != null" >
+        CREATE_USER,
+      </if>
+      
+      <if test="updateUser != null" >
+        UPDATE_USER,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=DECIMAL},
+      </if>
+       <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="codeName != null" >
+        #{codeName,jdbcType=VARCHAR},
+      </if>
+      <if test="codeValue != null" >
+        #{codeValue,jdbcType=VARCHAR},
+      </if>
+        
+      
+        <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+        <if test="updateTime != null" >
+        #{updateTime,jdbcType=VARCHAR},
+      </if>
+        <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.Manage" >
+    update T_MANAGE
+    <set >
+       <if test="code != null" >
+        CODE = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="codeName != null" >
+        CODE_NAME = #{codeName,jdbcType=VARCHAR},
+      </if>
+      <if test="codeValue != null" >
+        CODE_VALUE = #{codeValue,jdbcType=VARCHAR},
+      </if>
+      
+      
+      <if test="createUser != null" >
+        CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{sysDate,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null" >
+        UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.Manage" >
+    update T_MANAME
+    set CODE = #{code,jdbcType=VARCHAR},
+      CODE_NAME = #{codeName,jdbcType=VARCHAR},
+      CODE_VALUE = #{codeValue,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=VARCHAR},
+      CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      UPDATE_TIME = #{sysDate,jdbcType=VARCHAR},
+      UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+</mapper>

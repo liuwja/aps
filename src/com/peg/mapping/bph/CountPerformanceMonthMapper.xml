@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.CountPerformanceMonthMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.CountPerformanceMonth" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="CHECK_MONTH" property="checkMonth" jdbcType="TIMESTAMP" />
+    <result column="FACTORY" property="factory" jdbcType="VARCHAR" />
+    <result column="CHECK_INDEX_NAME" property="checkIndexName" jdbcType="VARCHAR" />
+    <result column="TARGET_VALUE" property="targetValue" jdbcType="DECIMAL" />
+    <result column="ACTUAL_VALUE" property="actualValue" jdbcType="DECIMAL" />
+    <result column="TOTAL_VALUE" property="totalValue" jdbcType="DECIMAL" />
+    <result column="boxdefect_qty" property="boxDefectQty" jdbcType="DECIMAL" />
+    <result column="oqcdefect_qty" property="oqcDefectQty" jdbcType="DECIMAL" />
+    <result column="quality_qty" property="qualityQty" jdbcType="DECIMAL" />
+    <result column="product_qty" property="productQty" jdbcType="DECIMAL" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, CHECK_MONTH, FACTORY, CHECK_INDEX_NAME, TARGET_VALUE, ACTUAL_VALUE, TOTAL_VALUE, 
+    CREATE_TIME,boxdefect_qty,oqcdefect_qty,quality_qty,product_qty
+  </sql>
+  <select id="getAllByPage" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_COUNT_PERFORMANCEMONTH
+    <where>
+        <if test="hashMap.factory != null">
+            FACTORY like '%${hashMap.factory}%'
+        </if>
+        <if test="hashMap.checkIndexName != null">
+           and CHECK_INDEX_NAME like '%${hashMap.checkIndexName}%'
+        </if>
+        <if test="hashMap.queryMonth != null">
+           and to_char(CHECK_MONTH,'YYYY-MM') = '${hashMap.queryMonth}'
+        </if>
+    </where>
+       order by CHECK_MONTH DESC, CREATE_TIME desc
+  </select> 
+  
+   <select id="getAllByMonth" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_COUNT_PERFORMANCEMONTH
+    <where>
+        <if test="hashMap.queryMonth != null">
+           and to_char(CHECK_MONTH,'YYYY-MM') = '${hashMap.queryMonth}'
+        </if>
+    </where>
+       order by ID 
+  </select> 
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_COUNT_PERFORMANCEMONTH
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from T_COUNT_PERFORMANCEMONTH
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.bph.CountPerformanceMonth" >
+    <selectKey resultType="long" order="BEFORE" keyProperty="id">
+      select seq_t_count_performancemonth.nextval as id from dual
+    </selectKey> 
+    insert into T_COUNT_PERFORMANCEMONTH (ID, CHECK_MONTH, FACTORY, 
+      CHECK_INDEX_NAME, TARGET_VALUE, ACTUAL_VALUE, 
+      TOTAL_VALUE,CREATE_TIME)
+    values (#{id,jdbcType=DECIMAL}, #{checkMonth,jdbcType=TIMESTAMP}, #{factory,jdbcType=VARCHAR}, 
+      #{checkIndexName,jdbcType=VARCHAR}, #{targetValue,jdbcType=DECIMAL}, #{actualValue,jdbcType=DECIMAL}, 
+      #{totalValue,jdbcType=DECIMAL},sysDate)
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.bph.CountPerformanceMonth" >
+    insert into T_COUNT_PERFORMANCEMONTH
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="checkMonth != null" >
+        CHECK_MONTH,
+      </if>
+      <if test="factory != null" >
+        FACTORY,
+      </if>
+      <if test="checkIndexName != null" >
+        CHECK_INDEX_NAME,
+      </if>
+      <if test="targetValue != null" >
+        TARGET_VALUE,
+      </if>
+      <if test="actualValue != null" >
+        ACTUAL_VALUE,
+      </if>
+      <if test="totalValue != null" >
+        TOTAL_VALUE,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="checkMonth != null" >
+        #{checkMonth,jdbcType=TIMESTAMP},
+      </if>
+      <if test="factory != null" >
+        #{factory,jdbcType=VARCHAR},
+      </if>
+      <if test="checkIndexName != null" >
+        #{checkIndexName,jdbcType=VARCHAR},
+      </if>
+      <if test="targetValue != null" >
+        #{targetValue,jdbcType=DECIMAL},
+      </if>
+      <if test="actualValue != null" >
+        #{actualValue,jdbcType=DECIMAL},
+      </if>
+      <if test="totalValue != null" >
+        #{totalValue,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.bph.CountPerformanceMonth" >
+    update T_COUNT_PERFORMANCEMONTH
+    <set >
+      <if test="checkMonth != null" >
+        CHECK_MONTH = #{checkMonth,jdbcType=TIMESTAMP},
+      </if>
+      <if test="factory != null" >
+        FACTORY = #{factory,jdbcType=VARCHAR},
+      </if>
+      <if test="checkIndexName != null" >
+        CHECK_INDEX_NAME = #{checkIndexName,jdbcType=VARCHAR},
+      </if>
+      <if test="targetValue != null" >
+        TARGET_VALUE = #{targetValue,jdbcType=DECIMAL},
+      </if>
+      <if test="actualValue != null" >
+        ACTUAL_VALUE = #{actualValue,jdbcType=DECIMAL},
+      </if>
+      <if test="totalValue != null" >
+        TOTAL_VALUE = #{totalValue,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.bph.CountPerformanceMonth" >
+    update T_COUNT_PERFORMANCEMONTH
+    set CHECK_MONTH = #{checkMonth,jdbcType=TIMESTAMP},
+      FACTORY = #{factory,jdbcType=VARCHAR},
+      CHECK_INDEX_NAME = #{checkIndexName,jdbcType=VARCHAR},
+      TARGET_VALUE = #{targetValue,jdbcType=DECIMAL},
+      ACTUAL_VALUE = #{actualValue,jdbcType=DECIMAL},
+      TOTAL_VALUE = #{totalValue,jdbcType=DECIMAL}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  
+  <!-- 查询是否存在相同的月份 -->
+  <select id="selectCommonMonth" resultMap="BaseResultMap" parameterType="com.peg.model.bph.CountPerformanceMonth">
+  select t.CHECK_MONTH , t.CHECK_INDEX_NAME 
+  from T_COUNT_PERFORMANCEMONTH t
+  where to_char(t.CHECK_MONTH,'YYYY-MM') =#{queryMonth,jdbcType=VARCHAR} 
+  and t.CHECK_INDEX_NAME = #{checkIndexName,jdbcType=VARCHAR}
+  and t.factory = #{factory,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 插入指标基础数据 -->
+  <insert id="insertBaseData" parameterType="com.peg.model.bph.CountPerformanceMonth">
+    insert into T_COUNT_PERFORMANCEMONTH(CHECK_MONTH, FACTORY, CHECK_INDEX_NAME)
+       select to_date(#{queryMonth},'YYYY-MM') monthly, factory ,check_index_name from
+      (
+        select factory ,check_index_name from t_performance_checkyear
+      )
+  </insert>
+  <!-- 删除指标基础数据 -->
+  <delete id="deleteByMonth" parameterType="com.peg.model.bph.CountPerformanceMonth">
+    delete from T_COUNT_PERFORMANCEMONTH tcp
+    where 1=1 
+    <if test="queryMonth != null" >
+    and tcp.CHECK_MONTH = TO_DATE(#{queryMonth},'YYYY-MM') 
+    </if>
+  </delete>
+  <!-- 更新开箱不良数（油烟机） -->
+  <update id="updateBoxdefectQtyYAJ" parameterType="com.peg.model.bph.CountPerformanceMonth">
+   update T_COUNT_PERFORMANCEMONTH tcp set tcp.boxdefect_qty =(
+       select count(*) from at_boxdefectrecord  a
+       where a.factory_s='电器工厂' 
+       and a.defect_source_s='开箱不良' 
+       and a.defect_category_s = '油烟机'
+       and to_char(a.record_date_t,'YYYY-MM-DD') between #{startDate} and #{endDate}
+    )where tcp.CHECK_INDEX_NAME in('油烟机开箱不良') and to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth}
+  </update>
+  
+   <!-- 更新开箱不良数（消毒柜） -->
+  <update id="updateBoxdefectQtyXDG" parameterType="com.peg.model.bph.CountPerformanceMonth">
+    update T_COUNT_PERFORMANCEMONTH tcp set tcp.boxdefect_qty =(
+       select count(*) from at_boxdefectrecord  a
+       where a.factory_s='电器工厂' 
+       and a.defect_source_s='开箱不良' 
+       and a.defect_category_s = '消毒柜'
+       and to_char(a.record_date_t,'YYYY-MM-DD') between #{startDate} and #{endDate}
+    )where tcp.CHECK_INDEX_NAME in('消毒柜开箱不良') and to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth}
+  </update>
+  
+   <!-- 更新开箱不良数（灶具） -->
+  <update id="updateBoxdefectQtyZJ" parameterType="com.peg.model.bph.CountPerformanceMonth">
+    update T_COUNT_PERFORMANCEMONTH tcp set tcp.boxdefect_qty =(
+       select count(*) from at_boxdefectrecord  a
+       where a.factory_s='燃气工厂' 
+       and a.defect_source_s='开箱不良' 
+       and a.defect_category_s = '灶具'
+       and to_char(a.record_date_t,'YYYY-MM-DD') between #{startDate} and #{endDate}
+    )where tcp.CHECK_INDEX_NAME in('灶具开箱不良') and to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth}
+  </update>
+  
+   <!-- 更新开箱不良数（热水器） -->
+  <update id="updateBoxdefectQtyRSQ" parameterType="com.peg.model.bph.CountPerformanceMonth">
+    update T_COUNT_PERFORMANCEMONTH tcp set tcp.boxdefect_qty =(
+       select count(*) from at_boxdefectrecord  a
+       where a.factory_s='燃气工厂' 
+       and a.defect_source_s='开箱不良' 
+       and a.defect_category_s = '热水器'
+       and to_char(a.record_date_t,'YYYY-MM-DD') between #{startDate} and #{endDate}
+    )where tcp.CHECK_INDEX_NAME in('热水器开箱不良') and to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth}
+  </update>
+  
+    <!-- 更新微蒸烤开箱不良（微蒸烤） -->
+  <update id="updateBoxdefectQtyWZK" parameterType="com.peg.model.bph.CountPerformanceMonth">
+    update T_COUNT_PERFORMANCEMONTH tcp set tcp.boxdefect_qty =(
+       select count(*) from at_boxdefectrecord  a
+       where a.factory_s='电器工厂' 
+       and a.defect_source_s='开箱不良' 
+       and a.defect_category_s in ('蒸箱','微波炉','烤箱')
+       and to_char(a.record_date_t,'YYYY-MM-DD') between #{startDate} and #{endDate}
+    )where tcp.CHECK_INDEX_NAME in('微蒸烤开箱不良') and to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth}
+  </update>
+  
+  <!-- 更新OQC不良次数 （油烟机）-->
+  <update id="updateOqcdefectQtyYYJ" parameterType="com.peg.model.bph.CountPerformanceMonth">
+    update T_COUNT_PERFORMANCEMONTH tcp set tcp.oqcdefect_qty =(
+        select count(*) oqcdefect_qty from (
+		select w.order_number,u.part_number,to_char(woi.planned_start_time,'yyyy-MM-dd'),p.description,u.serial_number,
+		t.test_passed,to_char(t.creation_time,'yyyy-MM-dd HH24:mi:ss'),
+		u.uda_8,t.uda_4,t.uda_9,up.mold_type_s
+		from  test_instance t,unit u,work_order w,work_order_items woi,production_line p,part pa,uda_part up
+		where t.object_key=u.unit_key and woi.order_item_key=u.order_item_key and w.order_key=woi.order_key(+)
+		and p.p_line_name(+)=woi.planned_line 
+		and t.uda_7='OQC单独抽检'
+		and t.test_passed=0
+		and pa.part_number=u.part_number
+		and pa.trx_id = up.trx_id
+		
+		and w.addr_city = '电器工厂' 	
+		and up.mold_type_s ='油烟机'
+		and to_char(t.creation_time,'yyyy-MM-DD') between #{startDate} and #{endDate}
+		
+		group by w.order_number,u.part_number,woi.planned_start_time,p.description,u.serial_number,
+		t.test_passed,to_char(t.creation_time,'yyyy-MM-dd HH24:mi:ss'),
+		u.uda_8,t.uda_4,t.uda_9,up.mold_type_s
+		order by to_char(t.creation_time,'yyyy-MM-dd HH24:mi:ss') desc,w.order_number desc) temp
+    )where tcp.CHECK_INDEX_NAME in('油烟机OQC不良') and to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth}
+  </update>
+  
+  <!-- 更新OQC不良次数 （消毒柜）-->
+  <update id="updateOqcdefectQtyXDG" parameterType="com.peg.model.bph.CountPerformanceMonth">
+    update T_COUNT_PERFORMANCEMONTH tcp set tcp.oqcdefect_qty =(
+        select count(*) oqcdefect_qty from (
+		select w.order_number,u.part_number,to_char(woi.planned_start_time,'yyyy-MM-dd'),p.description,u.serial_number,
+		t.test_passed,to_char(t.creation_time,'yyyy-MM-dd HH24:mi:ss'),
+		u.uda_8,t.uda_4,t.uda_9,up.mold_type_s
+		from  test_instance t,unit u,work_order w,work_order_items woi,production_line p,part pa,uda_part up
+		where t.object_key=u.unit_key and woi.order_item_key=u.order_item_key and w.order_key=woi.order_key(+)
+		and p.p_line_name(+)=woi.planned_line 
+		and t.uda_7='OQC单独抽检'
+		and t.test_passed=0
+		and pa.part_number=u.part_number
+		and pa.trx_id = up.trx_id
+		
+		and w.addr_city = '电器工厂' 	
+		and up.mold_type_s ='消毒柜'
+		and to_char(t.creation_time,'yyyy-MM-DD') between #{startDate} and #{endDate}
+		
+		group by w.order_number,u.part_number,woi.planned_start_time,p.description,u.serial_number,
+		t.test_passed,to_char(t.creation_time,'yyyy-MM-dd HH24:mi:ss'),
+		u.uda_8,t.uda_4,t.uda_9,up.mold_type_s
+		order by to_char(t.creation_time,'yyyy-MM-dd HH24:mi:ss') desc,w.order_number desc) temp
+    )where tcp.CHECK_INDEX_NAME in('消毒柜OQC不良') and to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth}
+  </update>
+  
+   <!-- 更新OQC不良次数 （灶具）-->
+  <update id="updateOqcdefectQtyZJ" parameterType="com.peg.model.bph.CountPerformanceMonth">
+    update T_COUNT_PERFORMANCEMONTH tcp set tcp.oqcdefect_qty =(
+        select count(*) oqcdefect_qty from (
+		select w.order_number,u.part_number,to_char(woi.planned_start_time,'yyyy-MM-dd'),p.description,u.serial_number,
+		t.test_passed,to_char(t.creation_time,'yyyy-MM-dd HH24:mi:ss'),
+		u.uda_8,t.uda_4,t.uda_9,up.mold_type_s
+		from  test_instance t,unit u,work_order w,work_order_items woi,production_line p,part pa,uda_part up
+		where t.object_key=u.unit_key and woi.order_item_key=u.order_item_key and w.order_key=woi.order_key(+)
+		and p.p_line_name(+)=woi.planned_line 
+		and t.uda_7='OQC单独抽检'
+		and t.test_passed=0
+		and pa.part_number=u.part_number
+		and pa.trx_id = up.trx_id
+		
+		and w.addr_city = '燃气工厂' 	
+		and up.mold_type_s ='灶具'
+		and to_char(t.creation_time,'yyyy-MM-DD') between #{startDate} and #{endDate}
+		
+		group by w.order_number,u.part_number,woi.planned_start_time,p.description,u.serial_number,
+		t.test_passed,to_char(t.creation_time,'yyyy-MM-dd HH24:mi:ss'),
+		u.uda_8,t.uda_4,t.uda_9,up.mold_type_s
+		order by to_char(t.creation_time,'yyyy-MM-dd HH24:mi:ss') desc,w.order_number desc) temp
+    )where tcp.CHECK_INDEX_NAME in('灶具OQC不良') and to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth}
+  </update>
+  
+   <!-- 更新OQC不良次数 （热水器）-->
+  <update id="updateOqcdefectQtyRSQ" parameterType="com.peg.model.bph.CountPerformanceMonth">
+    update T_COUNT_PERFORMANCEMONTH tcp set tcp.oqcdefect_qty =(
+        select count(*) oqcdefect_qty from (
+		select w.order_number,u.part_number,to_char(woi.planned_start_time,'yyyy-MM-dd'),p.description,u.serial_number,
+		t.test_passed,to_char(t.creation_time,'yyyy-MM-dd HH24:mi:ss'),
+		u.uda_8,t.uda_4,t.uda_9,up.mold_type_s
+		from  test_instance t,unit u,work_order w,work_order_items woi,production_line p,part pa,uda_part up
+		where t.object_key=u.unit_key and woi.order_item_key=u.order_item_key and w.order_key=woi.order_key(+)
+		and p.p_line_name(+)=woi.planned_line 
+		and t.uda_7='OQC单独抽检'
+		and t.test_passed=0
+		and pa.part_number=u.part_number
+		and pa.trx_id = up.trx_id
+		
+		and w.addr_city = '燃气工厂' 	
+		and up.mold_type_s ='热水器'
+		and to_char(t.creation_time,'YYYY-MM-DD') between #{startDate} and #{endDate}
+		
+		group by w.order_number,u.part_number,woi.planned_start_time,p.description,u.serial_number,
+		t.test_passed,to_char(t.creation_time,'yyyy-MM-dd HH24:mi:ss'),
+		u.uda_8,t.uda_4,t.uda_9,up.mold_type_s
+		order by to_char(t.creation_time,'yyyy-MM-dd HH24:mi:ss') desc,w.order_number desc) temp 
+    )where tcp.CHECK_INDEX_NAME in('热水器OQC不良') and to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth}
+  </update>
+  
+  <!-- 更新OQC不良次数 （微蒸烤）-->
+  <update id="updateOqcdefectQtyWZK" parameterType="com.peg.model.bph.CountPerformanceMonth">
+    update T_COUNT_PERFORMANCEMONTH tcp set tcp.oqcdefect_qty =(
+        select count(*) oqcdefect_qty from (
+		select w.order_number,u.part_number,to_char(woi.planned_start_time,'yyyy-MM-dd'),p.description,u.serial_number,
+		t.test_passed,to_char(t.creation_time,'yyyy-MM-dd HH24:mi:ss'),
+		u.uda_8,t.uda_4,t.uda_9,up.mold_type_s
+		from  test_instance t,unit u,work_order w,work_order_items woi,production_line p,part pa,uda_part up
+		where t.object_key=u.unit_key and woi.order_item_key=u.order_item_key and w.order_key=woi.order_key(+)
+		and p.p_line_name(+)=woi.planned_line 
+		and t.uda_7='OQC单独抽检'
+		and t.test_passed=0
+		and pa.part_number=u.part_number
+		and pa.trx_id = up.trx_id
+		
+		and w.addr_city = '电器工厂' 	
+		and up.mold_type_s in ('蒸箱','微波炉','烤箱')
+		and to_char(t.creation_time,'yyyy-MM-DD') between #{startDate} and #{endDate}
+		
+		group by w.order_number,u.part_number,woi.planned_start_time,p.description,u.serial_number,
+		t.test_passed,to_char(t.creation_time,'yyyy-MM-dd HH24:mi:ss'),
+		u.uda_8,t.uda_4,t.uda_9,up.mold_type_s
+		order by to_char(t.creation_time,'yyyy-MM-dd HH24:mi:ss') desc,w.order_number desc) temp 
+    )where tcp.CHECK_INDEX_NAME in('微蒸烤OQC不良') and to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth}
+  </update>
+  
+   <!-- 更新喷涂一次合格率（合格数，总数） -->
+  <update id="updatePaintingQty" parameterType="com.peg.model.bph.CountPerformanceMonth">
+    update T_COUNT_PERFORMANCEMONTH tcp set (quality_qty,product_qty) =(
+       select sum(a.quality_qty_i), sum(a.total_qty_i) from at_paintingdailyreport a where trim(a.factory_s) = '电器工厂'
+       and to_char(a.date_t,'YYYY-MM-DD') between #{startDate} and #{endDate}
+    )where tcp.CHECK_INDEX_NAME in('喷涂一次合格率') and to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth}
+  </update>
+  
+   <!-- 更新组装一次合格率（不合格数） -->
+  <update id="updateAssembleDefectQty" parameterType="com.peg.model.bph.CountPerformanceMonth">
+    update T_COUNT_PERFORMANCEMONTH tcp set (quality_qty) =(
+       select sum(a.repaired_num) from at_aseeblerepaired_sum a where trim(a.col_1) = '电器工厂'
+       and a.monthly = #{queryMonth}
+    )where tcp.CHECK_INDEX_NAME in('组装一次合格率') and to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth}
+  </update>
+  
+   <!-- 更新组装一次合格率（总数） -->
+  <update id="updateAssembleTotalQty" parameterType="com.peg.model.bph.CountPerformanceMonth">
+    update T_COUNT_PERFORMANCEMONTH tcp set (product_qty) =(
+       select sum(a.assemble_produce_qty) from t_qms_data_month a where trim(a.factory_name) = '电器工厂'
+       and trim(a.area_name)='组装车间' and  a.working_date = #{queryMonth}
+    )where tcp.CHECK_INDEX_NAME in('组装一次合格率') and to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth}
+  </update>
+  
+  
+  <!-- 更新实绩值 (开箱不良)-->
+   <update id="updateAccountActualBox" parameterType="com.peg.model.bph.CountPerformanceMonth">
+     update T_COUNT_PERFORMANCEMONTH tcp set (ACTUAL_VALUE) =(
+       select a.boxdefect_qty/a.target_value from T_COUNT_PERFORMANCEMONTH a 
+       where a.CHECK_INDEX_NAME = tcp.CHECK_INDEX_NAME
+       and  a.CHECK_MONTH = tcp.CHECK_MONTH
+       and to_char(a.CHECK_MONTH,'YYYY-MM') =#{queryMonth}
+       and a.CHECK_INDEX_NAME like '%开箱不良%'
+    )where  to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth}
+     and tcp.check_index_name in('油烟机开箱不良','消毒柜开箱不良','灶具开箱不良','热水器开箱不良','微蒸烤开箱不良')
+  </update>
+  
+   <!-- 更新累计值 (开箱不良)-->
+   <update id="updateAccountTotalBox" parameterType="com.peg.model.bph.CountPerformanceMonth">
+    update T_COUNT_PERFORMANCEMONTH tcp set (TOTAL_VALUE) =(
+        select boxdefect_qty/target_value from 
+       (select sum(a.boxdefect_qty) boxdefect_qty,sum(a.target_value) target_value,a.CHECK_INDEX_NAME
+        from T_COUNT_PERFORMANCEMONTH a,T_COUNT_PERFORMANCEMONTH b
+       where 
+       a.factory = b.factory
+       and a.CHECK_INDEX_NAME = b.CHECK_INDEX_NAME
+       and  a.CHECK_MONTH = b.CHECK_MONTH
+       and to_char(a.CHECK_MONTH,'YYYY-MM') between #{startTime} and #{queryMonth}
+       and a.CHECK_INDEX_NAME like '%开箱不良%'
+       group by a.CHECK_INDEX_NAME) bo
+       where  bo.CHECK_INDEX_NAME = tcp.CHECK_INDEX_NAME  
+    )where  to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth}
+     and tcp.check_index_name in('油烟机开箱不良','消毒柜开箱不良','灶具开箱不良','热水器开箱不良','微蒸烤开箱不良')
+  </update>
+  
+  <!-- 更新实绩值 (OQC不良)-->
+   <update id="updateAccountActualOqc" parameterType="com.peg.model.bph.CountPerformanceMonth">
+     update T_COUNT_PERFORMANCEMONTH tcp set (ACTUAL_VALUE) =(
+       select a.oqcdefect_qty/a.target_value from T_COUNT_PERFORMANCEMONTH a 
+       where a.CHECK_INDEX_NAME = tcp.CHECK_INDEX_NAME
+       and  a.CHECK_MONTH = tcp.CHECK_MONTH
+       and to_char(a.CHECK_MONTH,'YYYY-MM') =#{queryMonth}
+       and a.CHECK_INDEX_NAME like '%OQC不良%'
+    )where  to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth}
+     and tcp.check_index_name in('油烟机OQC不良','消毒柜OQC不良','灶具OQC不良','热水器OQC不良','微蒸烤OQC不良')
+  </update>
+  
+   <!-- 更新累计值 (OQC不良)-->
+   <update id="updateAccountTotalOqc" parameterType="com.peg.model.bph.CountPerformanceMonth">
+     update T_COUNT_PERFORMANCEMONTH tcp set (TOTAL_VALUE) =(
+       select qt.oqcdefect_qty/qt.target_value from (
+       select sum(a.oqcdefect_qty) oqcdefect_qty,sum(a.target_value) target_value,a.CHECK_INDEX_NAME 
+       from T_COUNT_PERFORMANCEMONTH a ,T_COUNT_PERFORMANCEMONTH b
+       where a.CHECK_INDEX_NAME = b.CHECK_INDEX_NAME
+       and  a.CHECK_MONTH = b.CHECK_MONTH
+       and to_char(a.CHECK_MONTH,'YYYY-MM') between #{startTime} and #{queryMonth}
+       and a.CHECK_INDEX_NAME like '%OQC不良%'
+       group by a.CHECK_INDEX_NAME) qt
+       where qt.CHECK_INDEX_NAME = tcp.CHECK_INDEX_NAME
+    )where  to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth}
+     and tcp.check_index_name in('油烟机OQC不良','消毒柜OQC不良','灶具OQC不良','热水器OQC不良','微蒸烤OQC不良')
+  </update>
+  
+   <!-- 更新实绩值合格率-->
+   <update id="updateAccountActualFitRate" parameterType="com.peg.model.bph.CountPerformanceMonth">
+     update T_COUNT_PERFORMANCEMONTH tcp set (ACTUAL_VALUE) =(
+       select  a.quality_qty/a.product_qty from T_COUNT_PERFORMANCEMONTH a
+       where a.CHECK_INDEX_NAME = tcp.CHECK_INDEX_NAME
+       and  a.CHECK_MONTH = tcp.CHECK_MONTH
+       and a.factory = tcp.factory
+       and to_char(a.CHECK_MONTH,'YYYY-MM') = #{queryMonth} 
+       and a.CHECK_INDEX_NAME like '%合格率%'
+    )where  to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth} 
+     and tcp.check_index_name in('组装一次合格率','喷涂一次合格率','冲压一次合格率','灶具组装一次合格率','热水器组装一次合格率','精加工一次合格率')
+  </update>
+  
+   <!-- 更新累计值合格率-->
+   <update id="updateAccountTotalFitRate" parameterType="com.peg.model.bph.CountPerformanceMonth">
+   update T_COUNT_PERFORMANCEMONTH tcp set (TOTAL_VALUE) =(
+       select  sum(a.quality_qty)/sum(a.product_qty) from T_COUNT_PERFORMANCEMONTH a 
+       where a.CHECK_INDEX_NAME = tcp.CHECK_INDEX_NAME
+       and a.factory = tcp.factory
+       and to_char(a.CHECK_MONTH,'YYYY-MM')  between #{startTime} and #{queryMonth}
+       and a.CHECK_INDEX_NAME like '%合格率%'
+       group by a.factory,a.CHECK_INDEX_NAME
+    )where  to_char(tcp.CHECK_MONTH,'YYYY-MM')=#{queryMonth}
+     and tcp.check_index_name in('组装一次合格率','喷涂一次合格率','冲压一次合格率','灶具组装一次合格率','热水器组装一次合格率','精加工一次合格率')  
+  </update>
+  
+  
+</mapper>

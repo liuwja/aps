@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.part.ErpPartReturnMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.part.ErpPartReturn" >
+    <id column="RETURN_KEY" property="returnKey" jdbcType="DECIMAL" />
+    <result column="PART_TYPE" property="partType" jdbcType="VARCHAR" />
+    <result column="PART_CLASS" property="partClass" jdbcType="VARCHAR" />
+    <result column="PART_NUMBER" property="partNumber" jdbcType="VARCHAR" />
+    <result column="PART_NAME" property="partName" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_NUMBER" property="supplierNumber" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_NAME" property="supplierName" jdbcType="VARCHAR" />
+    <result column="RETURN_DATE" property="returnDate" jdbcType="VARCHAR" />
+    <result column="RETURN_NUMBER" property="returnNumber" jdbcType="DECIMAL" />
+    <result column="WARE_HOUSE" property="wareHouse" jdbcType="VARCHAR" />
+    <result column="PRODUCT_MATURITY" property="productMaturity" jdbcType="VARCHAR" />
+    <result column="PRODUCTION_TYPE" property="productionType" jdbcType="VARCHAR" />
+    <result column="CREATION_TIME" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="LOT_NUMBER" property="lotNumber" jdbcType="VARCHAR" />
+    <result column="TOTAL_QTY" property="totalQty" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    RETURN_KEY, PART_TYPE, PART_CLASS, PART_NUMBER, PART_NAME, SUPPLIER_NUMBER, SUPPLIER_NAME, 
+    RETURN_DATE, RETURN_NUMBER, WARE_HOUSE, PRODUCT_MATURITY, PRODUCTION_TYPE, CREATION_TIME, 
+    LOT_NUMBER, TOTAL_QTY
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from ERP_PART_RETURN
+    where RETURN_KEY = #{returnKey,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from ERP_PART_RETURN
+    where RETURN_KEY = #{returnKey,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.part.ErpPartReturn" >
+    insert into ERP_PART_RETURN (RETURN_KEY, PART_TYPE, PART_CLASS, 
+      PART_NUMBER, PART_NAME, SUPPLIER_NUMBER, 
+      SUPPLIER_NAME, RETURN_DATE, RETURN_NUMBER, 
+      WARE_HOUSE, PRODUCT_MATURITY, PRODUCTION_TYPE, 
+      CREATION_TIME, LOT_NUMBER, TOTAL_QTY 
+      )
+    values (#{returnKey,jdbcType=DECIMAL}, #{partType,jdbcType=VARCHAR}, #{partClass,jdbcType=VARCHAR}, 
+      #{partNumber,jdbcType=VARCHAR}, #{partName,jdbcType=VARCHAR}, #{supplierNumber,jdbcType=VARCHAR}, 
+      #{supplierName,jdbcType=VARCHAR}, #{returnDate,jdbcType=VARCHAR}, #{returnNumber,jdbcType=DECIMAL}, 
+      #{wareHouse,jdbcType=VARCHAR}, #{productMaturity,jdbcType=VARCHAR}, #{productionType,jdbcType=VARCHAR}, 
+      #{creationTime,jdbcType=TIMESTAMP}, #{lotNumber,jdbcType=VARCHAR}, #{totalQty,jdbcType=DECIMAL}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.part.ErpPartReturn" >
+    insert into ERP_PART_RETURN
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="returnKey != null" >
+        RETURN_KEY,
+      </if>
+      <if test="partType != null" >
+        PART_TYPE,
+      </if>
+      <if test="partClass != null" >
+        PART_CLASS,
+      </if>
+      <if test="partNumber != null" >
+        PART_NUMBER,
+      </if>
+      <if test="partName != null" >
+        PART_NAME,
+      </if>
+      <if test="supplierNumber != null" >
+        SUPPLIER_NUMBER,
+      </if>
+      <if test="supplierName != null" >
+        SUPPLIER_NAME,
+      </if>
+      <if test="returnDate != null" >
+        RETURN_DATE,
+      </if>
+      <if test="returnNumber != null" >
+        RETURN_NUMBER,
+      </if>
+      <if test="wareHouse != null" >
+        WARE_HOUSE,
+      </if>
+      <if test="productMaturity != null" >
+        PRODUCT_MATURITY,
+      </if>
+      <if test="productionType != null" >
+        PRODUCTION_TYPE,
+      </if>
+      <if test="creationTime != null" >
+        CREATION_TIME,
+      </if>
+      <if test="lotNumber != null" >
+        LOT_NUMBER,
+      </if>
+      <if test="totalQty != null" >
+        TOTAL_QTY,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="returnKey != null" >
+        #{returnKey,jdbcType=DECIMAL},
+      </if>
+      <if test="partType != null" >
+        #{partType,jdbcType=VARCHAR},
+      </if>
+      <if test="partClass != null" >
+        #{partClass,jdbcType=VARCHAR},
+      </if>
+      <if test="partNumber != null" >
+        #{partNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="partName != null" >
+        #{partName,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNumber != null" >
+        #{supplierNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierName != null" >
+        #{supplierName,jdbcType=VARCHAR},
+      </if>
+      <if test="returnDate != null" >
+        #{returnDate,jdbcType=VARCHAR},
+      </if>
+      <if test="returnNumber != null" >
+        #{returnNumber,jdbcType=DECIMAL},
+      </if>
+      <if test="wareHouse != null" >
+        #{wareHouse,jdbcType=VARCHAR},
+      </if>
+      <if test="productMaturity != null" >
+        #{productMaturity,jdbcType=VARCHAR},
+      </if>
+      <if test="productionType != null" >
+        #{productionType,jdbcType=VARCHAR},
+      </if>
+      <if test="creationTime != null" >
+        #{creationTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lotNumber != null" >
+        #{lotNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="totalQty != null" >
+        #{totalQty,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.part.ErpPartReturn" >
+    update ERP_PART_RETURN
+    <set >
+      <if test="partType != null" >
+        PART_TYPE = #{partType,jdbcType=VARCHAR},
+      </if>
+      <if test="partClass != null" >
+        PART_CLASS = #{partClass,jdbcType=VARCHAR},
+      </if>
+      <if test="partNumber != null" >
+        PART_NUMBER = #{partNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="partName != null" >
+        PART_NAME = #{partName,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNumber != null" >
+        SUPPLIER_NUMBER = #{supplierNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierName != null" >
+        SUPPLIER_NAME = #{supplierName,jdbcType=VARCHAR},
+      </if>
+      <if test="returnDate != null" >
+        RETURN_DATE = #{returnDate,jdbcType=VARCHAR},
+      </if>
+      <if test="returnNumber != null" >
+        RETURN_NUMBER = #{returnNumber,jdbcType=DECIMAL},
+      </if>
+      <if test="wareHouse != null" >
+        WARE_HOUSE = #{wareHouse,jdbcType=VARCHAR},
+      </if>
+      <if test="productMaturity != null" >
+        PRODUCT_MATURITY = #{productMaturity,jdbcType=VARCHAR},
+      </if>
+      <if test="productionType != null" >
+        PRODUCTION_TYPE = #{productionType,jdbcType=VARCHAR},
+      </if>
+      <if test="creationTime != null" >
+        CREATION_TIME = #{creationTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lotNumber != null" >
+        LOT_NUMBER = #{lotNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="totalQty != null" >
+        TOTAL_QTY = #{totalQty,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where RETURN_KEY = #{returnKey,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.part.ErpPartReturn" >
+    update ERP_PART_RETURN
+    set PART_TYPE = #{partType,jdbcType=VARCHAR},
+      PART_CLASS = #{partClass,jdbcType=VARCHAR},
+      PART_NUMBER = #{partNumber,jdbcType=VARCHAR},
+      PART_NAME = #{partName,jdbcType=VARCHAR},
+      SUPPLIER_NUMBER = #{supplierNumber,jdbcType=VARCHAR},
+      SUPPLIER_NAME = #{supplierName,jdbcType=VARCHAR},
+      RETURN_DATE = #{returnDate,jdbcType=VARCHAR},
+      RETURN_NUMBER = #{returnNumber,jdbcType=DECIMAL},
+      WARE_HOUSE = #{wareHouse,jdbcType=VARCHAR},
+      PRODUCT_MATURITY = #{productMaturity,jdbcType=VARCHAR},
+      PRODUCTION_TYPE = #{productionType,jdbcType=VARCHAR},
+      CREATION_TIME = #{creationTime,jdbcType=TIMESTAMP},
+      LOT_NUMBER = #{lotNumber,jdbcType=VARCHAR},
+      TOTAL_QTY = #{totalQty,jdbcType=DECIMAL}
+    where RETURN_KEY = #{returnKey,jdbcType=DECIMAL}
+  </update>
+  
+  <select id="findAllByPage" resultMap="BaseResultMap">
+  select T.* from ERP_PART_RETURN t where 1=1 
+       <if test="hashMap.productType !=null">
+         and t.PRODUCTION_TYPE = #{hashMap.productType}
+       </if>
+       <if test="hashMap.supplier !=null">
+         and t.supplier_name in (${hashMap.supplier})
+       </if>
+       <if test="hashMap.partType !=null">
+        and  t.part_type in (${hashMap.partType})
+       </if>
+       <if test="hashMap.partClass !=null">
+       and t.part_class=  #{hashMap.partClass}
+       </if>
+       <if test="hashMap.partName !=null">
+        and  t.part_name in (${hashMap.partName})
+       </if>
+       <if test="hashMap.isNew !=null">
+        and  t.PRODUCT_MATURITY = #{hashMap.isNew}
+       </if>
+       <if test="hashMap.startDate !=null and hashMap.endDate != null">
+        and  substr(t.return_date,0,10) between #{hashMap.startDate} and #{hashMap.endDate}
+       </if>
+       <if test="hashMap.lotDate!=null">
+       
+       </if>
+       order by t.return_date
+  </select>
+  <delete id="deleteByPeriod">
+    delete from ERP_PART_RETURN
+    where substr(return_date,0,10) between #{startTime} and #{endTime}
+  </delete>
+  <update id="updateSupPartByPeriod">
+  update erp_part_return ept set(ept.part_number_n ,ept.supplier_number_n) =
+(
+   select a.part_number,a.supplier_number from (
+   select ept.return_key, decode(npr.new_part_number,'',ept.part_number,npr.new_part_number) part_number,
+   decode(tsr.supplier_number_n,'',ept.supplier_number,tsr.supplier_number_n) supplier_number
+   from t_supplier_ref tsr, new_part_ref npr ,erp_part_return ept
+   where ept.part_number = npr.old_part_number(+)
+   and ept.supplier_number = tsr.supplier_number(+)
+   and substr(ept.return_date,0,10) between #{startTime} and #{endTime}
+   ) a where a.return_key = ept.return_key
+)where exists(
+   select a.part_number,a.supplier_number from (
+   select ept.return_key, decode(npr.new_part_number,'',ept.part_number,npr.new_part_number) part_number,
+   decode(tsr.supplier_number_n,'',ept.supplier_number,tsr.supplier_number_n) supplier_number
+   from t_supplier_ref tsr, new_part_ref npr ,erp_part_return ept
+   where ept.part_number = npr.old_part_number(+)
+   and ept.supplier_number = tsr.supplier_number(+)
+   and substr(ept.return_date,0,10) between #{startTime} and #{endTime}
+   ) a where a.return_key = ept.return_key
+)
+  </update>
+</mapper>

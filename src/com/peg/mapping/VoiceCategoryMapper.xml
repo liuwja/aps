@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.VoiceCategoryMapper" >
+  <resultMap id="voiceCategoryMap" type="com.peg.model.VoiceCategory" >
+    <id column="CLASS_NUMBER" property="number" jdbcType="DECIMAL" />
+    <result column="CLASS_NAME" property="name" jdbcType="VARCHAR" />
+    <result column="pater_name" property="paterName" jdbcType="VARCHAR" />
+    <result column="PATER_NUMBER" property="paterNumber" jdbcType="DECIMAL" />
+    <result column="INSETR_TIME" property="insertTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="STATE" property="state" jdbcType="DECIMAL" />
+  </resultMap>
+<select id="findAllByPage" resultMap="voiceCategoryMap">
+	select VOC.CLASS_NUMBER,TVOC.CLASS_NAME  pater_name,VOC.CLASS_NAME from T_VOICE_CATEGORY VOC,T_VOICE_CATEGORY TVOC WHERE  VOC.PATER_NUMBER = TVOC.CLASS_NUMBER AND VOC.PATER_NUMBER != 0
+	<if test="hashMap.paterName!=null and hashMap.paterName!=''">
+	AND TVOC.CLASS_NAME = #{hashMap.paterName,jdbcType=VARCHAR}
+	</if>
+</select>
+<select id="findAll" resultMap="voiceCategoryMap" parameterType="com.peg.model.VoiceCategory">
+	select VOC.CLASS_NUMBER,TVOC.CLASS_NAME  pater_name,VOC.CLASS_NAME from T_VOICE_CATEGORY VOC,T_VOICE_CATEGORY TVOC WHERE  VOC.PATER_NUMBER = TVOC.CLASS_NUMBER AND VOC.PATER_NUMBER != 0
+	<if test="paterName!=null and paterName!=''">
+	AND TVOC.CLASS_NAME = #{paterName,jdbcType=VARCHAR}
+	</if>
+</select>
+<select id="findAllPater" resultMap="voiceCategoryMap">
+	select class_number,class_name from t_voice_category where pater_number = 0
+</select>
+<select id="getVoiceCategorybykey"  resultMap="voiceCategoryMap">
+  	select VOC.CLASS_NUMBER,TVOC.CLASS_NAME  pater_name,VOC.CLASS_NAME from T_VOICE_CATEGORY VOC,T_VOICE_CATEGORY TVOC WHERE  VOC.PATER_NUMBER = TVOC.CLASS_NUMBER AND VOC.CLASS_NUMBER = #{u,jdbcType=DECIMAL}
+</select>
+<select id="findAllCount" resultType="Integer">
+	select count(1) from T_VOICE_CATEGORY
+</select>
+<insert id="add" parameterType="com.peg.model.VoiceCategory">
+insert into T_VOICE_CATEGORY values(#{number},#{name},#{paterNumber})
+</insert>
+<update id="update" parameterType="com.peg.model.VoiceCategory">
+	update T_VOICE_CATEGORY
+    set  CLASS_NAME=
+    <foreach collection="list" item="item" index="index" 
+        separator=" " open="case CLASS_NUMBER" close="end">
+        when #{item.number} then #{item.name}
+    </foreach>
+    set  PATER_NUMBER=
+    <foreach collection="list" item="item" index="index" 
+        separator=" " open="case CLASS_NUMBER" close="end">
+        when #{item.number} then #{item.paterNumber}
+    </foreach>
+    where CLASS_NUMBER in
+    <foreach collection="list" index="index" item="item" 
+        separator="," open="(" close=")">
+        #{item.number,jdbcType=DECIMAL}
+    </foreach>
+</update>
+<delete id="delete" parameterType="com.peg.model.VoiceCategory">
+	delete form T_VOICE_CATEGORY
+	where CLASS_NUMBER in
+    <foreach collection="list" index="index" item="item" 
+        separator="," open="(" close=")">
+        #{item.number,jdbcType=DECIMAL}
+    </foreach>
+</delete>
+<update id="updateTime" parameterType="com.peg.model.VoiceCategory">
+update CRM_VOICE_CATEGORY set UPDATE_TIME= #{updateTime} where CLASS_NUMBER = #{number}
+</update>
+<select id="findNew" resultMap="voiceCategoryMap">
+select v.* from CRM_VOICE_CATEGORY v where v.UPDATE_TIME is null
+</select>
+<select id="findByPag" resultMap="voiceCategoryMap">
+<![CDATA[	SELECT * FROM  
+(  
+SELECT A.*, ROWNUM RN  
+FROM (SELECT c.*,vo.class_name pater_name FroM T_VOICE_CATEGORY c left join (select V.* from T_VOICE_CATEGORY V) vo on  c.PATER_NUMBER = vo.Class_number order by c.CLASS_NUMBER) A  
+WHERE ROWNUM < ${end}
+)  
+WHERE RN > ${start}]]>
+</select>
+</mapper>

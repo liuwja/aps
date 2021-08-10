@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.jxmb.MonthTrendChartMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.jxmb.MonthTrendChart" >
+    <result column="basevalue" property="baseValue" jdbcType="VARCHAR" />
+    <result column="monthreality" property="monthReality" jdbcType="VARCHAR" />
+    <result column="targetvalue" property="targetValue" jdbcType="VARCHAR" />
+    <result column="accumumonth" property="accumuMonth" jdbcType="VARCHAR" />
+    <result column="month" property="month" jdbcType="VARCHAR" />
+    <result column="oldMonthreality" property="oldMonthreality" jdbcType="VARCHAR" />
+    <result column="oldAccumumonth" property="oldAccumumonth" jdbcType="VARCHAR" />
+    <result column="depaNumber" property="depaNumber" jdbcType="VARCHAR" />
+    <result column="depaName" property="depaName" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    
+    <result column="moncolumn1" property="moncolumn1" jdbcType="VARCHAR" />
+    <result column="PERFORMANCETYPE" property="performanceType" jdbcType="VARCHAR" />
+    <result column="baseValueByYear" property="baseValueByYear" jdbcType="VARCHAR" />
+    <result column="targetValueByYear" property="targetValueByYear" jdbcType="VARCHAR" />
+    <result column="oldTargetValueByYear" property="oldTargetValueByYear" jdbcType="VARCHAR" />
+    <result column="CHECKYEAR" property="year" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="getAll" resultMap="BaseResultMap">
+	  select DISTINCT Y.DEPARTMENTNUMBER depaNumber,Y.DEPARTMENTNAME depaName,Y.PERFORMANCETYPE,Y.INDEXTYPE content,M.MYMONTH month,M.MONTARGETVALUE baseValue,
+	  M.MONREALITYTARGETVALUE monthReality,M.MONTOTALTARGETVALUE targetValue,M.MONREALITYTOTALTARGETVALUE accumuMonth,
+	  T.MONREALITYTARGETVALUE oldMonthreality,T.MONREALITYTOTALTARGETVALUE oldAccumumonth,M.column1 moncolumn1
+	from Y_MONTH_PERFORMANCE M 
+	LEFT JOIN Y_PERFORMANCE_INDEX Y ON M.PI_ID = Y.ID
+	LEFT JOIN (SELECT * FROM Y_MONTH_PERFORMANCE M2 LEFT JOIN Y_PERFORMANCE_INDEX Y2 ON M2.PI_ID = Y2.ID) T
+	ON M.MYMONTH=add_months(T.MYMONTH,+12) AND Y.DEPARTMENTNUMBER = T.DEPARTMENTNUMBER
+	WHERE Y.DEPARTMENTNUMBER IS NOT NULL 
+	<if test="hashMap.dape != null and hashMap.dape != ''">
+			and Y.DEPARTMENTNAME like'%${hashMap.dape}%'
+		</if>
+		<if test="hashMap.bigClass != null and hashMap.bigClass != ''">
+			and Y.PERFORMANCETARGETCLASS like'%${hashMap.bigClass}%'
+		</if>
+		<if test="hashMap.indexContent != null and hashMap.indexContent != ''">
+			and Y.INDEXCONTENT like'%${hashMap.indexContent}%'
+		</if>
+		<if test="hashMap.smallMonth != null and hashMap.smallMonth != ''">
+			and M.MYMONTH &gt;= TO_DATE('${hashMap.smallMonth}','yyyy-mm')
+		</if>
+		<if test="hashMap.bigMonth != null and hashMap.bigMonth != ''">
+			and M.MYMONTH &lt; TO_DATE('${hashMap.bigMonth}','yyyy-mm')
+		</if>
+		<if test="hashMap.yearEquaTo != null and hashMap.yearEquaTo != ''">
+			and TO_CHAR(M.MYMONTH,'yyyy') like '%${hashMap.yearEquaTo}%'
+		</if>
+		<if test="hashMap.smallYear != null and hashMap.smallYear != ''">
+			and to_char(M.MYMONTH,'yyyy') &gt;='${hashMap.smallYear}'
+		</if>
+		<if test="hashMap.bigYear != null and hashMap.bigYear != ''">
+			and to_char(M.MYMONTH,'yyyy') &lt; '${hashMap.bigYear}'
+		</if>
+		order by M.MYMONTH 
+  </select>
+	<!-- <select id="getAll" resultMap="BaseResultMap">
+ 		select s.basevalue,m.monthreality,s.targetvalue,m.accumumonth,s.month,t.monthreality oldMonthreality,t.accumumonth oldAccumumonth,
+ 		d.department_number as depaNumber,d.department_name as depaName,p.performancecontent as content
+		from y_month m
+		inner join y_setup s on m.index_key=s.index_key
+		inner join y_item i on s.item_key=i.item_key
+		inner join y_performancecheck p on i.id=p.id
+		inner join department d on p.department=d.department_number
+		left join (
+		     select t1.monthreality,t1.accumumonth,t2.month,t2.item_key,t4.id,t5.department_number
+		     from y_month t1 
+		     inner join y_setup t2 on t1.index_key=t2.index_key  
+		     inner join y_item t3 on t2.item_key=t3.item_key
+		     inner join y_performancecheck t4 on t3.id=t4.id
+		     inner join department t5 on t4.department=t5.department_number
+		) t on t.month=to_char(add_months(to_date(s.month,'yyyy-mm'),-12),'yyyy-mm') and t.id=p.id and t.department_number=d.department_number
+			where 1=1 
+		<if test="hashMap.dape != null and hashMap.dape != ''">
+			and d.department_name like'%${hashMap.dape}%'
+		</if>
+		<if test="hashMap.bigClass != null and hashMap.bigClass != ''">
+			and p.targetclass like'%${hashMap.bigClass}%'
+		</if>
+		<if test="hashMap.indexContent != null and hashMap.indexContent != ''">
+			and p.indexcontent like'%${hashMap.indexContent}%'
+		</if>
+		<if test="hashMap.smallMonth != null and hashMap.smallMonth != ''">
+			and s.month &gt;='${hashMap.smallMonth}'
+		</if>
+		<if test="hashMap.bigMonth != null and hashMap.bigMonth != ''">
+			and s.month &lt; '${hashMap.bigMonth}'
+		</if>
+		<if test="hashMap.yearEquaTo != null and hashMap.yearEquaTo != ''">
+			and s.month like '%${hashMap.yearEquaTo}%'
+		</if>
+		<if test="hashMap.smallYear != null and hashMap.smallYear != ''">
+			and s.month &gt;='${hashMap.smallYear}'
+		</if>
+		<if test="hashMap.bigYear != null and hashMap.bigYear != ''">
+			and s.month &lt; '${hashMap.bigYear}'
+		</if>
+		order by s.month 
+  	</select> -->
+  	<select id="getAllByYear" resultMap="BaseResultMap">
+  	SELECT T.MONTOTALTARGETVALUE as oldTargetValueByYear,M.CHECKYEAR,Y.REFERENCEVALUE as baseValueByYear,Y.FIRSTYEARTARGETVALUE+Y.SECONDYEARTARGETVALUE as targetValueByYear FROM Y_YEAR_PERFORMANCE Y 
+LEFT JOIN Y_PERFORMANCE_INDEX M ON Y.PI_ID = M.ID
+left join (select m.* from Y_YEAR_PERFORMANCE Y 
+left join Y_PERFORMANCE_INDEX P on y.pi_id =  P.ID
+LEFT JOIN Y_MONTH_PERFORMANCE M ON M.PI_ID = P.ID WHERE TO_CHAR(M.MYMONTH,'yyyy-mm') LIKE '%12') T ON T.ID = M.ID where 1=1
+	<if test="hashMap.dape != null and hashMap.dape != ''">
+			and M.DEPARTMENTNAME like'%${hashMap.dape}%'
+		</if>
+		<if test="hashMap.bigClass != null and hashMap.bigClass != ''">
+			and M.PERFORMANCETARGETCLASS like'%${hashMap.bigClass}%'
+		</if>
+		<if test="hashMap.indexContent != null and hashMap.indexContent != ''">
+			and M.INDEXCONTENT like'%${hashMap.indexContent}%'
+		</if>
+		<if test="hashMap.smallYear != null and hashMap.smallYear != ''">
+			and M.CHECKYEAR &gt;=to_date('${hashMap.smallYear}','yyyy')
+		</if>
+		<if test="hashMap.bigYear != null and hashMap.bigYear != ''">
+			and M.CHECKYEAR &lt;= to_date('${hashMap.bigYear}','yyyy')
+		</if>
+		order by M.CHECKYEAR
+  		<!-- select i.yeartargetvalue as baseValueByYear,i.referencevalue as targetValueByYear, t.accumumonth oldTargetValueByYear 
+		from y_item i
+		inner join y_performancecheck p on i.id=p.id
+		inner join department d on p.department=d.department_number
+		left join (
+		     select t1.monthreality,t1.accumumonth,t2.month,t2.item_key,t4.id,t5.department_number
+		     from y_month t1 
+		     inner join y_setup t2 on t1.index_key=t2.index_key  
+		     inner join y_item t3 on t2.item_key=t3.item_key
+		     inner join y_performancecheck t4 on t3.id=t4.id
+		     inner join department t5 on t4.department=t5.department_number
+		     where t2.month like '%12'
+		) t on t.id=p.id and t.department_number=d.department_number
+		where 1=1
+		<if test="hashMap.dape != null and hashMap.dape != ''">
+			and d.department_name like'%${hashMap.dape}%'
+		</if>
+		<if test="hashMap.bigClass != null and hashMap.bigClass != ''">
+			and p.targetclass like'%${hashMap.bigClass}%'
+		</if>
+		<if test="hashMap.indexContent != null and hashMap.indexContent != ''">
+			and p.indexcontent like'%${hashMap.indexContent}%'
+		</if>
+		<if test="hashMap.smallYear != null and hashMap.smallYear != ''">
+			and p.chekyear &gt;=to_date('${hashMap.smallYear}','yyyy')
+		</if>
+		<if test="hashMap.bigYear != null and hashMap.bigYear != ''">
+			and p.chekyear &lt; to_date('${hashMap.bigYear}','yyyy')
+		</if>
+		order by p.chekyear -->
+  	</select>
+</mapper>

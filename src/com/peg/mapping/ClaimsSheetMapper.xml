@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.ClaimsSheetMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.ClaimsSheet" >
+    <result column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="CLAIMS_TYPE" property="claims_type" jdbcType="VARCHAR" />
+    <result column="REWORK_ID" property="rework_id" jdbcType="VARCHAR" />
+    <result column="REWORK_NUMBER" property="rework_number" jdbcType="VARCHAR" />
+    <result column="REWORK_CREATION_TIME" property="rework_creation_time" jdbcType="VARCHAR" />
+    <result column="DUTY_DEPART" property="duty_depart" jdbcType="VARCHAR" />
+    <result column="DUTY_PROPORTION" property="duty_proportion" jdbcType="VARCHAR" />
+    <result column="REWORK_REASON" property="rework_reason" jdbcType="VARCHAR" />
+    <result column="REWORK_COUNT" property="rework_count" jdbcType="VARCHAR" />
+    <result column="PRODUCT_CATEGORY" property="product_category" jdbcType="VARCHAR" />
+    <result column="CLAIMS_NUMBER" property="claims_number" jdbcType="VARCHAR" />
+    <result column="CLAIMS_SUPPLIER" property="claims_supplier" jdbcType="VARCHAR" />
+    <result column="CLAIMS_REASON" property="claims_reason" jdbcType="VARCHAR" />
+    <result column="CLAIMS_AMOUNT" property="claims_amount" jdbcType="VARCHAR" />
+    <result column="CLAIMS_APPLICANT" property="claims_applicant" jdbcType="VARCHAR" />
+    <result column="CREATION_TIME" property="creation_time" jdbcType="VARCHAR" />
+    <result column="REGISTRAR" property="registrar" jdbcType="VARCHAR" />
+    <result column="IS_RESPONSE" property="is_response" jdbcType="VARCHAR" />
+    <result column="RESPONSE_REASON" property="response_reason" jdbcType="VARCHAR" />
+    <result column="IS_SIGN_IN" property="is_sign_in" jdbcType="VARCHAR" />
+    <result column="ACTUAL_CLAIM_AMOUNT" property="actual_claim_amount" jdbcType="VARCHAR" />
+    <result column="BOOKED_MONTH" property="booked_month" jdbcType="VARCHAR" />
+    <result column="IS_CLOSE" property="is_close" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+  	ID,CLAIMS_TYPE,REWORK_ID,REWORK_NUMBER,DUTY_DEPART,DUTY_PROPORTION,
+  	REWORK_REASON,REWORK_COUNT,PRODUCT_CATEGORY,CLAIMS_NUMBER,
+  	CLAIMS_SUPPLIER,CLAIMS_REASON,CLAIMS_AMOUNT,CLAIMS_APPLICANT,
+  	TO_CHAR(CREATION_TIME,'YYYY-MM-DD') AS CREATION_TIME,REGISTRAR,
+  	IS_RESPONSE,RESPONSE_REASON,IS_SIGN_IN,ACTUAL_CLAIM_AMOUNT,
+  	BOOKED_MONTH,IS_CLOSE,REMARK
+  </sql>
+  
+    <select id="getAllByPage" resultMap="BaseResultMap" >
+		select  cs.ID,cs.CLAIMS_TYPE,cs.REWORK_ID,rs.REWORK_NUMBER,
+				TO_CHAR(rs.CREATION_TIME,'YYYY-MM-DD') AS REWORK_CREATION_TIME,
+				cs.DUTY_DEPART,cs.DUTY_PROPORTION,cs.REWORK_REASON,cs.REWORK_COUNT,
+				cs.PRODUCT_CATEGORY,cs.CLAIMS_NUMBER,cs.CLAIMS_SUPPLIER,CLAIMS_REASON,
+				cs.CLAIMS_AMOUNT,cs.CLAIMS_APPLICANT,TO_CHAR(cs.CREATION_TIME,'YYYY-MM-DD') AS CREATION_TIME,
+				cs.REGISTRAR,cs.IS_RESPONSE,cs.RESPONSE_REASON,cs.IS_SIGN_IN,cs.ACTUAL_CLAIM_AMOUNT,
+  				cs.BOOKED_MONTH,cs.IS_CLOSE,cs.REMARK from CLAIMS_SHEET cs,REWORK_SHEET rs
+  		where cs.REWORK_ID = rs.ID(+) 
+	  <if test="claimsSheet.claims_type != null and claimsSheet.claims_type !=''" >
+        and cs.CLAIMS_TYPE like '%${claimsSheet.claims_type}%'
+      </if>
+	  <if test="claimsSheet.product_category != null and claimsSheet.product_category !=''" >
+        and cs.PRODUCT_CATEGORY like '%${claimsSheet.product_category}%'
+      </if>
+      <if test="claimsSheet.claims_number != null and claimsSheet.rework_number !=''" >
+        and cs.CLAIMS_NUMBER like '%${claimsSheet.claims_number}%'
+      </if>
+      <if test="claimsSheet.claims_supplier != null and claimsSheet.claims_supplier !=''" >
+        and cs.CLAIMS_SUPPLIER like '%${claimsSheet.claims_supplier}%'
+      </if>
+      <if test="claimsSheet.creation_time != null and claimsSheet.creation_time !=''" >
+        and TO_CHAR(cs.CREATION_TIME,'YYYY-MM-DD') = '${claimsSheet.creation_time}'
+      </if>
+      <if test="claimsSheet.is_response != null and claimsSheet.is_response !=''" >
+        and cs.IS_RESPONSE like '%${claimsSheet.is_response}%'
+      </if>
+      <if test="claimsSheet.is_close != null and claimsSheet.is_close !=''" >
+        and cs.IS_CLOSE like '%${claimsSheet.is_close}%'
+      </if>
+      <if test="claimsSheet.booked_month != null and claimsSheet.booked_month !=''" >
+        and cs.BOOKED_MONTH like '%${claimsSheet.booked_month}%'
+      </if>
+       order by cs.CREATION_TIME desc
+  </select> 
+  
+  <select id="getByReworkId" resultMap="BaseResultMap" parameterType="com.peg.model.ReworkSheet" >
+		select  cs.ID,cs.CLAIMS_TYPE,cs.REWORK_ID,rs.REWORK_NUMBER,
+				TO_CHAR(rs.CREATION_TIME,'YYYY-MM-DD') AS REWORK_CREATION_TIME,
+				cs.DUTY_DEPART,cs.DUTY_PROPORTION,cs.REWORK_REASON,cs.REWORK_COUNT,
+				cs.PRODUCT_CATEGORY,cs.CLAIMS_NUMBER,cs.CLAIMS_SUPPLIER,CLAIMS_REASON,
+				cs.CLAIMS_AMOUNT,cs.CLAIMS_APPLICANT,TO_CHAR(cs.CREATION_TIME,'YYYY-MM-DD') AS CREATION_TIME,
+				cs.REGISTRAR,cs.IS_RESPONSE,cs.RESPONSE_REASON,cs.IS_SIGN_IN,cs.ACTUAL_CLAIM_AMOUNT,
+  				cs.BOOKED_MONTH,cs.IS_CLOSE,cs.REMARK from CLAIMS_SHEET cs,REWORK_SHEET rs
+  		where 1=1 and  cs.REWORK_ID = rs.ID(+) and cs.REWORK_ID = #{id,jdbcType=VARCHAR}
+  </select>
+  
+    <select id="getByid" resultMap="BaseResultMap" parameterType="com.peg.model.ClaimsSheet" >
+		select  cs.ID,cs.CLAIMS_TYPE,cs.REWORK_ID,rs.REWORK_NUMBER,
+				TO_CHAR(rs.CREATION_TIME,'YYYY-MM-DD') AS REWORK_CREATION_TIME,
+				cs.DUTY_DEPART,cs.DUTY_PROPORTION,cs.REWORK_REASON,cs.REWORK_COUNT,
+				cs.PRODUCT_CATEGORY,cs.CLAIMS_NUMBER,cs.CLAIMS_SUPPLIER,CLAIMS_REASON,
+				cs.CLAIMS_AMOUNT,cs.CLAIMS_APPLICANT,TO_CHAR(cs.CREATION_TIME,'YYYY-MM-DD') AS CREATION_TIME,
+				cs.REGISTRAR,cs.IS_RESPONSE,cs.RESPONSE_REASON,cs.IS_SIGN_IN,cs.ACTUAL_CLAIM_AMOUNT,
+  				cs.BOOKED_MONTH,cs.IS_CLOSE,cs.REMARK from CLAIMS_SHEET cs,REWORK_SHEET rs
+  		where 1=1 and  cs.REWORK_ID = rs.ID(+) and cs.ID = #{id,jdbcType=VARCHAR}
+  </select>
+  
+   <select id="getByClaimsNumber" resultMap="BaseResultMap" parameterType="com.peg.model.ClaimsSheet" >
+		select  cs.ID,cs.CLAIMS_TYPE,cs.REWORK_ID,rs.REWORK_NUMBER,
+				TO_CHAR(rs.CREATION_TIME,'YYYY-MM-DD') AS REWORK_CREATION_TIME,
+				cs.DUTY_DEPART,cs.DUTY_PROPORTION,cs.REWORK_REASON,cs.REWORK_COUNT,
+				cs.PRODUCT_CATEGORY,cs.CLAIMS_NUMBER,cs.CLAIMS_SUPPLIER,CLAIMS_REASON,
+				cs.CLAIMS_AMOUNT,cs.CLAIMS_APPLICANT,TO_CHAR(cs.CREATION_TIME,'YYYY-MM-DD') AS CREATION_TIME,
+				cs.REGISTRAR,cs.IS_RESPONSE,cs.RESPONSE_REASON,cs.IS_SIGN_IN,cs.ACTUAL_CLAIM_AMOUNT,
+  				cs.BOOKED_MONTH,cs.IS_CLOSE,cs.REMARK from CLAIMS_SHEET cs,REWORK_SHEET rs
+  		where 1=1 and  cs.REWORK_ID = rs.ID(+) and cs.CLAIMS_NUMBER = #{claims_number,jdbcType=VARCHAR}
+  </select>
+  
+    <insert id="insertSelective" parameterType="com.peg.model.ClaimsSheet" >
+    insert into CLAIMS_SHEET
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="claims_type != null" >
+        CLAIMS_TYPE,
+      </if>
+      <if test="rework_id != null" >
+        REWORK_ID,
+      </if>
+      <if test="rework_number != null" >
+        REWORK_NUMBER,
+      </if>
+      <if test="duty_depart != null" >
+        DUTY_DEPART,
+      </if>
+      <if test="duty_proportion != null" >
+        DUTY_PROPORTION,
+      </if>
+      <if test="rework_reason != null" >
+        REWORK_REASON,
+      </if>
+      <if test="rework_count != null" >
+        REWORK_COUNT,
+      </if>
+      <if test="product_category != null" >
+        PRODUCT_CATEGORY,
+      </if>
+      <if test="claims_number != null" >
+        CLAIMS_NUMBER,
+      </if>
+      <if test="claims_supplier != null" >
+        CLAIMS_SUPPLIER,
+      </if>
+      <if test="claims_reason != null" >
+        CLAIMS_REASON,
+      </if>
+      <if test="claims_amount != null" >
+        CLAIMS_AMOUNT,
+      </if>
+      <if test="claims_applicant != null" >
+        CLAIMS_APPLICANT,
+      </if>
+      <if test="registrar != null" >
+        REGISTRAR,
+      </if>
+      <if test="is_response != null" >
+        IS_RESPONSE,
+      </if>
+      <if test="response_reason != null" >
+        RESPONSE_REASON,
+      </if>
+      <if test="is_sign_in != null" >
+        IS_SIGN_IN,
+      </if>
+      <if test="actual_claim_amount != null" >
+        ACTUAL_CLAIM_AMOUNT,
+      </if>
+      <if test="booked_month != null" >
+        BOOKED_MONTH,
+      </if>
+      <if test="is_close != null" >
+        IS_CLOSE,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="claims_type != null" >
+        #{claims_type,jdbcType=VARCHAR},
+      </if>
+      <if test="rework_id != null" >
+        #{rework_id,jdbcType=VARCHAR},
+      </if>
+      <if test="rework_number != null" >
+        #{rework_number,jdbcType=VARCHAR},
+      </if>
+      <if test="duty_depart != null" >
+        #{duty_depart,jdbcType=VARCHAR},
+      </if>
+      <if test="duty_proportion != null" >
+        #{duty_proportion,jdbcType=VARCHAR},
+      </if>
+      <if test="rework_reason != null" >
+        #{rework_reason,jdbcType=VARCHAR},
+      </if>
+      <if test="rework_count != null" >
+        #{rework_count,jdbcType=VARCHAR},
+      </if>
+      <if test="product_category != null" >
+        #{product_category,jdbcType=VARCHAR},
+      </if>
+      <if test="claims_number != null" >
+        #{claims_number,jdbcType=VARCHAR},
+      </if>
+      <if test="claims_supplier != null" >
+        #{claims_supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="claims_reason != null" >
+        #{claims_reason,jdbcType=VARCHAR},
+      </if>
+      <if test="claims_amount != null" >
+        #{claims_amount,jdbcType=VARCHAR},
+      </if>
+      <if test="claims_applicant != null" >
+        #{claims_applicant,jdbcType=VARCHAR},
+      </if>
+      <if test="registrar != null" >
+        #{registrar,jdbcType=VARCHAR},
+      </if>
+      <if test="is_response != null" >
+        #{is_response,jdbcType=VARCHAR},
+      </if>
+      <if test="response_reason != null" >
+        #{response_reason,jdbcType=VARCHAR},
+      </if>
+      <if test="is_sign_in != null" >
+        #{is_sign_in,jdbcType=VARCHAR},
+      </if>
+      <if test="actual_claim_amount != null" >
+        #{actual_claim_amount,jdbcType=VARCHAR},
+      </if>
+      <if test="booked_month != null" >
+        #{booked_month,jdbcType=VARCHAR},
+      </if>
+      <if test="is_close != null" >
+        #{is_close,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByIdSelective" parameterType="com.peg.model.ClaimsSheet" >
+    update CLAIMS_SHEET
+    <set >
+      <if test="claims_type != null" >
+        CLAIMS_TYPE = #{claims_type,jdbcType=VARCHAR},
+      </if>
+      <if test="rework_id != null" >
+        REWORK_ID = #{rework_id,jdbcType=VARCHAR},
+      </if>
+      <if test="rework_number != null" >
+        REWORK_NUMBER = #{rework_number,jdbcType=VARCHAR},
+      </if>
+      <if test="duty_depart != null" >
+        DUTY_DEPART = #{duty_depart,jdbcType=VARCHAR},
+      </if>
+      <if test="duty_proportion != null" >
+        DUTY_PROPORTION = #{duty_proportion,jdbcType=VARCHAR},
+      </if>
+      <if test="rework_reason != null" >
+        REWORK_REASON = #{rework_reason,jdbcType=VARCHAR},
+      </if>
+      <if test="rework_count != null" >
+        REWORK_COUNT = #{rework_count,jdbcType=VARCHAR},
+      </if>
+      <if test="product_category != null" >
+        PRODUCT_CATEGORY = #{product_category,jdbcType=VARCHAR},
+      </if>
+      <if test="claims_number != null" >
+        CLAIMS_NUMBER = #{claims_number,jdbcType=VARCHAR},
+      </if>
+      <if test="claims_supplier != null" >
+        CLAIMS_SUPPLIER = #{claims_supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="claims_reason != null" >
+        CLAIMS_REASON = #{claims_reason,jdbcType=VARCHAR},
+      </if>
+      <if test="claims_amount != null" >
+        CLAIMS_AMOUNT = #{claims_amount,jdbcType=VARCHAR},
+      </if>
+      <if test="claims_applicant != null" >
+        CLAIMS_APPLICANT = #{claims_applicant,jdbcType=VARCHAR},
+      </if>
+      <if test="registrar != null" >
+        REGISTRAR = #{registrar,jdbcType=VARCHAR},
+      </if>
+      <if test="is_response != null" >
+        IS_RESPONSE = #{is_response,jdbcType=VARCHAR},
+      </if>
+      <if test="response_reason != null" >
+        RESPONSE_REASON = #{response_reason,jdbcType=VARCHAR},
+      </if>
+      <if test="is_sign_in != null" >
+        IS_SIGN_IN = #{is_sign_in,jdbcType=VARCHAR},
+      </if>
+      <if test="actual_claim_amount != null" >
+        ACTUAL_CLAIM_AMOUNT = #{actual_claim_amount,jdbcType=VARCHAR},
+      </if>
+      <if test="booked_month != null" >
+        BOOKED_MONTH = #{booked_month,jdbcType=VARCHAR},
+      </if>
+      <if test="is_close != null" >
+        IS_CLOSE = #{is_close,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <delete id="deleteById" parameterType="com.peg.model.ClaimsSheet" >
+    delete from CLAIMS_SHEET
+    where 1=1 and ID = #{id,jdbcType=VARCHAR}
+  </delete>
+</mapper>  

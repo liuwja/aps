@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.ProductInstallMapper">
+	<resultMap id="BaseResultMap" type="com.peg.model.ProductInstall">
+		<result column="serial_number" property="partCode" jdbcType="VARCHAR" />
+		<result column="intall_date" property="intallDate" jdbcType="VARCHAR" />
+		<result column="service_order" property="serivceOrder" jdbcType="TIMESTAMP" />
+		<result column="product_type" property="productType" jdbcType="VARCHAR" />
+		<result column="description" property="decription" jdbcType="TIMESTAMP" />
+		<result column="n_Product_Type" property="nProductType" jdbcType="VARCHAR" />
+		<result column="part_Number" property="partNumber" jdbcType="VARCHAR" />
+		<result column="part_Family" property="partFamily" jdbcType="VARCHAR" />
+		<result column="part_Type" property="partType" jdbcType="VARCHAR" />
+		<result column="is_Out" property="isOut" jdbcType="VARCHAR" />
+		<result column="region" property="region" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		serial_number, intall_date, service_order, product_type, description, n_Product_Type, 
+		part_Number, part_Family, part_Type, is_Out, region
+	</sql>
+	
+	<select id="findRecordAllByPage" resultMap="BaseResultMap">
+		<![CDATA[
+			select serial_number, service_order, product_type, PART_NUMBER, PART_FAMILY, PART_TYPE, PART_NAME as description, REGION, INSTALL_MONTH as intall_date from t_install WHERE 1 = 1
+		]]>
+		<if test="ins.partCode != null and ins.partCode !=''">
+			and serial_number like '%${ins.partCode}%'
+		</if>
+		<if test="ins.productType != null and ins.productType !=''">
+			and product_type like '%${ins.productType}%'
+		</if>
+		<if test="ins.partType != null and ins.partType != ''" >
+			and part_Type in (${ins.partType})
+	   	</if>
+	   	<if test="ins.decription != null and ins.decription!=''">
+			and part_name like '%${ins.decription}%'
+		</if>
+		<if test="ins.region != null and ins.region != ''">
+			and region in (${ins.region})
+		</if>
+		<if test="ins.startTime != null and ins.startTime != ''">
+		    <![CDATA[ and to_date(INSTALL_MONTH,'yyyy-mm') >= to_date(#{ins.startTime},'yyyy-mm') ]]>
+		</if>
+		<if test="ins.endTime != null and ins.endTime != ''">
+		    <![CDATA[ and to_date(INSTALL_MONTH,'yyyy-mm') <= to_date(#{ins.endTime},'yyyy-mm') ]]>
+		</if>
+		order by INSTALL_MONTH
+	</select>
+	
+	<select id="findAllByPage" resultMap="BaseResultMap">
+		select  
+		<include refid="Base_Column_List" />
+		  from crm_unit_install 
+		    <where>
+			<if test="ins.partCode != null and ins.partCode !=''">
+				serial_number like '%${ins.partCode}%'
+			</if>
+			<if test="ins.productType != null and ins.productType !=''">
+				and product_type like '%${ins.productType}%'
+			</if>
+			<if test="ins.nProductType != null and ins.nProductType !=''">
+				and n_Product_Type like '%${ins.nProductType}%'
+			</if>
+			<if test="ins.partType != null and ins.partType != ''" >
+		       and part_Type in (${ins.partType})
+		   </if>
+			<if test="ins.decription != null and ins.decription!=''">
+				and description like '%${ins.decription}%'
+			</if>
+			<if test="ins.region != null and ins.region != ''">
+				and region in (${ins.region})
+			</if>
+			<if test="ins.startTime != null and ins.startTime != ''">
+			    <![CDATA[ and to_char(intall_date,'yyyy-mm-dd') >= #{ins.startTime} ]]>
+			</if>
+			<if test="ins.endTime != null and ins.endTime != ''">
+			    <![CDATA[ and to_char(intall_date,'yyyy-mm-dd') <= #{ins.endTime} ]]>
+			</if>
+			and is_Out is null
+			</where>
+		order by intall_date 
+	</select>
+</mapper>

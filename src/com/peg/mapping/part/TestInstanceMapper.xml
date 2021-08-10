@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.part.TestInstanceMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.part.TestInstance" >
+    <id column="id" property="id" jdbcType="DECIMAL" />
+    <result column="lot_name" property="lotName" jdbcType="VARCHAR" />
+    <result column="ware_house" property="wareHouse" jdbcType="VARCHAR" />
+    <result column="part_version" property="partVersion" jdbcType="VARCHAR" />
+    <result column="part_type" property="partType" jdbcType="VARCHAR" />
+    <result column="part_number" property="partNumber" jdbcType="VARCHAR" />
+    <result column="part_name" property="partName" jdbcType="VARCHAR" />
+    <result column="product_type" property="productType" jdbcType="VARCHAR" />
+    <result column="supplier_number" property="supplierCode" jdbcType="VARCHAR" />
+    <result column="supplier_name" property="supplier" jdbcType="VARCHAR" />
+    <result column="supplier_brief" property="supplierBrief" jdbcType="VARCHAR" />
+    <result column="date_t" property="dateT" jdbcType="VARCHAR" />
+    <result column="is_new" property="isNew" jdbcType="VARCHAR" />
+    <result column="result_s" property="resultS" jdbcType="VARCHAR" />
+    <result column="total_lot" property="totalLot" jdbcType="DECIMAL" />
+    <result column="defect_lot" property="defectLot" jdbcType="DECIMAL" />
+    <result column="total_qty" property="totalQty" jdbcType="DECIMAL" />
+    <result column="defect_qty" property="defectQty" jdbcType="DECIMAL" />
+    <result column="aspect_lot" property="aspectLot" jdbcType="DECIMAL" />
+    <result column="size_lot" property="sizeLot" jdbcType="DECIMAL" />
+    <result column="property_lot" property="propertyLot" jdbcType="DECIMAL" />
+    <result column="other_lot" property="otherLot" jdbcType="DECIMAL" />
+     <result column="aspect_qty" property="aspectQty" jdbcType="DECIMAL" />
+    <result column="size_qty" property="sizeQty" jdbcType="DECIMAL" />
+    <result column="property_qty" property="propertyQty" jdbcType="DECIMAL" />
+    <result column="other_qty" property="otherQty" jdbcType="DECIMAL" />
+    <result column="aspect_type" property="aspectType" jdbcType="VARCHAR" />
+    <result column="size_type" property="sizeType" jdbcType="VARCHAR" />
+    <result column="property_type" property="propertyType" jdbcType="VARCHAR" />
+    <result column="other_type" property="otherType" jdbcType="VARCHAR" />
+    <result column="property_tnum" property="propertyTnum" jdbcType="DECIMAL" />
+    <result column="property_dnum" property="propertyDnum" jdbcType="DECIMAL" />
+    <result column="size_tnum" property="sizeTnum" jdbcType="DECIMAL" />
+    <result column="size_dnum" property="sizeDnum" jdbcType="DECIMAL" />
+    <result column="aspect_tnum" property="aspectTnum" jdbcType="DECIMAL" />
+    <result column="aspect_dnum" property="aspectDnum" jdbcType="DECIMAL" />
+    <result column="other_tnum" property="otherTnum" jdbcType="DECIMAL" />
+    <result column="other_dnum" property="otherDnum" jdbcType="DECIMAL" />
+    <result column="part_class" property="partClass" jdbcType="VARCHAR" />
+    <result column="new_part_number" property="newPartNumber" jdbcType="VARCHAR" />
+    <result column="new_supplier_number" property="newSupplierNumber" jdbcType="VARCHAR" />
+    <result column="small_batch" property="smallBatch" jdbcType="VARCHAR" />
+    <result column="source" property="source" jdbcType="VARCHAR" />
+    <result column="rohs" property="rohs" jdbcType="VARCHAR" />
+    
+    <result column="production_line_name" property="productionLineName" jdbcType="VARCHAR" />
+    <result column="location" property="location" jdbcType="VARCHAR" />
+    <result column="defect" property="defect" jdbcType="VARCHAR" />
+    <result column="class1" property="class1" jdbcType="VARCHAR" />
+    <result column="class1" property="class1" jdbcType="VARCHAR" />
+    
+    <result column="week" property="week" jdbcType="DECIMAL" />
+    <result column="factory" property="factory" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, product_type, supplier_name, part_type, part_name,date_t,is_new,lot_name,supplier_number,part_number,total_lot,defect_lot,
+    total_qty,defect_qty,aspect_lot,size_lot,property_lot,other_lot,aspect_qty,size_qty,property_qty,other_qty,part_number,
+    ware_house,part_version,result_s,aspect_type,size_type,property_type,other_type
+  </sql>
+ 
+  <select id="getProductType" resultMap="BaseResultMap">
+     select t.machine_type as product_type from T_MACHINE_TYPE t
+  </select>
+  <select id="getSupplier" resultMap="BaseResultMap">
+     select t.account_name as supplier_number,t.description as supplier_name  from ACCOUNT t
+     order by t.description
+  </select>
+  
+  <select id="getPartType" resultMap="BaseResultMap">
+   select distinct(up.part_type_s) as part_type from uda_part up where up.part_type_s is not null order by up.part_type_s
+  </select>
+  
+   <select id="getPartAllByPage" resultMap="BaseResultMap">
+   <!-- 
+     select t.part_key as id, t.part_number,t.description as part_name from (
+     select * from part p where p.part_number like '12%' or p.part_number like '13%'
+         or p.part_number like '14%' or p.part_number like '15%' 
+         or p.part_number like '16%'
+     ) t
+      -->
+     select t.part_key as id, t.part_number,t.description as part_name from part t
+     where 1=1
+       <if test="hashMap.partNumber !=null">
+         and t.part_number like '%${hashMap.partNumber}%'
+       </if>
+        <if test="hashMap.partName !=null">
+        and  t.description like '%${hashMap.partName}%'
+       </if>
+       <if test="hashMap.isConsumed !=null">
+       	and t.consumption_type like '%${hashMap.isConsumed}%'
+       </if>
+       <choose>
+          <when test="hashMap.distinction != null">
+               <if test="hashMap.partList !=null">
+		        and  substr(t.part_number,0,length(t.part_number)-1) in (${hashMap.partList})
+		       </if>
+          </when>
+          <otherwise>
+               <if test="hashMap.partList !=null">
+		          and  t.part_number in (${hashMap.partList})
+		       </if>
+          </otherwise>
+       </choose>
+      
+     order by t.part_number 
+  </select>
+  <!-- 物料一级分类 -->
+  <select id="getPartCategoryOne" resultType="com.peg.model.part.PartCategory">
+     SELECT DISTINCT S.PART_CLASS_S categoryName FROM AT_SUPPLIER@MES_TEST_LINK S
+     order by S.PART_CLASS_S
+  </select>
+  
+     <select id="getPartCategoryByPage" resultType="com.peg.model.part.PartCategory">
+     SELECT T.categoryName,T.categoryTwoName,ROWNUM id FROM (SELECT DISTINCT S.PART_CLASS_S categoryName,PART_CLASS2_S categoryTwoName FROM AT_SUPPLIER@MES_TEST_LINK S
+     where 1=1
+       <if test="hashMap.partCategoryName !=null and hashMap.partCategoryName != ''">
+         and S.PART_CLASS_S = #{hashMap.partCategoryName}
+       </if>
+     order by S.PART_CLASS_S) T
+  </select>
+  
+  <select id="getTestInstance"   resultMap="BaseResultMap">
+   ${sql}   
+  </select>
+  
+  <select id="getWeek" resultMap="BaseResultMap">
+   select to_char(to_date(#{date},'yyyy-mm-dd'),'iw') as week  from dual
+  </select>
+  
+  <select id="getSupplierByPage" resultMap="BaseResultMap">
+    select t.account_key as id, t.account_name as supplier_number,t.description as supplier_name  from ACCOUNT t
+    where 1=1
+        and t.account_name like '1%'
+       <if test="hashMap.factory !=null">
+        and  t.ca0_addr_name like '%${hashMap.factory}%'
+       </if>
+        <if test="hashMap.supplierClass !=null">
+        
+       </if>
+       <if test="hashMap.supplierNumber !=null">
+        and  t.account_name like '%${hashMap.supplierNumber}%'
+       </if>
+       <if test="hashMap.supplierName !=null">
+        and  t.description like '%${hashMap.supplierName}%'
+       </if>
+       <if test="hashMap.supplierList != null">
+          and t.account_name in (${hashMap.supplierList})
+       </if>
+    order by t.ca0_addr_name, t.description
+  </select>
+  <select id="getMesProductType" resultMap="BaseResultMap">
+     select t.factory_s as factory,t.name_s as product_type from at_partline@mes_test_link t
+  </select>
+  
+  <select id="findAllByPage" resultMap="BaseResultMap">
+  select t.* from t_test_instance_record t where 1=1
+       <if test="hashMap.factory != null ">
+            <if test="hashMap.productType ==null">
+                and t.product_type in (select t.name_s  from at_partline@mes_test_link t where t.factory_s = #{hashMap.factory})
+            </if>
+       </if>
+       <if test="hashMap.productType !=null">
+         and t.product_type = #{hashMap.productType}
+       </if>
+       <if test="hashMap.supplierNumber !=null">
+        <!--  and t.supplier_number in (${hashMap.supplierNumber}) -->
+        and t.new_supplier_number in (${hashMap.supplierNumber})
+       </if>
+       <if test="hashMap.supplier !=null">
+         and t.supplier_name in (${hashMap.supplier})
+       </if>
+       <if test="hashMap.partType !=null">
+        and  t.part_type in (${hashMap.partType})
+       </if>
+       <if test="hashMap.partClass !=null">
+        and t.part_class = #{hashMap.partClass}
+       </if>
+       <if test="hashMap.partName !=null">
+        and  t.part_name in (${hashMap.partName})
+       </if>
+        <if test="hashMap.partNumber !=null ">
+           <choose>
+               <when test="hashMap.partVersion =='否'.toString() ">
+                 and substr(t.new_part_number,0,length(t.new_part_number)-1) in (${hashMap.partNumber})
+               </when>
+               <otherwise>
+                  and  t.new_part_number in (${hashMap.partNumber})
+               </otherwise>
+           </choose>
+          
+       </if>
+       <if test="hashMap.isNew !=null">
+       <!--  and  t.is_new = #{hashMap.isNew} -->
+       and  t.is_new like '%${hashMap.isNew}%'
+       </if>
+       <if test="hashMap.startDate !=null and hashMap.endDate != null">
+        and  substr(t.date_t,0,10) between #{hashMap.startDate} and #{hashMap.endDate}
+       </if>
+       <if test="hashMap.lotStartTime !=null and hashMap.lotEndTime != null">
+        and  substr(lot_name,11,3) between  #{hashMap.lotStartTime} and #{hashMap.lotEndTime}
+       </if>
+       <if test="hashMap.resultS!=null and hashMap.resultS!=''">
+        and  t.result_s = #{hashMap.resultS}
+       </if>
+       <if test="hashMap.source!=null and hashMap.source!=''">
+        and  t.source = #{hashMap.source}
+       </if>
+       <if test="hashMap.smallBatch!=null">
+        and  t.small_batch = #{hashMap.smallBatch}
+       </if>
+       <if test="hashMap.defectType!=null">
+         and  t.result_s ='该批不合格'
+         <if test="hashMap.propertyType !=null">
+           and t.property_type = '不合格'
+         </if>
+         <if test="hashMap.sizeType !=null">
+           and t.size_type = '不合格'
+         </if>
+         <if test="hashMap.aspectType !=null">
+           and t.aspect_type = '不合格'
+         </if>
+         <if test="hashMap.otherType !=null">
+           and t.other_type = '不合格'
+         </if>
+       </if>
+       order by t.date_t
+  </select>
+  
+ <select id="getErpPartReturn" resultMap="BaseResultMap">
+  <choose>
+    <when test="test.analysisType=='1'.toString()">
+         select t.supplier_name ,t.supplier_number_n,sum(t.return_number) as defect_lot from erp_part_return t
+    </when>
+    <otherwise>
+       select t.supplier_name ,t.supplier_number_n,count(1) as defect_lot from erp_part_return t
+    </otherwise>
+  </choose>
+     where 1=1
+     <if test="test.supplierCode != null and test.supplierCode != ''">
+       and t.supplier_number_n in (${test.supplierCode})
+     </if>
+     <if test="test.partNumber != null and test.partNumber != ''">
+          <choose>
+               <when test="test.partVersion =='否'.toString() ">
+                 and substr(t.part_number_n,0,length(t.part_number_n)-1) in (${test.partNumber})
+               </when>
+               <otherwise>
+                  and t.part_number_n in (${test.partNumber})
+               </otherwise>
+           </choose>
+     </if>
+     
+    <if test="test.partType != null and test.partType != ''">
+     and t.part_type in (${test.partType})
+     </if>
+    <if test="test.productType != null and test.productType != ''">
+     and t.production_type =  #{test.productType}
+     </if>
+    <if test="test.partClass != null and test.partClass !=''">
+     and t.part_class =  #{test.partClass}
+     </if>
+     <if test="test.isNew != null and test.isNew !=''">
+     and t.product_maturity =  #{test.isNew}
+     </if>
+       <choose>
+     <when test="test.dateType == '天'.toString() ">
+          <if test="test.dateT != null and test.dateT != ''">
+           and t.return_date = #{test.dateT}
+          </if>
+     </when>
+     <when test="test.dateType eq '周'.toString()">
+           <if test="test.dateT != null and test.dateT != ''">
+           and to_char(to_date(t.return_date,'yyyy-mm-dd'),'iw') = to_char(to_date(#{test.dateT},'yyyy-mm-dd'),'iw')
+          </if>
+     </when>
+     <when test="test.dateType eq '月'.toString()">
+           <if test="test.dateT != null and test.dateT != ''">
+           and substr(t.return_date,0,7) = #{test.dateT}
+          </if>
+     </when>
+     <when test="test.dateType eq '年'.toString()">
+           <if test="test.dateT != null and test.dateT != ''">
+            and substr(t.return_date,0,4) = #{test.dateT}
+          </if>
+     </when>
+  </choose>
+  group by t.supplier_number,t.supplier_name,t.supplier_number_n  order by defect_lot desc
+  </select> 
+  
+  <select id="getTotalQty" resultMap="BaseResultMap">
+  <if test="test.analysisType == '0'.toString()">
+     select count(1) total_lot,nvl(sum(decode(result_s,'该批不合格',1,0)),0) defect_lot from t_test_instance_record
+  </if>
+  <if test="test.analysisType == '1'.toString()">
+	select sum(decode(t.result_s,'该批不合格', decode(t.property_type,'不合格',t.property_tnum,'合格',
+	decode(t.size_type,'不合格',t.size_tnum,'合格', decode(t.aspect_type,'不合格',t.aspect_tnum,'合格',
+	decode(t.other_type,'不合格',t.other_tnum,'合格',0,0),0),0),0),0)) total_lot, sum(decode(t.result_s,'该批不合格',
+	decode(t.property_type,'不合格',t.property_dnum,'合格', decode(t.size_type,'不合格',t.size_dnum,'合格', 
+	decode(t.aspect_type,'不合格',t.aspect_dnum,'合格', decode(t.other_type,'不合格',t.other_dnum,'合格',0,0),0),0),0),0)) defect_lot 
+	from t_test_instance_record t 
+  </if>
+   <choose>
+     <when test="test.dateType == '天'.toString() ">
+          <if test="test.dateT != null and test.dateT != ''">
+           where to_date(substr(date_t,0,10),'yyyy-mm-dd')
+           between to_date(#{test.dateT},'yyyy-mm-dd')-30 and to_date(#{test.dateT},'yyyy-mm-dd')
+          </if>
+     </when>
+     <when test="test.dateType eq '周'.toString()">
+           <if test="test.dateT != null and test.dateT != ''">
+           where to_char(to_date(substr(date_t,0,10),'yyyy-mm-dd'),'iw')
+           between to_char(to_date(#{test.dateT},'yyyy-mm-dd'),'iw')-30 and to_char(to_date(#{test.dateT},'yyyy-mm-dd'),'iw')
+          </if>
+     </when>
+     <when test="test.dateType eq '月'.toString()">
+           <if test="test.dateT != null and test.dateT != ''">
+           where to_date(substr(date_t,0,7),'yyyy-mm')
+           between add_months(to_date(#{test.dateT},'yyyy-mm'),-30) and to_date(#{test.dateT},'yyyy-mm')
+          </if>
+     </when>
+     <when test="test.dateType eq '年'.toString()">
+           <if test="test.dateT != null and test.dateT != ''">
+           where to_date(substr(date_t,0,4),'yyyy')
+           between add_months(to_date(#{test.dateT},'yyyy'),-300) and to_date(#{test.dateT},'yyyy')
+          </if>
+     </when>
+  </choose>
+       <if test="test.factory != null and test.factory !='' ">
+            <if test="test.productType ==null or test.productType ==''">
+                and product_type in (select t.name_s  from at_partline@mes_test_link t where t.factory_s = #{test.factory})
+            </if>
+       </if>
+       <if test="test.productType !=null and test.productType !=''">
+         and product_type = #{test.productType}
+       </if>
+       <if test="test.supplierCode !=null and test.supplierCode !=''">
+        <!--  and t.supplier_number in (${test.supplierNumber}) -->
+        and new_supplier_number in (${test.supplierCode})
+       </if>
+     
+       <if test="test.partType !=null and test.partType !=''">
+        and  part_type in (${test.partType})
+       </if>
+       <if test="test.partClass !=null and test.partClass !=''">
+        and part_class = #{test.partClass}
+       </if>    
+        <if test="test.partNumber !=null and test.partNumber !=''">
+           <choose>
+               <when test="test.partVersion =='否'.toString() and test.distinction != '1'.toString()">
+                 and substr(new_part_number,0,length(new_part_number)-1) in (${test.partNumber})
+               </when>
+               <otherwise>
+                  and  new_part_number in (${test.partNumber})
+               </otherwise>
+           </choose>
+          
+       </if>
+       <if test="test.isNew !=null and test.isNew !=''">
+        <!-- and  is_new = #{test.isNew} -->
+        and  is_new like '%${test.isNew}%'
+       </if>
+       <if test="test.lotStartTime !=null and test.lotStartTime !='' and test.lotEndTime != null and test.lotEndTime !=''">
+        and  substr(lot_name,11,3) between  #{test.lotStartTime} and #{test.lotEndTime}
+       </if>
+  </select>
+  
+   <select id="getPartTypeByPage" resultMap="BaseResultMap">
+     select distinct t.category as factory,t.uda_1 as part_type from part_class t
+     where 1=1
+       <if test="hashMap.factory !=null">
+         and t.category like '%${hashMap.factory}%'
+       </if>
+        <if test="hashMap.partType !=null">
+        and  t.uda_1 like '%${hashMap.partType }%'
+       </if>
+     order by t.category,t.uda_1
+  </select>
+  
+  <delete id="deleteTestInstanceByPeriod">
+    delete from  t_test_instance_record
+    where substr(date_t,0,10) between #{startTime} and #{endTime}
+  </delete>
+  
+  <insert id="insertTestInstanceByPeriod" statementType="CALLABLE">
+     <![CDATA[  
+          {call insert_lot_check_info(#{startTime,mode=IN,jdbcType=VARCHAR},#{endTime,mode=IN,jdbcType=VARCHAR})}  
+        ]]>   
+  </insert>
+  
+  <select id="getPeriodTotalQty" resultMap="BaseResultMap">
+  <if test="test.analysisType == '0'.toString()">
+     select count(1) total_lot,nvl(sum(decode(result_s,'该批不合格',1,0)),0) defect_lot from t_test_instance_record
+  </if>
+  <if test="test.analysisType == '1'.toString()">
+	select sum(decode(t.result_s,'该批不合格', decode(t.property_type,'不合格',t.property_tnum,'合格',
+	decode(t.size_type,'不合格',t.size_tnum,'合格', decode(t.aspect_type,'不合格',t.aspect_tnum,'合格',
+	decode(t.other_type,'不合格',t.other_tnum,'合格',0,0),0),0),0),0)) total_lot, sum(decode(t.result_s,'该批不合格',
+	decode(t.property_type,'不合格',t.property_dnum,'合格', decode(t.size_type,'不合格',t.size_dnum,'合格', 
+	decode(t.aspect_type,'不合格',t.aspect_dnum,'合格', decode(t.other_type,'不合格',t.other_dnum,'合格',0,0),0),0),0),0)) defect_lot 
+	from t_test_instance_record t 
+  </if>
+   <choose>
+     <when test="test.dateType == '天'.toString() ">
+          <if test="test.dateT != null and test.dateT != ''">
+           where to_date(substr(date_t,0,10),'yyyy-mm-dd') = to_date(#{test.dateT},'yyyy-mm-dd')
+          </if>
+     </when>
+     <when test="test.dateType eq '周'.toString()">
+           <if test="test.dateT != null and test.dateT != ''">
+           where to_char(to_date(substr(date_t,0,10),'yyyy-mm-dd'),'iw') = to_char(to_date(#{test.dateT},'yyyy-mm-dd'),'iw')
+          </if>
+     </when>
+     <when test="test.dateType eq '月'.toString()">
+           <if test="test.dateT != null and test.dateT != ''">
+           where to_date(substr(date_t,0,7),'yyyy-mm') = to_date(#{test.dateT},'yyyy-mm')
+          </if>
+     </when>
+     <when test="test.dateType eq '年'.toString()">
+           <if test="test.dateT != null and test.dateT != ''">
+           where to_date(substr(date_t,0,4),'yyyy') = to_date(#{test.dateT},'yyyy')
+          </if>
+     </when>
+  </choose>
+       <if test="test.factory != null and test.factory !='' ">
+            <if test="test.productType ==null or test.productType ==''">
+                and product_type in (select t.name_s  from at_partline@mes_test_link t where t.factory_s = #{test.factory})
+            </if>
+       </if>
+       <if test="test.productType !=null and test.productType !=''">
+         and product_type = #{test.productType}
+       </if>
+       <if test="test.supplierCode !=null and test.supplierCode !=''">
+        <!--  and t.supplier_number in (${test.supplierNumber}) -->
+        and new_supplier_number in (${test.supplierCode})
+       </if>
+     
+       <if test="test.partType !=null and test.partType !=''">
+        and  part_type in (${test.partType})
+       </if>
+       <if test="test.partClass !=null and test.partClass !=''">
+        and part_class = #{test.partClass}
+       </if>    
+        <if test="test.partNumber !=null and test.partNumber !=''">
+           <choose>
+               <when test="test.partVersion =='否'.toString() and test.distinction != '1'.toString() ">
+                 and substr(new_part_number,0,length(new_part_number)-1) in (${test.partNumber})
+               </when>
+               <otherwise>
+                  and  new_part_number in (${test.partNumber})
+               </otherwise>
+           </choose>
+          
+       </if>
+       <if test="test.isNew !=null and test.isNew !=''">
+        <!-- and  is_new = #{test.isNew} -->
+        and  is_new like '%${test.isNew}%'
+       </if>
+       <if test="test.lotStartTime !=null and test.lotStartTime !='' and test.lotEndTime != null and test.lotEndTime !=''">
+        and  substr(lot_name,11,3) between  #{test.lotStartTime} and #{test.lotEndTime}
+       </if>     
+  </select>
+  
+</mapper>

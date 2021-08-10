@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.system.SysMesUserMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.system.SysMesUser" >
+    <result column="USER_KEY" property="userKey" jdbcType="DECIMAL" />
+    <result column="SITE_NUM" property="siteNum" jdbcType="DECIMAL" />
+    <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+    <result column="FIRST_NAME" property="firstName" jdbcType="VARCHAR" />
+    <result column="LAST_NAME" property="lastName" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="CATEGORY" property="category" jdbcType="VARCHAR" />
+    <result column="PASSWORD_MODIFIABLE" property="passwordModifiable" jdbcType="DECIMAL" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="STATUS_CHANGE_TIME" property="statusChangeTime" jdbcType="TIMESTAMP" />
+    <result column="STATUS_CHANGE_TIME_U" property="statusChangeTimeU" jdbcType="TIMESTAMP" />
+    <result column="STATUS_CHANGE_TIME_Z" property="statusChangeTimeZ" jdbcType="VARCHAR" />
+    <result column="PASSWORD" property="password" jdbcType="VARCHAR" />
+    <result column="FORM_KEY" property="formKey" jdbcType="DECIMAL" />
+    <result column="IMAGE_KEY" property="imageKey" jdbcType="DECIMAL" />
+    <result column="NOTE_KEY" property="noteKey" jdbcType="DECIMAL" />
+    <result column="USER_EXPIRATION" property="userExpiration" jdbcType="TIMESTAMP" />
+    <result column="USER_EXPIRATION_U" property="userExpirationU" jdbcType="TIMESTAMP" />
+    <result column="USER_EXPIRATION_Z" property="userExpirationZ" jdbcType="VARCHAR" />
+    <result column="PASSWORD_EXPIRATION" property="passwordExpiration" jdbcType="TIMESTAMP" />
+    <result column="PASSWORD_EXPIRATION_U" property="passwordExpirationU" jdbcType="TIMESTAMP" />
+    <result column="PASSWORD_EXPIRATION_Z" property="passwordExpirationZ" jdbcType="VARCHAR" />
+    <result column="PASSWORD_DURATION" property="passwordDuration" jdbcType="DECIMAL" />
+    <result column="PASSWORD_HISTORY" property="passwordHistory" jdbcType="VARCHAR" />
+    <result column="CREATOR_KEY" property="creatorKey" jdbcType="DECIMAL" />
+    <result column="CREATION_TIME" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="CREATION_TIME_U" property="creationTimeU" jdbcType="TIMESTAMP" />
+    <result column="CREATION_TIME_Z" property="creationTimeZ" jdbcType="VARCHAR" />
+    <result column="LAST_MODIFIER_KEY" property="lastModifierKey" jdbcType="DECIMAL" />
+    <result column="LAST_MODIFIED_TIME" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME_U" property="lastModifiedTimeU" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME_Z" property="lastModifiedTimeZ" jdbcType="VARCHAR" />
+    <result column="LOGIN_COUNT" property="loginCount" jdbcType="DECIMAL" />
+    <result column="EMAIL_ADDRESS" property="emailAddress" jdbcType="VARCHAR" />
+    <result column="UDA_0" property="uda0" jdbcType="VARCHAR" />
+    <result column="UDA_1" property="uda1" jdbcType="VARCHAR" />
+    <result column="UDA_2" property="uda2" jdbcType="VARCHAR" />
+    <result column="UDA_3" property="uda3" jdbcType="VARCHAR" />
+    <result column="UDA_4" property="uda4" jdbcType="VARCHAR" />
+    <result column="XFR_INSERT_PID" property="xfrInsertPid" jdbcType="DECIMAL" />
+    <result column="XFR_UPDATE_PID" property="xfrUpdatePid" jdbcType="DECIMAL" />
+    <result column="SECURITY_MASK" property="securityMask" jdbcType="VARCHAR" />
+    <result column="FAILED_LOGIN_ATTEMPT_COUNT" property="failedLoginAttemptCount" jdbcType="DECIMAL" />
+    <result column="TRX_ID" property="trxId" jdbcType="CHAR" />
+    <result column="SECURITY_REALM" property="securityRealm" jdbcType="VARCHAR" />
+    <result column="UNUSED_PRIVILEGE" property="unusedPrivilege" jdbcType="DECIMAL" />
+    <result column="UPDATE_PRIVILEGE_KEY" property="updatePrivilegeKey" jdbcType="DECIMAL" />
+    <result column="DELETE_PRIVILEGE_KEY" property="deletePrivilegeKey" jdbcType="DECIMAL" />
+    <result column="SHIFT_KEY" property="shiftKey" jdbcType="DECIMAL" />
+  </resultMap>
+  
+   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    *
+    from APP_USER
+    where USER_KEY = #{id,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="getAllByPage" resultMap="BaseResultMap" >
+    select 
+    *
+    from APP_USER
+    <where>
+      <if test="userName != null and userName!=''" >
+        USER_NAME like '%${userName}%'
+      </if>
+      <if test="description != null and description !=''" >
+        and DESCRIPTION like '%${description}%'
+      </if>
+    </where>
+  </select>
+  
+  <select id="findUsersByGroupKey" resultMap="BaseResultMap"  >
+    select 
+    u.*
+    from APP_USER u,SYS_USER_GROUP g
+    where u.USER_KEY = g.USER_KEY and g.GROUP_KEY = #{param1}
+  </select>
+  
+  <select id="selectByUsername" resultMap="BaseResultMap"  >
+    select 
+    *
+    from APP_USER
+    where USER_NAME = #{param1}
+  </select>
+
+	<select id="mergeUser" statementType="CALLABLE" >
+		{call MES_USER}
+	</select>
+</mapper>

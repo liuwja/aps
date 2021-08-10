@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.performance.MonthPerformanceMapper" >
+  <!-- 月度表的基础映射 -->
+  <resultMap id="BaseResultMap" type="com.peg.model.performance.MonthPerformance" >
+    <result column="MON_ID" property="id" jdbcType="DECIMAL" />
+    <result column="MON_PI_ID" property="piid" jdbcType="DECIMAL" />
+    <result column="myMonth" property="myMonth" jdbcType="TIMESTAMP" />
+    <result column="monTargetValue" property="monTargetValue" jdbcType="VARCHAR" />
+    <result column="monTotalTargetValue" property="monTotalTargetValue" jdbcType="VARCHAR" />
+    <result column="monChallengeTargetValue" property="monChallengeTargetValue" jdbcType="VARCHAR" />
+    <result column="monRealityTargetValue" property="monRealityTargetValue" jdbcType="VARCHAR" />
+    <result column="monRealityTotalTargetValue" property="monRealityTotalTargetValue" jdbcType="VARCHAR" />
+    <result column="monRealityChallengeTargetValue" property="monRealityChallengeTargetValue" jdbcType="VARCHAR" />
+    <result column="checkMethod" property="checkMethod" jdbcType="VARCHAR" />
+    <result column="checkResult" property="checkResult" jdbcType="VARCHAR" />
+    <result column="createTime1" property="createTime1" jdbcType="TIMESTAMP" />
+    <result column="createUser1" property="createUser1" jdbcType="VARCHAR" />
+    <result column="createTime2" property="createTime2" jdbcType="TIMESTAMP" />
+    <result column="createUser2" property="createUser2" jdbcType="VARCHAR" />
+    <result column="moncolumn1" property="column1" jdbcType="VARCHAR" />
+    <result column="moncolumn2" property="column2" jdbcType="VARCHAR" />
+    <!-- <collection property="dtpartment" resultMap="com.peg.dao.jxmb.PerformanceCheckMapper.BaseResultMap" columnPrefix="dt_"></collection> -->
+  </resultMap>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select * from Y_MONTH_PERFORMANCE where ID = #{id,jdbcType=DECIMAL}
+  </select>  
+  
+  <select id="getAll" resultMap="BaseResultMap">
+	SELECT ID MON_ID,PI_ID MON_PI_ID,myMonth,monTargetValue,monTotalTargetValue,monChallengeTargetValue,
+	monRealityTargetValue,monRealityTotalTargetValue,monRealityChallengeTargetValue,
+	checkMethod,checkResult,createTime1,createUser1,createTime2,createUser2,column1,column2 order by myMonth desc
+  </select>
+  
+  <!-- 根据绩效指标主键查询年度绩效指标记录 -->
+	<select id="selectByPiid" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select ID YEAR_ID,PI_ID YEAR_PI_ID,LASTYEARREALITYVALUE YEAR_LASTYEARREALITYVALUE,
+		REFERENCEVALUE YEAR_REFERENCEVALUE,TARGETVALUE YEAR_TARGETVALUE,FIRSTYEARTARGETVALUE YEAR_FIRSTYEARTARGETVALUE,
+		SECONDYEARTARGETVALUE YEAR_SECONDYEARTARGETVALUE,CREATETIME YEAR_CREATETIME,CREATEUSER YEAR_CREATEUSER,
+		UPDATETIME YEAR_UPDATETIME,UPDATEUSER YEAR_UPDATEUSER from Y_YEAR_PERFORMANCE where PI_ID = #{piid,jdbcType=DECIMAL}
+	</select> 
+  
+	<select id="getAllByPage" resultMap="BaseResultMap">
+ 		SELECT D.ID, FACTORY_NUMBER, S.DESCRIPTION FACTORY_NAME, DEPARTMENT_NUMBER, DEPARTMENT_NAME, D.CREATION_TIME, D.CREATION_NAME FROM DEPARTMENT D, SITE S WHERE D.FACTORY_NUMBER = S.SITE_NAME
+		<if test="hashMap.factoryNumber != null and hashMap.factoryNumber != ''">
+			and D.factory_number like '%${hashMap.factoryNumber}%'
+		</if>
+		<if test="hashMap.departmentNumber != null and hashMap.departmentNumber != ''">
+			and D.DEPARTMENT_NUMBER like '%${hashMap.departmentNumber}%'
+		</if>
+		order by D.FACTORY_NUMBER , D.DEPARTMENT_NUMBER 
+  	</select>
+  
+	
+  
+	<insert id="insert" parameterType="com.peg.model.jxmb.PerDeparment" >
+		insert into DEPARTMENT (FACTORY_NUMBER, FACTORY_NAME, DEPARTMENT_NUMBER, DEPARTMENT_NAME, CREATION_NAME)
+		values (#{factoryNumber,jdbcType=VARCHAR}, #{factoryName,jdbcType=VARCHAR}, #{departmentNumber,jdbcType=VARCHAR}, #{departmentName,jdbcType=VARCHAR}, #{creationName,jdbcType=VARCHAR})
+  	</insert>
+
+	
+	
+	<!-- 根据部门编号查询部门记录 -->
+	<select id="selectByDepartmentNumber" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT D.ID, FACTORY_NUMBER, FACTORY_NAME, DEPARTMENT_NUMBER, DEPARTMENT_NAME, D.CREATION_TIME, D.CREATION_NAME FROM DEPARTMENT D, SITE S WHERE D.FACTORY_NUMBER = S.SITE_NAME
+		AND D.DEPARTMENT_NUMBER = #{departmentNumber,jdbcType=VARCHAR}
+	</select>  
+	
+	<!-- 根据部门名称查询部门记录 -->
+	<select id="selectByDepartmentName" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT D.ID, FACTORY_NUMBER, FACTORY_NAME, DEPARTMENT_NUMBER, DEPARTMENT_NAME, D.CREATION_TIME, D.CREATION_NAME FROM DEPARTMENT D, SITE S WHERE D.FACTORY_NUMBER = S.SITE_NAME
+		AND D.DEPARTMENT_NAME = #{departmentName,jdbcType=VARCHAR}
+	</select> 
+
+<!--      <insert id="insertSelective" parameterType="com.peg.model.performance.PerformanceIndex" >
+  	<selectKey resultType="long" order="AFTER" keyProperty="id">
+      select QMS_YEAR_PERFORMANCE_SEQUENCE.currval as ID from dual
+    </selectKey> 
+    insert into Y_YEAR_PERFORMANCE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="piid != null and piid != ''" >
+        PI_ID,
+      </if>
+      <if test="lastYearRealityValue != null and lastYearRealityValue != ''" >
+        lastYearRealityValue,
+      </if>
+      <if test="referenceValue != null and referenceValue != ''" >
+        referenceValue,
+      </if>
+      <if test="targetValue != null and targetValue != ''" >
+        targetValue,
+      </if>
+      <if test="firstYearTargetValue != null and firstYearTargetValue != ''" >
+        firstYearTargetValue,
+      </if>
+      <if test="secondYearTargetValue != null and secondYearTargetValue != ''" >
+        secondYearTargetValue,
+      </if>
+      <if test="createTime != null and createTime != ''" >
+        createTime,
+      </if>
+      <if test="createUser != null and createUser != ''" >
+        createUser,
+      </if>
+      <if test="updateTime != null and updateTime != ''" >
+        updateTime,
+      </if>
+      <if test="updateUser != null and updateUser != ''" >
+        updateUser,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="piid != null and piid != ''" >
+        #{piid,jdbcType=DECIMAL},
+      </if>
+      <if test="lastYearRealityValue != null and lastYearRealityValue != ''" >
+        #{lastYearRealityValue,jdbcType=VARCHAR},
+      </if>
+      <if test="referenceValue != null and referenceValue != ''" >
+        #{referenceValue,jdbcType=VARCHAR},
+      </if>
+      <if test="targetValue != null and targetValue != ''" >
+        #{targetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="firstYearTargetValue != null and firstYearTargetValue != ''" >
+        #{firstYearTargetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="secondYearTargetValue != null and secondYearTargetValue != ''" >
+        #{secondYearTargetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null and createTime != ''" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null and createUser != ''" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null and updateTime != ''" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null and updateUser != ''" >
+        #{updateUser,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>  -->
+	
+ 	<insert id="insertSelective" parameterType="com.peg.model.performance.MonthPerformance" >
+  	<selectKey resultType="long" order="AFTER" keyProperty="id">
+      select QMS_MONTH_PERFORMANCE_SEQUENCE.currval as ID from dual
+    </selectKey> 
+    insert into Y_MONTH_PERFORMANCE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="piid != null and piid != ''" >
+        PI_ID,
+      </if>
+      <if test="myMonth != null and myMonth != ''" >
+        myMonth,
+      </if>
+      <if test="monTargetValue != null and monTargetValue != ''" >
+        monTargetValue,
+      </if>
+      <if test="monTotalTargetValue != null and monTotalTargetValue != ''" >
+        monTotalTargetValue,
+      </if>
+      <if test="monChallengeTargetValue != null and monChallengeTargetValue != ''" >
+        monChallengeTargetValue,
+      </if>
+      <if test="monRealityTargetValue != null and monRealityTargetValue != ''" >
+        monRealityTargetValue,
+      </if>
+      <if test="monRealityTotalTargetValue != null and monRealityTotalTargetValue != ''" >
+        monRealityTotalTargetValue,
+      </if>
+      <if test="monRealityChallengeTargetValue != null and monRealityChallengeTargetValue != ''" >
+        monRealityChallengeTargetValue,
+      </if>
+      <if test="checkMethod != null and checkMethod != ''" >
+        checkMethod,
+      </if>
+      <if test="checkResult != null and checkResult != ''" >
+        checkResult,
+      </if>
+      <if test="createTime1 != null and createTime1 != ''" >
+        createTime1,
+      </if>
+      <if test="createUser1 != null and createUser1 != ''" >
+        createUser1,
+      </if>
+      <if test="createTime2 != ''" >
+        createTime2,
+      </if>
+      <if test="createUser2 != null and createUser2 != ''" >
+        createUser2,
+      </if> 
+      <if test="column1 != null" >
+        COLUMN1,
+      </if>
+      <if test="column2 != null" >
+        COLUMN2,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="piid != null and piid != ''" >
+        #{piid,jdbcType=DECIMAL},
+      </if>
+      <if test="myMonth != null and myMonth != ''" >
+        #{myMonth,jdbcType=TIMESTAMP},
+      </if>
+      <if test="monTargetValue != null and monTargetValue != ''" >
+        #{monTargetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="monTotalTargetValue != null and monTotalTargetValue != ''" >
+        #{monTotalTargetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="monChallengeTargetValue != null and monChallengeTargetValue != ''" >
+        #{monChallengeTargetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="monRealityTargetValue != null and monRealityTargetValue != ''" >
+        #{monRealityTargetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="monRealityTotalTargetValue != null and monRealityTotalTargetValue != ''" >
+        #{monRealityTotalTargetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="monRealityChallengeTargetValue != null and monRealityChallengeTargetValue != ''" >
+        #{monRealityChallengeTargetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="checkMethod != null and checkMethod != ''" >
+        #{checkMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="checkResult != null and checkResult != ''" >
+        #{checkResult,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime1 != null and createTime1 != ''" >
+        #{createTime1,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser1 != null and createUser1 != ''" >
+        #{createUser1,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime2 != ''" >
+        #{createTime2,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser2 != null and createUser2 != ''" >
+        #{createUser2,jdbcType=VARCHAR},
+      </if>
+      <if test="column1 != null" >
+        #{column1,jdbcType=VARCHAR},
+      </if>
+      <if test="column2 != null" >
+        #{column2,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>  
+
+	<update id="update" parameterType="com.peg.model.jxmb.PerDeparment">
+		UPDATE DEPARTMENT SET 
+		FACTORY_NUMBER = #{factoryNumber, jdbcType=VARCHAR},
+		FACTORY_NAME = #{factoryName, jdbcType=VARCHAR},
+		DEPARTMENT_NUMBER = #{departmentNumber, jdbcType=VARCHAR},
+		DEPARTMENT_NAME = #{departmentName, jdbcType=VARCHAR}
+		WHERE ID = #{id, jdbcType=DECIMAL}
+	</update>
+<!-- 	
+	<update id="updateByPrimaryKeySelective" parameterType ="com.peg.model.performance.yearPerformance" >
+    	update Y_YEAR_PERFORMANCE
+    <set >
+      <if test="lastYearRealityValue != null and lastYearRealityValue != ''" >
+        lastYearRealityValue = #{lastYearRealityValue,jdbcType=VARCHAR},
+      </if>
+      <if test="referenceValue != null and referenceValue != ''" >
+        referenceValue = #{referenceValue,jdbcType=VARCHAR},
+      </if>
+      <if test="targetValue != null and targetValue != ''" >
+        targetValue = #{targetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="firstYearTargetValue != null and firstYearTargetValue != ''" >
+        firstYearTargetValue = #{firstYearTargetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="secondYearTargetValue != null and secondYearTargetValue != ''" >
+        secondYearTargetValue = #{secondYearTargetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null and createTime != ''" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null and createUser != ''" >
+        createUser = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null and updateTime != ''" >
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null and updateUser != ''" >
+        updateUser = #{updateUser,jdbcType=TIMESTAMP},
+      </if>
+   	</set>
+   	where PI_ID = #{ppid,jdbcType=DECIMAL}
+  </update> -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.performance.MonthPerformance" >
+    update Y_MONTH_PERFORMANCE
+    <set >
+      <if test="piid != null" >
+        PI_ID = #{piid,jdbcType=DECIMAL},
+      </if>
+      <if test="myMonth != null" >
+        MYMONTH = #{myMonth,jdbcType=TIMESTAMP},
+      </if>
+      <if test="monTargetValue != null" >
+        MONTARGETVALUE = #{monTargetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="monTotalTargetValue != null" >
+        MONTOTALTARGETVALUE = #{monTotalTargetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="monChallengeTargetValue != null" >
+        MONCHALLENGETARGETVALUE = #{monChallengeTargetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="monRealityTargetValue != null" >
+        MONREALITYTARGETVALUE = #{monRealityTargetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="monRealityTotalTargetValue != null" >
+        MONREALITYTOTALTARGETVALUE = #{monRealityTotalTargetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="monRealityChallengeTargetValue != null" >
+        MONREALITYCHALLENGETARGETVALUE = #{monRealityChallengeTargetValue,jdbcType=VARCHAR},
+      </if>
+      <if test="checkMethod != null" >
+        CHECKMETHOD = #{checkMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="checkResult != null" >
+        CHECKRESULT = #{checkResult,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime1 != null" >
+        CREATETIME1 = #{createTime1,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser1 != null" >
+        CREATEUSER1 = #{createUser1,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime2 != null" >
+        CREATETIME2 = #{createTime2,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser2 != null" >
+        CREATEUSER2 = #{createUser2,jdbcType=VARCHAR},
+      </if>
+      <if test="column1 != null" >
+        COLUMN1 = #{column1,jdbcType=VARCHAR},
+      </if>
+      <if test="column2 != null" >
+        COLUMN2 = #{column2,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+	
+  
+   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from Y_MONTH_PERFORMANCE
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  
+	<!-- 根据绩效指标ID删除年度绩效指标 -->    
+	<delete id="deleteByPiid" parameterType="java.lang.Long" >
+	    delete from Y_YEAR_PERFORMANCE where PI_ID = #{piid,jdbcType=DECIMAL}
+	</delete>
+</mapper>

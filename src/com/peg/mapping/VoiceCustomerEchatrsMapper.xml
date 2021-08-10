@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.VoiceCustomerEchatrsMapper" >
+
+<resultMap id="voiceEchart" type="com.peg.model.VoiceEchart" >
+    <result column="xName" property="xName" jdbcType="VARCHAR" />
+    <result column="yValue" property="yValue" jdbcType="DECIMAL" />
+</resultMap>
+
+<select id="findXY" parameterType="com.peg.model.CommonVo" resultMap="voiceEchart">
+
+		
+
+	<![CDATA[	
+	select * from (    
+		select ${title} as xName,count(1) as yValue
+		from  VOICE_CUSTOMER vie
+		where 1=1
+	]]>
+	<if test="title == 'DATE_TIME'">
+		and DATE_TIME is not null
+	</if>
+	<if test="productFamilyList!=null and productFamilyList != ''">
+		and 
+		<foreach collection="productFamilyList" item="item" open="(" separator="," close=")">
+			'${item}'
+		</foreach>
+	
+	</if>
+	
+	<if test="startTime != null and endTime != null and startTime != '' and endTime != ''" >
+		and DATE_TIME BETWEEN to_date('${startTime}','yyyy-mm-dd') and to_date('${endTime}','yyyy-mm-dd')
+	</if>
+	<if test="productType != null and productType != ''" >
+		and vie.type1 like '%${productType}%'
+	</if>
+	<if test="regions != null">
+		and vie.SERVICE_CENTER in
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">
+			${item}
+		</foreach>
+	</if>
+	<if test="partTypes != null">
+		and vie.MODEL_PRODUCT in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">
+			${item}
+		</foreach>
+	</if>
+	<if test="voiceCategorys != null">
+	and vie.type2 in
+		<foreach item="item" index="index" collection="voiceCategorys" open="(" separator="," close=")">
+			${item}
+		</foreach>
+	</if>
+	<![CDATA[
+		group by ${title}
+		) v order by v.xName
+	]]>
+		
+
+
+</select>
+<select id="findXYByTime" parameterType="com.peg.model.CommonVo" resultMap="voiceEchart">   
+		select 
+	<if test="timeType == 'year'">
+			<![CDATA[
+		 to_char(vie.DATE_TIME,'yyyy')
+	]]>
+	</if>
+	<if test="timeType == 'month'">
+			<![CDATA[
+		 to_char(vie.DATE_TIME,'yyyy-mm')
+	]]>
+	</if>
+	<if test="timeType == 'date'">
+			<![CDATA[
+		 to_char(vie.DATE_TIME,'yyyy-mm-dd')
+	]]>
+	</if>
+ as xName,count(1) as yValue
+		from  VOICE_CUSTOMER vie left join T_MARKET_REPAIR_RECORD TMRR ON VIE.ORDER_NUMBER = TMRR.ORDER_NUMBER
+		where 1=1
+
+	<if test="title == 'DATE_TIME'">
+		and vie.DATE_TIME is not null
+	</if>
+	<if test="isConsumedPart != '' and isConsumedPart != null">
+		and TMRR.IS_CONSUMED_PART ='${isConsumedPart}'
+	</if>
+	<if test="productFamilyList!=null and productFamilyList != ''">
+		and TMRR.PRODUCT_FAMILY IN
+		<foreach collection="productFamilyList" item="item" open="(" separator="," close=")">
+			'${item}'
+		</foreach>
+	
+	</if>
+	
+	<if test="startTime != null and endTime != null and startTime != '' and endTime != ''" >
+		and vie.DATE_TIME BETWEEN to_date('${startTime}','yyyy-mm-dd') and to_date('${endTime}','yyyy-mm-dd')
+	</if>
+	<if test="productType != null and productType != ''" >
+		and vie.type1 like '%${productType}%'
+	</if>
+	<if test="regions != null">
+		and vie.SERVICE_CENTER in
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">
+			${item}
+		</foreach>
+	</if>
+	<if test="partTypes != null">
+		and vie.MODEL_PRODUCT in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">
+			${item}
+		</foreach>
+	</if>
+	<if test="voiceCategorys != null">
+	and vie.type2 in
+		<foreach item="item" index="index" collection="voiceCategorys" open="(" separator="," close=")">
+			${item}
+		</foreach>
+	</if>
+	<if test="timeType == 'year'">
+			<![CDATA[
+		group by to_char(vie.DATE_TIME,'yyyy')
+	]]>
+	</if>
+	<if test="timeType == 'month'">
+			<![CDATA[
+		group by to_char(vie.DATE_TIME,'yyyy-mm')
+	]]>
+	</if>
+	<if test="timeType == 'date'">
+			<![CDATA[
+		group by to_char(vie.DATE_TIME,'yyyy-mm-dd')
+	]]>
+	</if>
+
+		
+
+
+</select>
+</mapper>

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.jxmb.PerformanceCheckMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.jxmb.PerformanceCheck" >
+    <result column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="CHEKYEAR" property="chekyear" jdbcType="TIMESTAMP" />
+    <result column="DEPARTMENT" property="department" jdbcType="VARCHAR" />
+    <result column="DEPARTMENTNUMBER" property="departmentNumber" jdbcType="VARCHAR" />
+    <result column="TARGETCLASS" property="targetclass" jdbcType="VARCHAR" />
+    <result column="INDEXCONTENT" property="indexcontent" jdbcType="VARCHAR" />
+    <result column="PERFORMANCECONTENT" property="performancecontent" jdbcType="VARCHAR" />
+    <result column="WEIGHT" property="weight" jdbcType="VARCHAR" />
+    <result column="ASSESSMENTMETHOD" property="assessmentmethod" jdbcType="VARCHAR" />
+    <result column="RECORDTIME" property="recordtime" jdbcType="TIMESTAMP" />
+    <result column="RECORD" property="record" jdbcType="VARCHAR" />
+    <result column="COMPANY" property="company" jdbcType="VARCHAR" />
+    <result column="TARGETVALUE" property="targetvalue" jdbcType="VARCHAR" />
+    <result column="REFERENCEVALUE" property="referencevalue" jdbcType="VARCHAR" />
+    <result column="MEDIAN" property="median" jdbcType="VARCHAR" />
+    <result column="FACTORY_NAME" property="factoryName" jdbcType="VARCHAR" />
+    <result column="FACTORY_NUMBER" property="factoryNumber" jdbcType="VARCHAR" />
+    <result column="FORMULA" property="formula" jdbcType="VARCHAR" />
+  </resultMap>
+  <insert id="insert" parameterType="com.peg.model.jxmb.PerformanceCheck" >
+    insert into Y_PERFORMANCECHECK (ID, CHEKYEAR, DEPARTMENT, 
+      TARGETCLASS, INDEXCONTENT, PERFORMANCECONTENT, 
+      WEIGHT, ASSESSMENTMETHOD, RECORDTIME, 
+      RECORD, COMPANY, TARGETVALUE, 
+      REFERENCEVALUE, MEDIAN, FORMULA, FACTORY_NUMBER
+      )
+    values (#{id,jdbcType=DECIMAL}, #{chekyear,jdbcType=TIMESTAMP}, #{department,jdbcType=VARCHAR}, 
+      #{targetclass,jdbcType=VARCHAR}, #{indexcontent,jdbcType=VARCHAR}, #{performancecontent,jdbcType=VARCHAR}, 
+      #{weight,jdbcType=VARCHAR}, #{assessmentmethod,jdbcType=VARCHAR}, #{recordtime,jdbcType=TIMESTAMP}, 
+      #{record,jdbcType=VARCHAR}, #{company,jdbcType=VARCHAR}, #{targetvalue,jdbcType=VARCHAR}, 
+      #{referencevalue,jdbcType=VARCHAR}, #{median,jdbcType=VARCHAR}, #{formula,jdbcType=VARCHAR}, #{factoryNumber,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.jxmb.PerformanceCheck" >
+    insert into Y_PERFORMANCECHECK
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="chekyear != null" >
+        CHEKYEAR,
+      </if>
+      <if test="department != null" >
+        DEPARTMENT,
+      </if>
+      <if test="targetclass != null" >
+        TARGETCLASS,
+      </if>
+      <if test="indexcontent != null" >
+        INDEXCONTENT,
+      </if>
+      <if test="performancecontent != null" >
+        PERFORMANCECONTENT,
+      </if>
+      <if test="weight != null" >
+        WEIGHT,
+      </if>
+      <if test="assessmentmethod != null" >
+        ASSESSMENTMETHOD,
+      </if>
+      <if test="recordtime != null" >
+        RECORDTIME,
+      </if>
+      <if test="record != null" >
+        RECORD,
+      </if>
+      <if test="company != null" >
+        COMPANY,
+      </if>
+      <if test="targetvalue != null" >
+        TARGETVALUE,
+      </if>
+      <if test="referencevalue != null" >
+        REFERENCEVALUE,
+      </if>
+      <if test="median != null" >
+        MEDIAN,
+      </if>
+      <if test="formula != null" >
+        FORMULA,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="chekyear != null" >
+        #{chekyear,jdbcType=TIMESTAMP},
+      </if>
+      <if test="department != null" >
+        #{department,jdbcType=VARCHAR},
+      </if>
+      <if test="targetclass != null" >
+        #{targetclass,jdbcType=VARCHAR},
+      </if>
+      <if test="indexcontent != null" >
+        #{indexcontent,jdbcType=VARCHAR},
+      </if>
+      <if test="performancecontent != null" >
+        #{performancecontent,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=VARCHAR},
+      </if>
+      <if test="assessmentmethod != null" >
+        #{assessmentmethod,jdbcType=VARCHAR},
+      </if>
+      <if test="recordtime != null" >
+        #{recordtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record != null" >
+        #{record,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null" >
+        #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="targetvalue != null" >
+        #{targetvalue,jdbcType=VARCHAR},
+      </if>
+      <if test="referencevalue != null" >
+        #{referencevalue,jdbcType=VARCHAR},
+      </if>
+      <if test="median != null" >
+        #{median,jdbcType=VARCHAR},
+      </if>
+      <if test="formula != null" >
+        #{formula,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <sql id="Base_Column_List" >
+    ID, CHEKYEAR, DEPARTMENT, 
+      TARGETCLASS, INDEXCONTENT, PERFORMANCECONTENT, 
+      WEIGHT, ASSESSMENTMETHOD, RECORDTIME, 
+      RECORD, COMPANY, TARGETVALUE, 
+      REFERENCEVALUE, MEDIAN, FORMULA
+  </sql>
+  <select id="getAllByPage" resultMap="BaseResultMap" >
+		SELECT PER.ID, S.DESCRIPTION FACTORY_NAME, D.DEPARTMENT_NAME DEPARTMENT,D.DEPARTMENT_NUMBER DEPARTMENTNUMBER,
+		CHEKYEAR, TARGETCLASS, INDEXCONTENT, PERFORMANCECONTENT, 
+      	WEIGHT, ASSESSMENTMETHOD, RECORDTIME, 
+      	RECORD, COMPANY, TARGETVALUE, 
+      	REFERENCEVALUE, MEDIAN, FORMULA FROM y_performancecheck PER, DEPARTMENT D, SITE S WHERE PER.DEPARTMENT = D.DEPARTMENT_NUMBER AND D.FACTORY_NUMBER = S.SITE_NAME
+        <if test="hashMap.factoryNumber != null and hashMap.factoryNumber != ''">
+            and d.factory_number like '%${hashMap.factoryNumber}%'
+        </if>
+        <if test="hashMap.department != null and hashMap.department != ''">
+            and department like '%${hashMap.department}%'
+        </if>
+        <if test="hashMap.departmentNumber != null and hashMap.departmentNumber != ''">
+            and department_number like '%${hashMap.departmentNumber}%'
+        </if>
+        <if test="hashMap.targetclass != null and hashMap.targetclass != ''">
+           and targetclass like '%${hashMap.targetclass}%'
+        </if>
+        <if test="hashMap.chekyear != null and hashMap.chekyear != ''">
+           and to_char(chekyear,'YYYY') = '${hashMap.chekyear}'
+        </if>
+       order by recordtime desc
+  </select> 
+  <select id="getAll" resultMap="BaseResultMap" >
+  
+  select Y.ID,Y.FACTORYNAME FACTORY_NAME,
+  Y.DEPARTMENTNAME DEPARTMENT,Y.DEPARTMENTNUMBER,
+  Y.CHECKYEAR,Y.PERFORMANCETARGETCLASS TARGETCLASS,
+  Y.INDEXCONTENT,Y.PERFORMANCETYPE,
+  Y.WEIGHT,Y.ASSESSMENTMETHOD,
+  Y.UPDATETIME RECORDTIME,Y.UPDATEUSER RECORD,
+  Y.COMPANY,Y.TARGETVALUE,
+  Y.REFERENCEVALUE,Y.MIDDLEVALUE MEDIAN,
+  Y.FORMULA from Y_PERFORMANCE_INDEX Y WHERE 1=1
+		
+		<!-- SELECT PER.ID, S.DESCRIPTION FACTORY_NAME, D.DEPARTMENT_NAME DEPARTMENT,D.DEPARTMENT_NUMBER DEPARTMENTNUMBER,
+		CHEKYEAR, TARGETCLASS, INDEXCONTENT, PERFORMANCECONTENT, 
+      	WEIGHT, ASSESSMENTMETHOD, RECORDTIME, 
+      	RECORD, COMPANY, TARGETVALUE, 
+      	REFERENCEVALUE, MEDIAN, FORMULA FROM y_performancecheck PER, DEPARTMENT D, SITE S WHERE PER.DEPARTMENT = D.DEPARTMENT_NUMBER AND D.FACTORY_NUMBER = S.SITE_NAME -->
+        <if test="hashMap.factoryNumber != null and hashMap.factoryNumber != ''">
+            and FACTORYNUMBER like '%${hashMap.factoryNumber}%'
+        </if>
+        <if test="hashMap.department != null and hashMap.department != ''">
+            and DEPARTMENTNAME like '%${hashMap.department}%'
+        </if>
+        <if test="hashMap.departmentNumber != null and hashMap.departmentNumber != ''">
+            and DEPARTMENTNUMBER like '%${hashMap.departmentNumber}%'
+        </if>
+        <if test="hashMap.targetclass != null and hashMap.targetclass != ''">
+           and PERFORMANCETARGETCLASS like '%${hashMap.targetclass}%'
+        </if>
+        <if test="hashMap.chekyear != null and hashMap.chekyear != ''">
+           and to_char(CHECKYEAR,'YYYY') = '${hashMap.chekyear}'
+        </if>
+       order by UPDATETIME desc
+  </select> 
+  
+   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT PER.ID, S.DESCRIPTION FACTORY_NAME, S.SITE_NAME FACTORY_NUMBER, D.DEPARTMENT_NAME DEPARTMENT,D.DEPARTMENT_NUMBER DEPARTMENTNUMBER,
+		CHEKYEAR, TARGETCLASS, INDEXCONTENT, PERFORMANCECONTENT, 
+      	WEIGHT, ASSESSMENTMETHOD, RECORDTIME, 
+      	RECORD, COMPANY, TARGETVALUE, 
+      	REFERENCEVALUE, MEDIAN, FORMULA FROM y_performancecheck PER, DEPARTMENT D, SITE S WHERE PER.DEPARTMENT = D.DEPARTMENT_NUMBER AND D.FACTORY_NUMBER = S.SITE_NAME
+    and PER.ID = #{id,jdbcType=DECIMAL}
+  </select>
+      
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.jxmb.PerformanceCheck" >
+    update y_performancecheck
+    <set >
+      <if test="chekyear != null and chekyear !=''" >
+        chekyear = #{chekyear,jdbcType=TIMESTAMP},
+      </if>
+      <if test="departmentNumber != null and departmentNumber != ''" >
+        department = #{departmentNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="targetclass != null" >
+        targetclass = #{targetclass,jdbcType=VARCHAR},
+      </if>
+      <if test="indexcontent != null" >
+        indexcontent = #{indexcontent,jdbcType=VARCHAR},
+      </if>
+      <if test="performancecontent != null" >
+        performancecontent = #{performancecontent,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=VARCHAR},
+      </if>
+      <if test="assessmentmethod != null" >
+        assessmentmethod = #{assessmentmethod,jdbcType=VARCHAR},
+      </if>
+      <if test="recordtime != null" >
+        recordtime = #{recordtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record != null" >
+        record = #{record,jdbcType=VARCHAR},
+      </if>
+      <if test="company != null" >
+        company = #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="targetvalue != null" >
+        targetvalue = #{targetvalue,jdbcType=VARCHAR},
+      </if>
+      
+      <if test="referencevalue != null" >
+        referencevalue = #{referencevalue,jdbcType=VARCHAR},
+      </if>
+      <if test="median != null" >
+        median = #{median,jdbcType=VARCHAR},
+      </if>
+      <if test="formula != null" >
+        formula = #{formula,jdbcType=VARCHAR},
+      </if>
+      <if test="factoryNumber != null" >
+      FACTORY_NUMBER = #{factoryNumber,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.jxmb.PerformanceCheck" >
+    update y_performancecheck
+    set chekyear = #{chekyear,jdbcType=TIMESTAMP},
+      department = #{department,jdbcType=VARCHAR},
+      targetclass = #{targetclass,jdbcType=VARCHAR},
+      indexcontent = #{indexcontent,jdbcType=VARCHAR},
+      performancecontent = #{performancecontent,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=VARCHAR},
+      assessmentmethod = #{assessmentmethod,jdbcType=VARCHAR},
+      recordtime = #{recordtime,jdbcType=TIMESTAMP},
+      record = #{record,jdbcType=VARCHAR},
+      company = #{company,jdbcType=VARCHAR},
+      targetvalue = #{targetvalue,jdbcType=VARCHAR},
+      
+      referencevalue = #{referencevalue,jdbcType=VARCHAR},
+      company = #{company,jdbcType=VARCHAR},
+      formula = #{formula,jdbcType=VARCHAR}
+      
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from y_performancecheck
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  
+  <select id="getByid" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List"></include>
+    from y_performancecheck
+    where formula = #{formula,jdbcType=DECIMAL}
+  </select>
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.DownLineTotalMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.DownLineTotal" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="PRODUCT_TYPE" property="productType" jdbcType="VARCHAR" />
+    <result column="STATISTICS_MONTH" property="statisticsMonth" jdbcType="VARCHAR" />
+    <result column="PART_TYPE" property="partType" jdbcType="VARCHAR" />
+    <result column="REGION" property="region" jdbcType="VARCHAR" />
+    <result column="PRODUCTLINE_NUMBER" property="productlineNumber" jdbcType="VARCHAR" />
+    <result column="DOWNLINE_COUNT" property="downlineCount" jdbcType="DECIMAL" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="product_family" property="productFamily" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, PRODUCT_TYPE, STATISTICS_MONTH, PART_TYPE, REGION, PRODUCTLINE_NUMBER, DOWNLINE_COUNT, 
+    CREATE_TIME,product_family
+  </sql>
+  
+  
+  <!--分页显现下线汇总表 -->
+  <select id="findAllByPage" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo">
+    select 
+    <include refid="Base_Column_List" />
+    from T_DOWNLINE_TOTAL_RECORD
+    <if test="downLine!=null">
+    	<where>
+			<if test="downLine.productType != null and downLine.productType != '' " >
+				product_type like '%${downLine.productType}%'
+			</if>
+			<if test="downLine.region != null and downLine.region !=''" >
+				and region like '%${downLine.region}%'
+			</if>
+			<if test="downLine.partType != null and downLine.partType != ''" >
+				and part_type like '%${downLine.partType}%'
+			</if>
+			<if test="downLine.startTime!=null and downLine.startTime!='' and downLine.endTime!=null and downLine.endTime!=''"  >
+				and statistics_month BETWEEN #{downLine.startTime,jdbcType=VARCHAR} and  #{downLine.endTime,jdbcType=VARCHAR}
+			</if>
+				<if test="downLine.productlineNumber != null and downLine.productlineNumber != ''" >
+				and productline_number like '%${downLine.productlineNumber}%'
+			</if>
+	  	</where>
+    </if>
+  	order by create_time desc
+  </select>
+  
+  <!--查询所有下线汇总表（不分页，导出excel） -->
+  <select id="findAll" resultMap="BaseResultMap" parameterType="com.peg.model.CommonVo">
+    select 
+    <include refid="Base_Column_List" />
+    from T_DOWNLINE_TOTAL_RECORD
+    <if test="downLine!=null">
+    	<where>
+			<if test="downLine.productType != null and downLine.productType != '' " >
+				product_type like '%${downLine.productType}%'
+			</if>
+			<if test="downLine.region != null and downLine.region !=''" >
+				and region like '%${downLine.region}%'
+			</if>
+			<if test="downLine.partType != null and downLine.partType != ''" >
+				and part_type like '%${downLine.partType}%'
+			</if>
+			<if test="downLine.startTime!=null and downLine.startTime!='' and downLine.endTime!=null and downLine.endTime!=''"  >
+				and statistics_month BETWEEN #{downLine.startTime,jdbcType=VARCHAR} and  #{downLine.endTime,jdbcType=VARCHAR}
+			</if>
+				<if test="downLine.productlineNumber != null and downLine.productlineNumber != ''" >
+				and productline_number like '%${downLine.productlineNumber}%'
+			</if>
+	  	</where>
+    </if>
+  </select>
+  <!-- 计算下线总数 -->
+  <select id="sumDownLine" resultType="java.lang.Integer">
+  	select nvl(sum(DOWNLINE_COUNT),0)  from T_DOWNLINE_TOTAL_RECORD 
+  	 <if test="downLine!=null">
+    	<where>
+			<if test="downLine.productType != null and downLine.productType != '' " >
+				product_type like '%${downLine.productType}%'
+			</if>
+			<if test="downLine.region != null and downLine.region !=''" >
+				and region like '%${downLine.region}%'
+			</if>
+			<if test="downLine.partType != null and downLine.partType != ''" >
+				and part_type like '%${downLine.partType}%'
+			</if>
+			<if test="downLine.startTime!=null and downLine.startTime!='' and downLine.endTime!=null and downLine.endTime!=''"  >
+				and statistics_month BETWEEN #{downLine.startTime,jdbcType=VARCHAR} and  #{downLine.endTime,jdbcType=VARCHAR}
+			</if>
+				<if test="downLine.productlineNumber != null and downLine.productlineNumber != ''" >
+				and productline_number like '%${downLine.productlineNumber}%'
+			</if>
+	  	</where>
+    </if>
+  </select>
+  
+</mapper>

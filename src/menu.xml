@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	name:菜单名称tabId
+	url：菜单路径,如果为空则默认为base/maincontent.sp?method=underConstruction
+	iconName:菜单图标名称,默认为folder
+	display：是否显示。0为显示；1为不显示。默认显示(0)
+	permissionCode：权限代码
+	targetType：菜单打开方式。0：navTab; 1:_blank.默认为navTab(0)
+	operation: 对应菜单下的操作
+	systemType:系统管理:0,质量系统:2,扁平化:4,物料系统:5
+	&符号用&amp;替代       
+ -->
+<menus>
+	<navMenu name ="导航栏">
+		<menu name="测试" url="base/navMenu.sp?method=showMenu&amp;menuName=jiaofu" tabId="deliveryNavTab" permissionCode="rpt:delivery" targetType="0" display="1" />
+    </navMenu>
+    
+     <accordion name="物料质量统计分析" permissionCode ="part" iconName="folder" display="0" systemType ="5">
+		<folder name="进料部分"  display="0" systemType ="5">
+			<menu name="进料质量" url="quality/testInstance/supplerDefectRate.do" tabId="supplerDefectRateTab" permissionCode="part:supplerDefectRate" targetType="0" display="1" />
+			<menu name="进料统计分析" url="quality/testInstance/supplerDefect.do" tabId="supplerDefectTab" permissionCode="part:supplerDefect" targetType="0" display="0" />
+			<menu name="进料质量明细" url="quality/testInstance/feedDetail.do" tabId="feedDetailTab" permissionCode="part:feedDetail" targetType="0" display="0" />
+			<menu name="明细-IQC进料" url="quality/testInstance/testInstentDetail.do" tabId="testInstentDetailTab" permissionCode="part:testInstentDetail" targetType="0" display="0" />
+			<menu name="明细-ERP原料退料" url="quality/testInstance/erpPartReturnDetail.do" tabId="erpPartReturnDetailTab" permissionCode="part:erpPartReturnDetail" targetType="0" display="0" />
+		</folder>
+
+		<folder name="在线部分"  display="0"  systemType ="5">
+			<menu name="物料在线统计分析"  url="base/online/onlineHomeChar.do" tabId="onlineHomeChar" permissionCode="part:onlineHomeChar" targetType="0" display="0" />
+			<menu name="明细-在线批次"  url="base/online/onlinebatch.do" tabId="onlinepoorcharNav" permissionCode="part:onlinepoorchar" targetType="0" display="0" />
+			<menu name="明细-MES在线维修"  url="base/online/onlinenum.do" tabId="onlinenumcharNav" permissionCode="part:onlinenumchar" targetType="0" display="0" />
+			<menu name="明细-MES在线退次"  url="base/online/onlinenumReturn.do" tabId="onlinenumReturncharNav" permissionCode="part:onlinenumReturnchar" targetType="0" display="0" />
+			<menu name="明细-ERP组装退次"  url="base/online/onlineERPnum.do" tabId="onlineERPnumcharNav" permissionCode="part:onlineERPnumchar" targetType="0" display="0" />
+			<menu name="明细-来料入库"  url="base/online/onlineStorage.do" tabId="onlineStorageNav" permissionCode="part:onlineStorageNav" targetType="0" display="0" />
+		</folder>
+		
+		<folder name="市场部分" display="0" systemType = "5">
+			<menu name="市场不良排列图" url="quality/marketPart/marketDefectIndex.do" tabId="marketDefectIndexTab" permissionCode="part:marketDefectIndex" targetType="0" display="0"></menu>
+			<menu name="市场不良趋势图-物料" url="quality/marketPart/marketDefectTrendIndex.do" tabId="marketDefectTrendIndexTab" permissionCode="part:marketDefectTrendIndex" targetType="0" display="0"></menu>
+			<menu name="市场不良趋势图" url="quality/marketPart/marketDefectTrendNewIndex.do" tabId="marketDefectTrendNewIndexTab" permissionCode="part:marketDefectTrendNewIndex" targetType="0" display="0"></menu>
+			<menu name="市场不良三角阵" url="quality/marketPart/marketDefectMatrixIndex.do" tabId="marketDefectMatrixIndexTab" permissionCode="part:marketDefectMatrixIndex" targetType="0" display="0"></menu>
+			<menu name="明细-部件不良" url="quality/marketPart/marketPartData.do" tabId="marketPartDataTab" permissionCode="part:marketPartData" targetType="0" display="0"></menu>
+			<menu name="明细-来料入库" url="quality/marketPart/incomingPartData.do" tabId="incomingPartDataTab" permissionCode="part:incomingPartData" targetType="0" display="0"></menu>
+			<menu name="明细-扫码入库" url="quality/marketPart/serialPartData.do" tabId="serialPartDataTab" permissionCode="part:serialPartData" targetType="0" display="0"></menu>
+		</folder>
+    	  
+		<folder name="基础数据" display="0" systemType ="5">
+			<menu name="新旧供应商关系对照表" url="base/supplierRef/list.do" tabId="supplierRefListTab" permissionCode="part:supplierRefList" targetType="0" display="0" commonOptions="1,2,3,4"></menu>
+			<menu name="供应商物料关系对照表" url="base/supplierRef/supplierPartList.do" tabId="supplierPartListTab" permissionCode="base:supplierPartList" targetType="0" display="0" commonOptions="1,2,3,4"></menu>
+			<menu name="仓库与机型对应关系" url="quality/wareHouse/list.do" tabId="wareHouseTab" permissionCode="part:wareHouse" targetType="0" display="1" commonOptions="1,2,3,4"/>
+			<menu name="新旧物料对应关系" url="quality/newPartRef/list.do" tabId="newPartRefTab" permissionCode="part:newPartRef" targetType="0" display="0" commonOptions="1,2,3,4"/>
+			<menu name="MES与CEM物料关系对照表" url="quality/MCPart/list.do" tabId="mcPartTab" permissionCode="part:mcPart" targetType="0" display="0" commonOptions="1,2,3,4"/>
+		</folder>
+		
+		<folder name="残缺数据管理" display="0" systemType ="5">
+			<menu name="残缺原材料汇总" url="base/missData/partList.do" tabId="missPartDataNav" permissionCode="part:missPartData" targetType="0" display="0" />
+			<menu name="残缺供应商汇总" url="base/missData/supplierList.do" tabId="missSupplierDataNav" permissionCode="part:missSupplierData" targetType="0" display="0" />
+		</folder>
+		
+		<menu name="供应商首页" url="system/homePage/supplierHomePage.do" tabId="supplierHomePageTab" permissionCode="part:supplierHomePage" targetType="0" display="0" />
+		<menu name="数据更新" url="quality/common/dataSum.do" tabId="partSumTab" permissionCode="part:dataSum" targetType="0" display="0" >
+			<operation name="物料模块数据更新" url="updateTestInstance.do" code="updateTestInstance"/>
+			<operation name="在线模块数据更新" url="updateReplaceSumDataMonth.do" code="sumMesDataMon"/>
+			<operation name="市场模块数据更新" url="updateData.do" code="importMes"/>
+		</menu>
+		
+		<menu name="数据导入" url="base/part/import/init.do" tabId="partDataImportTab" permissionCode="part:partDataImport" targetType="0" display="0" />
+		<menu name="返工/停线单" url="system/reworkSheet/list.do" tabId="reworkSheetTab" permissionCode="base:reworkSheetData" targetType="0" display="0" commonOptions="1,2,3,4"></menu>
+		<menu name="索赔/处罚单" url="system/claimsSheet/list.do" tabId="claimsSheetTab" permissionCode="base:claimsSheetData" targetType="0" display="0" commonOptions="1,2,3,4"></menu>
+		<menu name="计划采购登记" url="system/claimsSheet/procurementList.do" tabId="procurementRegisterTab" permissionCode="base:procurementRegisterData" targetType="0" display="0" commonOptions="1,2,3"></menu>
+         
+		<!-- 
+		<folder name="在线部分"  display="0"  systemType ="4">
+			 <menu name="物料在线"  url="base/quality/onlineHomePage.do" tabId="onlineHomePage" permissionCode="base:onlineHomePage" targetType="0" display="1" />
+			 <menu name="物料在线统计分析"  url="base/quality/onlineHomeChar.do" tabId="onlineHomeChar" permissionCode="base:onlineHomeChar" targetType="0" display="0" />
+			 <menu name="明细-在线批次"  url="base/quality/onlinebatch.do" tabId="onlinepoorcharNav" permissionCode="base:onlinepoorchar" targetType="0" display="0" />
+			 <menu name="明细-在线退次及更换"  url="base/quality/onlinenum.do" tabId="onlinenumcharNav" permissionCode="base:onlinenumchar" targetType="0" display="0" />
+			 <menu name="明细-ERP组装退次"  url="base/quality/onlineERPnum.do" tabId="onlineERPnumcharNav" permissionCode="base:onlineERPnumchar" targetType="0" display="0" />
+			 <menu name="明细-来料入库"  url="base/quality/onlineStorage.do" tabId="onlineStorageNav" permissionCode="base:onlineStorageNav" targetType="0" display="0" />
+		</folder>
+		
+		<menu name="在线部分数据汇总" url="base/online/onlineReplace.do" tabId="onlineReplaceNav" permissionCode="part:onlineReplaceNav" targetType="0" display="1" >
+			<operation name="MES更换数据月份汇总" url="updateReplaceSumDataMonth.do" code="sumMesDataMon"/>
+			<operation name="MES更换数据日份汇总" url="updateReplaceSumDataDay.do" code="sumMesDataDay"/>
+		</menu>
+		-->
+	</accordion>
+    
+    <accordion name="班组绩效管理" permissionCode ="purchase" iconName="folder" display="0" systemType ="4">
+    	
+    	<folder name="班组绩效报表" display="0" systemType ="4">
+    		<menu name="扁平化首页"  url="system/homePage/alarmPage.do" tabId="alarmPageNav" permissionCode="base:alarmPage:chart" targetType="0" display="0" />
+    		<menu name="班组绩效排名"  url="groupPerformanceChart/singlePerformanceChar.do" tabId="newsinglePerformanceCharNav" permissionCode="base:singlePerformanceChar:chart" targetType="0" display="0" />
+	        <menu name="班组绩效统计"  url="groupPerformanceChart/oneGroupPerfanceYear.do" tabId="newoneGroupPerfanceYearNav" permissionCode="base:oneGroupPerfanceYear:chart" targetType="0" display="0" />
+	        <menu name="关键指标日考核值"  url="groupPerformanceChart/primaryKeySelectList.do" tabId="newprimaryKeySelectListNav" permissionCode="base:primaryKeySelectList" targetType="0" display="0" />
+	        <menu name="班组绩效明细查询"  url="groupPerformanceChart/performanceDetailList.do" tabId="newperformanceDetailListNav" permissionCode="base:performanceDetailList" targetType="0" display="0" />       
+	        <menu name="班组统计明细表"  url="system/mesDataSum/list.do" tabId="newmesDataSumListTab" permissionCode="base:mesDataSumList" targetType="0" display="0" /> 
+	   		<menu name="绩效对比"  url="groupPerformanceChart/achievementscontrast.do" tabId="achievementscontrast" permissionCode="base:achievementscontrast" targetType="0" display="0" />
+	        <menu name="班组指标得分公式说明"  url="groupPerformanceChart/indexDecription.do" tabId="indexDecriptionTab" permissionCode="base:indexDecription" targetType="0" display="0" /> 
+    	</folder>
+    
+    	<folder name="原始数据查询"  display="0"  systemType ="4">
+	         <menu name="生产退次表查询"  url="base/commonselect/assemblyList.do" tabId="assemblyListNav" permissionCode="base:assemblyList" targetType="0" display="0" />
+	         <menu name="前工序FQC查检表查询"  url="base/commonselect/formerProcessList.do" tabId="formerProcessListNav" permissionCode="base:formerProcessList" targetType="0" display="0" />
+	         <menu name="5M1E不合格项记录单"  url="base/commonselect/batchDefectList.do" tabId="batchDefectListNav" permissionCode="base:batchDefectList" targetType="0" display="0" />
+	         <menu name="冲压质量日报表查询"  url="base/commonselect/stampingDaliyList.do" tabId="stampingDaliyListNav" permissionCode="base:stampingDaliyList" targetType="0" display="0" />
+	         <menu name="过程审核记录表查询"  url="base/commonselect/processAuditList.do" tabId="processAuditListNav" permissionCode="base:processAuditList" targetType="0" display="0" />
+	         <menu name="质量改善课题申报表查询"  url="base/commonselect/qualityImpList.do" tabId="qualityImpListNav" permissionCode="base:qualityImpList" targetType="0" display="0" />
+	         <menu name="市场开箱不良记录单查询"  url="base/commonselect/boxDefectList.do" tabId="boxDefectListNav" permissionCode="base:boxDefectList" targetType="0" display="0" />
+	         <menu name="喷涂质量日报表查询"  url="base/commonselect/paintingDailyList.do" tabId="paintingDailyListNav" permissionCode="base:paintingDailyList" targetType="0" display="0" />
+	         <menu name="IPQC巡检不良表查询"  url="base/commonselect/ipqcInspects.do" tabId="ipqcInspectsListNav" permissionCode="base:ipqcInspectsList" targetType="0" display="0" />
+	         <menu name="OQC抽检不良表查询"  url="base/commonselect/oqcCheck.do" tabId="oqcCheckListNav" permissionCode="base:oqcCheckList" targetType="0" display="0" />
+	         <menu name="组装维修日报表查询"  url="base/commonselect/assemblyRepaired.do" tabId="assemblyRepairedListNav" permissionCode="base:assemblyRepairedList" targetType="0" display="0" />
+	         <menu name="喷涂生产退次表查询"  url="base/commonselect/paintingProductReturn.do" tabId="paintingProductReturnNav" permissionCode="base:paintingProductReturn" targetType="0" display="0" />
+	         <menu name="精加工车间直通率查询"  url="base/commonselect/finishingDaliyList.do" tabId="finishingDaliyListNav" permissionCode="base:finishingDaliyList" targetType="0" display="0" />
+	    </folder>
+	    
+	    <folder name="扁平化管理"   display="0"  systemType ="4">
+	    	<menu name="考核项目设定"  url="base/item/list.do" tabId="newItemNav" permissionCode="base:item" targetType="0" display="0" commonOptions="1,2,3,4" />
+	    	<menu name="考核指标设定"  url="base/index/list.do" tabId="newIndexNav" permissionCode="base:index" targetType="0" display="0" commonOptions="1,2,3,4" />
+	    	<menu name="月度考核基准目标设定"  url="base/monthAssesment/list.do" tabId="newMonthAssesmentNav" permissionCode="base:monthAssesment" targetType="0" display="0" commonOptions="1,2,3,4" />
+	    	<menu name="过程评分设定"  url="system/processscore/list.do" tabId="processScoreNav" permissionCode="base:processScore" targetType="0" display="0" commonOptions="1,2,3,4" />
+	    	<menu name="QPRN分数设定"  url="system/qprnsetting/list.do" tabId="qprnSettingNav" permissionCode="base:qprnsetting" targetType="0" display="0" commonOptions="1,2,3,4"/>
+	    	<menu name="生产退次指定型号设定"  url="system/productionreturn/list.do" tabId="productionReturnNav" permissionCode="base:productionReturn" targetType="0" display="1" commonOptions="1,2,3,4"/>
+	    	<menu name="年度考核指标设定"  url="system/performanceCheckYear/list.do" tabId="performanceCheckYearNav" permissionCode="base:performanceCheckYear" targetType="0" display="1" />
+	    	<menu name="年度考核指标绩效查询"  url="system/countPerformanceMonth/list.do" tabId="countPerformanceMonthNav" permissionCode="base:countPerformanceMonth" targetType="0" display="0" commonOptions="1,2,3,4" />
+	    	<menu name="异常信息录入表"  url="system/exceptionEnter/list.do" tabId="exceptionEnterNav" permissionCode="base:exceptionEnter" targetType="0" display="0" commonOptions="1,2,3,4" />
+	    	<menu name="开箱不良责任划分" url="poorOpen/list.do" tabId="poorOpenNav" permissionCode="base:poorOpen" targetType="0" display="0">
+	    		<operation name="一级责任判定" url="primary.do" code="primary"/>
+	    		<operation name="二级责任判定" url="ultimate.do" code="ultimate"/>
+	    	</menu>
+	    	<menu name="开箱不良趋势图 " url="poorOpen/chart.do" tabId="poorOpen" permissionCode="poorOpen:Chart" targetType="0" display="0"/>
+	    </folder>
+	    
+	    <menu name="扁平化数据汇总" url="qms/common/mesSum.do" tabId="mesSumTab" permissionCode="sys:mesSum" targetType="0" display="0" >
+        	<operation name="MES月份汇总" url="updateMesSumDataMonth.do" code="sumMesDataMon"/>
+        	<operation name="MES月份汇总" url="updateMesSumDataDay.do" code="sumMesDataDay"/>
+        </menu>
+    </accordion>
+    
+    <accordion name="市场质量统计分析" permissionCode ="supplierSearch" iconName="folder" display="0" systemType ="2">
+		
+		<folder name="综合分析"  display="0">
+            <menu name="综合分析"  url="partTypeChart/sumChar.do" tabId="sumChart" permissionCode="sumChart:chart" targetType="0" display="0" />
+            <menu name="警示图-计算"  url="system/homePage/alarmInfo.do" tabId="alarmInfoNav" permissionCode="system:alarmInfo" targetType="0" display="1" />
+            <menu name="警示图"  url="base/repairCountInput/homeList.do" tabId="homeRepairRateInputNav" permissionCode="base:homeRepairRateInput" targetType="0" display="1" />
+        </folder>
+    	
+    	<folder name="分析"  display="1">
+       		<menu name="型号排列图"  url="partTypeChart/analysisChart.do" tabId="partTypeAnalysisChart" permissionCode="partTypeAnalysisChart:chart" targetType="0" display="0" />
+       		<menu name="区域排列图"  url="regionChart/analysisChart.do" tabId="regionAnalysisChart" permissionCode="regionAnalysisChart:chart" targetType="0" display="0" />
+       		<menu name="产线排列图"  url="plineChart/analysisChart.do" tabId="plineAnalysisChart" permissionCode="plineAnalysisChart:chart" targetType="0" display="0" />
+       		<menu name="故障大类排列图"  url="faultTypeChart/singleChart.do" tabId="faultTypeCharts" permissionCode="faultTypeCharts:chart" targetType="0" display="0" />
+       		<menu name="故障小类排列图"  url="faultReasonChart/analysisChart.do" tabId="faultReasonAnalysisChart" permissionCode="faultReasonAnalysisChart:chart" targetType="0" display="0" />       		
+        </folder>
+        
+        <folder name="具体分析"  display="0">
+        	<!-- 单表 -->
+        	<menu name="百台维修率序列图"  url="timeChart/singleChart.do" tabId="timeCharts" permissionCode="timeCharts:chart" targetType="0" display="1" />
+        	<menu name="型号排列图"  url="partTypeChart/singleChart.do" tabId="partTypeCharts" permissionCode="partTypeCharts:chart" targetType="0" display="1" />
+	        <menu name="区域排列图"  url="regionChart/singleChart.do" tabId="regionCharts" permissionCode="regionCharts:chart" targetType="0" display="1" />
+	        <menu name="产线排列图"  url="plineChart/singleChart.do" tabId="plineCharts" permissionCode="plineCharts:chart" targetType="0" display="1" />
+	        <menu name="故障大类排列图"  url="faultTypeChart/singleChart.do" tabId="faultTypeCharts" permissionCode="faultTypeCharts:chart" targetType="0" display="1" />
+	        <menu name="故障小类排列图-累加"  url="faultReasonChart/singleChart.do" tabId="faultReasonCharts" permissionCode="faultReasonCharts:chart" targetType="0" display="1" />
+	        <menu name="故障小类排列图-单月"  url="faultReason2Chart/singleChart.do" tabId="faultReason2Charts" permissionCode="faultReason2Charts:chart" targetType="0" display="1" />
+	        <menu name="年度百台排列分析"  url="partTypeChart/common.do" tabId="commonCharts" permissionCode="commonCharts:chart" targetType="0" display="0" />
+	       	<menu name="生产及维修日期排列分析"  url="partTypeChart/betweenCommon.do" tabId="betweenCommonCharts" permissionCode="betweenCommon:chart" targetType="0" display="0" />
+	       	<menu name="百台四象限分析" url="scatterChart/scatterChart.do" tabId="scatterCharts" permissionCode="scatterCharts:chart" targetType="0" display="0" />
+	        <menu name="安装四象限分析" url="scatterChart/installScatterChart.do" tabId="installScatterChart" permissionCode="installScatterChart:chart" targetType="0" display="0" />
+	         <menu name="时间序列分析三角阵"  url="timeMatrixTable/sigleMonthReCount.do" tabId="sigleMonthReCountTab" permissionCode="sigleMonthReCountTab:table" targetType="0" display="0" />
+	        <menu name="时间序列分析(倒三角)"  url="timeMatrixTable/sigleDownMonthReCount.do" tabId="sigleDownMonthReCountTab" permissionCode="sigleDownMonthReCountTab:table" targetType="0" display="1" />
+	        <menu name="安装时间序列分析三角阵"  url="timeMatrixInstall/trgMatrixInsSigleCount.do"  tabId="trgMatrixInsSigleCountTab" permissionCode="trgMatrixInsSigleCount:table" targetType="0" display="0" />
+	        <menu name="新品安装分析三角阵"  url="newInstall/trgNewInstallationCount.do"  tabId="trgNewInstallationCount" permissionCode="trgNewInstallationCount:table" targetType="0" display="0" />
+        	<menu name="安装时间序列分析(倒三角)"  url="timeMatrixInstall/trgMatrixDownInsSigleCount.do"  tabId="trgMatrixDownInsSigleCountTab" permissionCode="trgMatrixDownInsSigleCount:table" targetType="0" display="1" />
+        	<menu name="保内维修分析三角阵"  url="warrantyRepair/trgWarrantyRepairCount.do"  tabId="trgWarrantyRepairTab" permissionCode="trgWarrantyRepairCount:table" targetType="0" display="0" />
+	        <menu name="保内时序图" url="timeMatrixTable/underWarrantyChart.do" tabId="underWarrantyChartTab" permissionCode="underWarrantyChart:chart" targetType="0" display="0" />
+	        <menu name="生产月P控图分析"  url="timeMatrixTable/timeTotalPChart.do" tabId="timeTotalPChartTab" permissionCode="timeTotalPChart:chart" targetType="0" display="0" />
+	        <menu name="区域维修分析" url="mapChart/singleMapChart.do" tabId="mapCharts" permissionCode="mapCharts:chart" targetType="0" display="0" />
+	        <menu name="时间序列分析(累计)"  url="timeMatrixTable/sigleMonthReTotalCount.do"  tabId="sigleMonthReTotalCountTab" permissionCode="sigleMonthReTotalCount:table" targetType="0" display="0" />
+	        <menu name="时间序列分析(P控图)"  url="timeMatrixTable/trgMatrixReTotalCount.do"  tabId="trgMatrixReTotalCountTab" permissionCode="trgMatrixReTotalCount:table" targetType="0" display="0" />
+	        <menu name="时间序列矩阵(三角阵-累计维修率)"  url="timeMatrixTable/trgMatrixRePercent.do"  tabId="trgMatrixRePercentTab" permissionCode="trgMatrixRePercent:table" targetType="0" display="0" />
+	    	<menu name="CEM客户之声分析"  url="voiceCustomerEchatrs/singleChart.do" tabId="voiceCustomerEchatrs" permissionCode="voiceCustomerEchatrs:chart" targetType="0" display="0"></menu>	
+        	
+        	<!--
+	            <menu name="菜单测试" url="underBuilding.do" tabId="stamPlanListTab" permissionCode="supplierSearch:test" targetType="0" display="1" >
+	            	<operation name="增加"  code="add"/>
+	            	<operation name="增加物料" url="pm/stamping/produPlan.sp?method=reOpenOrder"  code="reopen"/>
+	            </menu>
+		        <menu name="时间序列矩阵(单月维修率)"  url="timeMatrixTable/sigleMonthRePercent.do"  tabId="sigleMonthRePercentTab" permissionCode="sigleMonthRePercent:table" targetType="0" display="0" /> 
+	        -->
+        </folder>
+        
+        <folder name="质量管理" display="0" systemType ="2">
+        	<menu name="仪表盘维修率"  url="base/repairRateDashboard/list.do" tabId="repairRateDashboardListNav" permissionCode="base:repairRateDashboard" targetType="0" display="0" commonOptions="1,2,3,4" />
+	        <menu name="各机型月度累计百台维修率"  url="base/repairRate/repairRateList.do" tabId="repairRateListNav" permissionCode="base:repairRate" targetType="0" display="0" commonOptions="1,2,3,4" />
+	    	<menu name="区域与分公司仓库对应关系"  url="base/locationRegion/locationRegionList.do" tabId="locationRegionListNav" permissionCode="base:locationRegionList" targetType="0" display="0" commonOptions="1,2,3,4">
+	    		<operation name="同步mes仓库" url="synchronous.do" code="synchronous"/>
+	    	</menu>
+	    	<menu name="故障大类"  url="base/fault/faultType/faultType.do" tabId="faultTypeNav" permissionCode="base:faultType" targetType="0" display="0" commonOptions="1,2,3,4" />
+	    	<menu name="故障小类"  url="base/fault/faultReason/faultReason.do" tabId="faultReasonNav" permissionCode="base:faultReason" targetType="0" display="0" commonOptions="1,2,3,4">
+	    		<operation name="合并" url="faultReasonSelect.do" code="mesh"/>
+	    		<operation name="同步故障名称" url="synchronous.do" code="faultSynchronous"/>
+	    	</menu>
+	    	<menu name="CEM市场维修记录-中间表"  url="base/repairRecord/initIntermediate.do" tabId="repairRecordIntermediateNav" permissionCode="base:repairRecordIntermediate" targetType="0" display="0"></menu>
+	    	<menu name="CEM市场维修记录"  url="base/repairRecord/init.do" tabId="repairRecordNav" permissionCode="base:repairRecord" targetType="0" display="0">
+	    		<operation name="导出" url="base/repairRecord/excelOutput.do" code="exportExcel"/>
+	    		<operation name="MQE" code="mqe"/>
+	    	</menu>
+	    	<menu name="CEM客户之声分类" url="voiceCategory/findAll.do" tabId="voiceCategory" permissionCode="base:voiceCategory" targetType="0" display="0"></menu>
+	    	<menu name="CEM客户之声"  url="base/voiceOfCustomer/voiceofcustomerList.do" tabId="VoiceOfCustomerNav" permissionCode="base:voiceOfCustomer" targetType="0" display="0"></menu>	
+	    	<menu name="产品安装信息"  url="base/productInstall/init.do" tabId="productInstallNav" permissionCode="base:productInstall" targetType="0" display="0" />
+	    	<menu name="CEM安装信息"  url="base/crmInstall/init.do" tabId="crmInstallNav" permissionCode="base:crmInstall" targetType="0" display="0" />
+	    	<menu name="机型类别"  url="base/machineType/machineType.do" tabId="machineTypeNav" permissionCode="base:machineType" targetType="0" display="0" commonOptions="1,2,3,4"/>
+	 		<menu name="下线汇总表"  url="base/downShipTotal/downLineTotal.do" tabId="downLineNav" permissionCode="base:downLineTotal" targetType="0" display="0" />
+	   		<menu name="发货汇总表"  url="base/downShipTotal/shipmentsTotal.do" tabId="shipmentsNav" permissionCode="base:shipmentsTotal" targetType="0" display="0" />
+	   		<menu name="维修汇总表"  url="base/repairTotal/repairTotal.do" tabId="repairNav" permissionCode="base:repairTotal" targetType="0" display="0" />	
+	   		<menu name="安装汇总表"  url="base/installTotal/installTotal.do" tabId="installNav" permissionCode="base:installTotal" targetType="0" display="0" />	
+	    	<menu name="各报表统计说明"  url="qms/common/chartDecription.do" tabId="chartDecriptionNav" permissionCode="common:chartDecription" targetType="0" display="0" />
+	    	<menu name="百台维修率录入表"  url="base/repairCountInput/list.do" tabId="repairRateInputNav" permissionCode="base:repairRateInput" targetType="0" display="0" commonOptions="1,2,3,4" />	
+	        <menu name="生产数和包装下线数记录查询"  url="system/basicdata/materiallist.do" tabId="materialNav" permissionCode="base:material" targetType="0" display="1" />
+	    </folder>
+	    
+	    <folder name="残缺数据管理" display="0" systemType ="2">
+			<menu name="残缺数据汇总" url="base/missData/list.do" tabId="missDataNav" permissionCode="part:missData" targetType="0" display="1" />
+			<menu name="残缺成品汇总" url="base/missData/partListByProduct.do" tabId="missPartDataByProductNav" permissionCode="part:missPartDataByProduct" targetType="0" display="0" />
+		</folder>
+	    
+	    <menu name="市场质量数据汇总" url="qms/common/sum.do" tabId="sumTab" permissionCode="sys:sum" targetType="0" display="0">
+        	<operation name="MES导入" url="importMesData.do" code="importMes"/>
+        	<operation name="CRM导入" url="importCRMData.do" code="importCRM"/>
+        	<operation name="更新发货时间" url="updateShipDate.do" code="updateShipDate"/>
+        	<operation name="下线汇总" url="updateDownLineTotal.do" code="updateDownLineTotal"/>
+        	<operation name="发货汇总" url="updateShipTotal.do" code="updateShipTotal"/>
+        	<operation name="维修汇总" url="updateMarketRepairTotal.do" code="updateMarketRepairTotal"/>
+        	<operation name="一键汇总" url="updateTotalCount.do" code="updateTotalCount"/>
+        	<operation name="安装汇总" url="sumInstallTotal.do" code="sumInstall"/>
+        	<operation name="安装维修汇总" url="sumInstallRepair.do" code="sumInstallReapair"/>
+        </menu>
+    </accordion>
+
+	<accordion name="smt报表" permissionCode="smt" iconName="folder" display="0">
+		<menu name="上料记录" url="smt/PFSAPANAMvData/list.do" tabId="mvDataId" permissionCode="smt:mvData" targetType="0" display="0"/>
+		<menu name="物料追溯" url="smt/PFSAPANATraceData/list.do" tabId="traceDataId" permissionCode="smt:traceData" targetType="0" display="0"/>
+		<menu name="抛料率" url="smt/PFSAPANAScrapData/list.do" tabId="scrapDataId" permissionCode="smt:scrapData" targetType="0" display="0"/>
+	</accordion>
+    
+    <accordion name="系统管理" permissionCode ="sys" iconName="folder" display="0">
+		<menu name="用户管理" url="system/user/list.do" tabId="userlistNav" permissionCode="sys:userMgr" targetType="0" display="0" >
+            <operation name="设置用户组" url="toUserGroup.do"  code="settingGroup" />
+        </menu>
+        <menu name="用户组管理" url="system/group/list.do" tabId="grouplistNav" permissionCode="sys:userGroupMgr" targetType="0" display="0" commonOptions="1,2,3,4" >
+            <operation name="设置用户组用户" url="userSetting.do" code="usersSetting" />
+            <operation name="设置用户组权限" url="editGroupPrivilege.do" code="plgSetting" />
+        </menu>
+        <menu name="修改密码" url="system/user/toModifyPwd.do" tabId="editPasswordNav" permissionCode="sys:chgPassword" targetType="0" display="1" />
+        <menu name="系统配置" url="system/sysconfig/managelist.do" tabId="manageNav" permissionCode="sys:system:config" targetType="0" display="0" commonOptions="1,2,3,4"/>
+        <menu name="系统调试" url="system/user/debug.do" tabId="debugNav" permissionCode="sys:system:debug" targetType="0" display="1" />
+        <menu name="mmGrid" url="highcharts/exemple/testGrid.do" tabId="debugNav" permissionCode="sys:system:testGrid" targetType="0" display="1" />
+        <menu name="fixtable" url="highcharts/exemple/fixtable.do" tabId="debugNav" permissionCode="sys:system:fixtable" targetType="0" display="1" />
+        <menu name="登陆日志" url="system/sysLoginHistory/list.do" tabId="sysLoginHistoryTab" permissionCode="sys:system:sysLoginHistory" targetType="0" display="0" />
+        <menu name="操作日志" url="system/sysOperateLog/list.do" tabId="sysOperateLogTab" permissionCode="sys:system:sysOperateLog" targetType="0" display="0" />
+        <menu name="汇总计算日志" url="system/sumOperationLog/sumOperationLog.do" tabId="sumOperationLogNav" permissionCode="system:sumOperationLog" targetType="0" display="0" />
+        <menu name="SMT日志" url="system/smtLog/list.do" tabId="smtLogNav" permissionCode="system:smtLog" targetType="0" display="0" />
+        <menu name="数据来源说明" url="system/dataSource/list.do" tabId="dataSourceListNav" permissionCode="system:dataSourceList" targetType="0" display="0" commonOptions="1,2,3,4" />
+    </accordion>
+    
+    <accordion name="echarts图表" permissionCode ="echarts" iconName="folder" display="1">
+   		<menu name="echartsTest" url="report/echart/test.do" tabId="echartsTestTab" permissionCode="echarts:echartsTest" targetType="0" display="0" />
+    </accordion>
+    
+    <!-- zj测试用 -->
+    <accordion name="绩效目标管理" permissionCode ="jxmb"  display="0">
+    	<menu name="绩效指标设定"  url="ptm/performanceIndex/list.do" tabId="performanceIndexNav" permissionCode="ptm:performanceIndexList" targetType="0" display="0" commonOptions="1,2,3,4" /> 
+    	<menu name="年度指标设定"  url="ptm/yearPerformanceSet/list.do" tabId="yearPerformancelistNav" permissionCode="ptm:yearPerformancelist" targetType="0" display="0" commonOptions="1,2,3,4" /> 
+    	<menu name="月度指标设定"  url="ptm/monthPerformanceSet/list.do" tabId="monthPerformancelistNav" permissionCode="ptm:monthPerformancelist" targetType="0" display="0" commonOptions="1,2,3,4" />
+    	<menu name="月度指标结果"  url="ptm/monthPerformanceResult/list.do" tabId="monthPerformanceResultlistNav" permissionCode="ptm:monthPerformanceResultlist" targetType="0" display="0" commonOptions="1,2,3,4" />
+        <menu name="综合绩效明细"  url="ptm/totalPerformanceList/list.do" tabId="totalPerformanceListNav" permissionCode="ptm:totalPerformanceList" targetType="0" display="0" commonOptions="1,2,3,4" />
+    	<!-- <menu name="绩效考核指标设定"  url="system/performanceCheck/list.do" tabId="performanceCheckNav" permissionCode="base:performanceCheck" targetType="0" display="0" commonOptions="1,2,3,4" /> 
+        <menu name="年度考核目标设定"  url="per/item/list.do" tabId="perItemNav" permissionCode="per:item" targetType="0" display="0" commonOptions="1,2,3,4" />
+        <menu name="月度考核目标设定"  url="per/index/list.do" tabId="perIndexNav" permissionCode="per:index" targetType="0" display="0" commonOptions="1,2,3,4"  />
+    	<menu name="月度绩效明细"  url="per/month/list.do" tabId="perMonthNav" permissionCode="per:month" targetType="0" display="0" commonOptions="1,2,3,4"  />  
+       	<menu name="月度绩效考核结果"  url="per/monthly/list.do" tabId="perMonthlyNav" permissionCode="per:monthly" targetType="0" display="0" commonOptions="1,2,3,4"  />   -->
+        <menu name="工厂部门对应"  url="per/department/list.do" tabId="perdtNav" permissionCode="per:department" targetType="0" display="0" commonOptions="1,2,3,4"  />    
+        <menu name="月度实际绩效趋势"  url="per/chartsDate/monthFactTrend.do" tabId="monthFactTrendNav" permissionCode="per:monthFactTrend" targetType="0" display="0" commonOptions="1"  />     
+        <menu name="年度同比实际绩效统计"  url="per/chartsDate/anYearFactTrend.do" tabId="anYearFactTrendNav" permissionCode="per:anYearFactTrend" targetType="0" display="0" commonOptions="1"  />    
+        <menu name="指标达成率统计"  url="per/chartsDate/reachRateTable.do" tabId="reachRateTable" permissionCode="per:reachRateTable" targetType="0" display="0" commonOptions="1"  />   
+        <menu name="年度实际绩效统计"  url="per/chartsDate/anYearFactResult.do" tabId="anYearFactResult" permissionCode="per:anYearFactResult" targetType="0" display="0" commonOptions="1"  />
+        <!-- <menu name="绩效管理日志" url="system/editReason/list.do" tabId="jxManagerNav" permissionCode="system:editReasonList" targetType="0" display="0" commonOptions="1,2,3,4" /> -->  
+        <menu name="绩效管理日志" url="ptm/performanceEditRecord/list.do" tabId="ptmDailyNav" permissionCode="ptm:ptmDailyList" targetType="0" display="0" commonOptions="1,2,3,4" />  
+    </accordion>    
+    
+    <!-- <accordion name="绩效管理" permissionCode ="performanceTargetManager"  display="0">
+    	<menu name="绩效指标设定"  url="ptm/performanceIndex/list.do" tabId="performanceIndexNav" permissionCode="ptm:performanceIndexList" targetType="0" display="0" commonOptions="1,2,3,4" /> 
+    	<menu name="年度指标设定"  url="ptm/yearPerformanceSet/list.do" tabId="yearPerformancelistNav" permissionCode="ptm:yearPerformancelist" targetType="0" display="0" commonOptions="1,2,3,4" /> 
+    	<menu name="月度指标设定"  url="ptm/monthPerformanceSet/list.do" tabId="monthPerformancelistNav" permissionCode="ptm:monthPerformancelist" targetType="0" display="0" commonOptions="1,2,3,4" />
+    	<menu name="月度指标结果"  url="ptm/monthPerformanceResult/list.do" tabId="monthPerformanceResultlistNav" permissionCode="ptm:monthPerformanceResultlist" targetType="0" display="0" commonOptions="1,2,3,4" />
+        <menu name="综合绩效明细"  url="ptm/totalPerformanceList/list.do" tabId="totalPerformanceListNav" permissionCode="ptm:totalPerformanceList" targetType="0" display="0" commonOptions="1,2,3,4" />
+        <menu name="绩效管理日志" url="ptm/performanceEditRecord/list.do" tabId="ptmDailyNav" permissionCode="ptm:ptmDailyList" targetType="0" display="0" commonOptions="1,2,3,4" />  
+    </accordion>   -->                       
+</menus>

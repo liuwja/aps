@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.ReworkSheetMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.ReworkSheet" >
+    <result column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="FACTORY" property="factory" jdbcType="VARCHAR" />
+    <result column="REWORK_NUMBER" property="rework_number" jdbcType="VARCHAR" />
+    <result column="WORKHOUR" property="workhour" jdbcType="VARCHAR" />
+    <result column="SUPPLIES_EXPENSE" property="supplies_expense" jdbcType="VARCHAR" />
+    <result column="MONEY" property="money" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="CREATION_TIME" property="creation_time" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+  	ID,FACTORY,REWORK_NUMBER,WORKHOUR,SUPPLIES_EXPENSE,MONEY,STATUS,TO_CHAR(CREATION_TIME,'YYYY-MM-DD') AS CREATION_TIME
+  </sql>
+    <select id="getAllByPage" resultMap="BaseResultMap" >
+		select <include refid="Base_Column_List"></include> from REWORK_SHEET rs 
+		<where>
+      <if test="reworkSheet.factory != null and reworkSheet.factory !=''" >
+        FACTORY like '%${reworkSheet.factory}%'
+      </if>
+      <if test="reworkSheet.rework_number != null and reworkSheet.rework_number !=''" >
+        and REWORK_NUMBER like '%${reworkSheet.rework_number}%'
+      </if>
+        <if test="reworkSheet.status != null and reworkSheet.status !=''" >
+        and STATUS like '%${reworkSheet.status}%'
+      </if>
+      <if test="reworkSheet.creation_time != null and reworkSheet.creation_time !=''" >
+        and TO_CHAR(CREATION_TIME,'YYYY-MM-DD') = '${reworkSheet.creation_time}'
+      </if>
+    </where>
+       order by rs.CREATION_TIME desc
+  </select> 
+  
+  <select id="getByid" resultMap="BaseResultMap" parameterType="com.peg.model.ReworkSheet" >
+    select 
+    <include refid="Base_Column_List"></include>
+    from REWORK_SHEET 
+    where 1=1 and id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+   <select id="getByReworkNumber" resultMap="BaseResultMap" parameterType="com.peg.model.ReworkSheet" >
+    select 
+    <include refid="Base_Column_List"></include>
+    from REWORK_SHEET 
+    where 1=1 and rework_number = #{rework_number,jdbcType=VARCHAR}
+  </select>
+  
+    <insert id="insertSelective" parameterType="com.peg.model.ReworkSheet" >
+    insert into REWORK_SHEET
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="factory != null" >
+        FACTORY,
+      </if>
+      <if test="rework_number != null" >
+        REWORK_NUMBER,
+      </if>
+      <if test="workhour != null" >
+        WORKHOUR,
+      </if>
+      <if test="supplies_expense != null" >
+        SUPPLIES_EXPENSE,
+      </if>
+      <if test="money != null" >
+        MONEY,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="factory != null" >
+        #{factory,jdbcType=VARCHAR},
+      </if>
+      <if test="rework_number != null" >
+        #{rework_number,jdbcType=VARCHAR},
+      </if>
+      <if test="workhour != null" >
+        #{workhour,jdbcType=VARCHAR},
+      </if>
+      <if test="supplies_expense != null" >
+        #{supplies_expense,jdbcType=VARCHAR},
+      </if>
+      <if test="money != null" >
+        #{money,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+    <update id="updateByIdSelective" parameterType="com.peg.model.ReworkSheet" >
+    update REWORK_SHEET
+    <set >
+      <if test="factory != null" >
+        FACTORY = #{factory,jdbcType=TIMESTAMP},
+      </if>
+      <if test="rework_number != null" >
+        REWORK_NUMBER = #{rework_number,jdbcType=TIMESTAMP},
+      </if>
+      <if test="workhour != null" >
+        WORKHOUR = #{workhour,jdbcType=TIMESTAMP},
+      </if>
+      <if test="supplies_expense != null" >
+        SUPPLIES_EXPENSE = #{supplies_expense,jdbcType=TIMESTAMP},
+      </if>
+      <if test="money != null" >
+        MONEY = #{money,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <delete id="deleteById" parameterType="com.peg.model.ReworkSheet" >
+    delete from REWORK_SHEET
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+</mapper>  

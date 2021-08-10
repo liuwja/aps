@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.MonthAssessmentMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.MonthAssessment" >
+    <id column="ma_key" property="maKey" jdbcType="DECIMAL" />
+    <result column="index_key" property="indexKey" jdbcType="DECIMAL" />
+    <result column="group_key" property="groupKey" jdbcType="DECIMAL" />
+    <result column="monthly" property="monthly" jdbcType="VARCHAR" />
+    <result column="item_scale" property="itemScale" jdbcType="DECIMAL" />
+    <result column="index_scale" property="indexScale" jdbcType="DECIMAL" />
+    <result column="index_mainkey" property="indexMainkey" jdbcType="VARCHAR" />
+    <result column="base_value" property="baseValue" jdbcType="DECIMAL" />
+    <result column="target_value" property="targetValue" jdbcType="DECIMAL" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+    <result column="LAST_UPDATE_TIME" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_UPDATE_User" property="lastUpdateUser" jdbcType="VARCHAR" />
+    <result column="index_act_value" property="indexActValue" jdbcType="DECIMAL" />
+    <result column="index_score" property="indexScore" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ma_key,group_key, index_key,monthly,item_scale,index_scale,index_mainkey,base_value,target_value,CREATE_TIME,CREATE_USER,LAST_UPDATE_TIME,LAST_UPDATE_User
+  </sql>
+
+  
+   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List"></include>
+    from t_monthly_assessment
+    where ma_key = #{maKey,jdbcType=DECIMAL}
+  </select>
+   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_monthly_assessment
+    where ma_key = #{maKey,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.bph.MonthAssessment" >
+    insert into t_monthly_assessment ( index_key,group_key,monthly,item_scale,index_scale,index_mainkey,
+    base_value,target_value,CREATE_USER,CREATE_TIME,LAST_UPDATE_TIME,LAST_UPDATE_User )
+    values (#{indexKey,jdbcType=DECIMAL}, #{groupKey,jdbcType=DECIMAL},  #{monthly,jdbcType=VARCHAR}, 
+    #{itemScale,jdbcType=DECIMAL},#{indexScale,jdbcType=DECIMAL},#{indexMainkey,jdbcType=VARCHAR},
+    #{baseValue,jdbcType=DECIMAL},#{targetValue,jdbcType=DECIMAL},
+    #{createUser,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},
+    #{lastUpdateTime,jdbcType=TIMESTAMP},#{lastUpdateUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.bph.Index" >
+    insert into t_monthly_assessment
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="indexKey != null" >
+        index_key,
+      </if>
+      <if test="groupKey != null" >
+       group_key,
+      </if>
+      <if test="monthly != null" >
+       monthly,
+      </if>
+      <if test="itemScale != null" >
+        item_scale,
+      </if>
+      <if test="indexScale != null" >
+        index_Scale,
+      </if>
+      <if test="indexMainkey != null" >
+        index_mainkey,
+      </if>
+      <if test="baseValue != null" >
+        base_Value,
+      </if>
+      <if test="targetValue != null" >
+        target_Value,
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="indexKey != null" >
+        #{indexKey,jdbcType=DECIMAL},
+      </if>
+      <if test="groupKey != null" >
+        #{groupKey,jdbcType=DECIMAL},
+      </if>
+      <if test="monthly != null" >
+        #{monthly,jdbcType=VARCHAR},
+      </if>
+      <if test="itemScale != null" >
+        #{itemScale,jdbcType=DECIMAL},
+      </if>
+      <if test="indexScale != null" >
+        #{indexScale,jdbcType=DECIMAL},
+      </if>
+      <if test="indexMainkey != null" >
+        #{indexMainkey,jdbcType=TIMESTAMP},
+      </if>
+      <if test="baseValue != null" >
+        #{baseValue,jdbcType=DECIMAL},
+      </if>
+      <if test="targetValue != null" >
+       #{targetValue,jdbcType=DECIMAL},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.bph.MonthAssessment" >
+    update t_monthly_assessment
+    <set >
+     <if test="indexKey != null" >
+        index_key= #{indexKey,jdbcType=DECIMAL},
+      </if>
+       <if test="groupKey != null" >
+        group_key= #{groupKey,jdbcType=DECIMAL},
+      </if>
+      <if test="monthly != null" >
+       monthly= #{monthly,jdbcType=VARCHAR},
+      </if>
+      <if test="itemScale != null" >
+        item_scale=#{itemScale,jdbcType=DECIMAL},
+      </if>
+      <if test="indexScale != null" >
+         index_Scale=#{indexScale,jdbcType=DECIMAL},
+      </if>
+      <if test="indexMainkey != null" >
+      index_mainkey=#{indexMainkey,jdbcType=VARCHAR},
+      </if>
+      <if test="baseValue != null" >
+        base_Value=#{baseValue,jdbcType=DECIMAL},
+      </if>
+      <if test="targetValue != null" >
+       target_Value=#{targetValue,jdbcType=DECIMAL},
+      </if>
+      
+    </set>
+    where  ma_key = #{maKey,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.bph.MonthAssessment" >
+    update t_monthly_assessment
+    set index_key= #{indexKey,jdbcType=DECIMAL},
+       group_key= #{groupKey,jdbcType=DECIMAL},
+      monthly= #{monthly,jdbcType=VARCHAR},
+      item_scale=#{itemScale,jdbcType=DECIMAL},
+      index_Scale=#{indexScale,jdbcType=DECIMAL},
+      index_mainkey=#{indexMainkey,jdbcType=VARCHAR},
+      base_Value=#{baseValue,jdbcType=DECIMAL},
+      target_Value=#{targetValue,jdbcType=TIMESTAMP},
+      LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=VARCHAR},
+      where ma_key = #{maKey,jdbcType=DECIMAL}
+  </update>
+  
+  <select id="findeByGroupAndMonth" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List"></include>
+    from t_monthly_assessment
+    where 1=1
+    <if test="groupKey != null">
+     and group_key = #{groupKey}
+    </if>
+    <if test="queryMonth != null">
+     and monthly = #{queryMonth}
+    </if>
+  </select>
+   <delete id="deleteMonthByGcKey" parameterType="java.lang.Long" >
+    delete from t_monthly_assessment
+    where index_key in(select index_key from t_index where item_key in(
+    select item_key from t_item where gc_key =#{gcKey,jdbcType=DECIMAL} )) 
+  </delete>
+  
+  <select id="findeByGroupAndMonthAndIndex" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List"></include>
+    from t_monthly_assessment
+    where 1=1
+    <if test="groupKey != null">
+     and group_key = #{groupKey}
+    </if>
+    <if test="queryMonth != null">
+     and monthly = #{queryMonth}
+    </if>
+    <if test="indexKey != null">
+     and index_key = #{indexKey}
+    </if>
+  </select>
+ </mapper>

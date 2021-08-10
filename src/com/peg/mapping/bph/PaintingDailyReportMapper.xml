@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.PaintingDailyReportMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.PaintingDailyReport" >
+    <id column="ATR_KEY" property="atrKey" jdbcType="DECIMAL" />
+    <id column="SITE_NUM" property="siteNum" jdbcType="DECIMAL" />
+    <result column="ATR_NAME" property="atrName" jdbcType="VARCHAR" />
+    <result column="PURGE_STATUS" property="purgeStatus" jdbcType="DECIMAL" />
+    <result column="CREATION_TIME" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="CREATION_TIME_U" property="creationTimeU" jdbcType="TIMESTAMP" />
+    <result column="CREATION_TIME_Z" property="creationTimeZ" jdbcType="VARCHAR" />
+    <result column="LAST_MODIFIED_TIME" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME_U" property="lastModifiedTimeU" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME_Z" property="lastModifiedTimeZ" jdbcType="VARCHAR" />
+    <result column="XFR_INSERT_PID" property="xfrInsertPid" jdbcType="DECIMAL" />
+    <result column="XFR_UPDATE_PID" property="xfrUpdatePid" jdbcType="DECIMAL" />
+    <result column="TRX_ID" property="trxId" jdbcType="CHAR" />
+    <result column="PARENT_KEY" property="parentKey" jdbcType="DECIMAL" />
+    <result column="AREA_S" property="areaS" jdbcType="VARCHAR" />
+    <result column="CHECK_MAN_S" property="checkManS" jdbcType="VARCHAR" />
+    <result column="CHECK_QTY_I" property="checkQtyI" jdbcType="DECIMAL" />
+    <result column="DATE_T" property="dateT" jdbcType="TIMESTAMP" />
+    <result column="DATE_U" property="dateU" jdbcType="TIMESTAMP" />
+    <result column="DATE_Z" property="dateZ" jdbcType="VARCHAR" />
+    <result column="DEFECT_S" property="defectS" jdbcType="VARCHAR" />
+    <result column="DEFECT_QTY_I" property="defectQtyI" jdbcType="DECIMAL" />
+    <result column="FACTORY_S" property="factoryS" jdbcType="VARCHAR" />
+    <result column="GROUP_S" property="groupS" jdbcType="VARCHAR" />
+    <result column="GROUP_LEADER_S" property="groupLeaderS" jdbcType="VARCHAR" />
+    <result column="ORDER_NUMBER_S" property="orderNumberS" jdbcType="VARCHAR" />
+    <result column="PRODUCT_NAME_S" property="productNameS" jdbcType="VARCHAR" />
+    <result column="PRODUCT_NUMBER_S" property="productNumberS" jdbcType="VARCHAR" />
+    <result column="QUALITY_QTY_I" property="qualityQtyI" jdbcType="DECIMAL" />
+    <result column="RECORD_MAN_S" property="recordManS" jdbcType="VARCHAR" />
+    <result column="SHIFT_S" property="shiftS" jdbcType="VARCHAR" />
+    <result column="TYPE_S" property="typeS" jdbcType="VARCHAR" />
+    <result column="TOTAL_QTY_I" property="totalQtyI" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ATR_KEY, SITE_NUM, ATR_NAME, PURGE_STATUS, CREATION_TIME, CREATION_TIME_U, CREATION_TIME_Z, 
+    LAST_MODIFIED_TIME, LAST_MODIFIED_TIME_U, LAST_MODIFIED_TIME_Z, XFR_INSERT_PID, XFR_UPDATE_PID, 
+    TRX_ID, PARENT_KEY, AREA_S, CHECK_MAN_S, CHECK_QTY_I, DATE_T, DATE_U, DATE_Z, DEFECT_S, 
+    DEFECT_QTY_I, FACTORY_S, GROUP_S, GROUP_LEADER_S, ORDER_NUMBER_S, PRODUCT_NAME_S, 
+    PRODUCT_NUMBER_S, QUALITY_QTY_I, RECORD_MAN_S, SHIFT_S, TYPE_S, TOTAL_QTY_I
+  </sql>
+ <select id="getPaintingDailyAllByPage" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from at_PaintingDailyReport
+    <where>
+         <if test="hashMap.startTime != null and hashMap.endTime !=null">
+
+             date_t BETWEEN #{hashMap.startTime,jdbcType=TIMESTAMP} and  #{hashMap.endTime,jdbcType=TIMESTAMP}
+
+       </if>
+       <if test="hashMap.factoryS != null">
+          and  FACTORY_S  like '%${hashMap.factoryS}%'
+       </if> 
+       <if test="hashMap.areaS != null">
+         and   AREA_S  like '%${hashMap.areaS}%'
+       </if> 
+       <if test="hashMap.groupS!= null">
+         and   GROUP_S  like '%${hashMap.groupS}%'
+       </if> 
+       <if test="hashMap.typeS != null">
+         and   TYPE_S  like '%${hashMap.typeS}%'
+       </if>
+       <if test="hashMap.productNameS != null">
+         and   PRODUCT_NAME_S  like '%${hashMap.productNameS}%'
+       </if>
+       <if test="hashMap.defectS != null">
+         and   DEFECT_S  like '%${hashMap.defectS}%'
+       </if>
+      
+    </where>
+    order by date_t DESC
+  </select>
+  <select id="getPaintingDaily" resultMap="BaseResultMap" parameterType="com.peg.model.bph.PaintingDailyReport">
+   select 
+    <include refid="Base_Column_List" />
+    from at_PaintingDailyReport
+   <where>
+     <if test="startTime != null and endTime !=null">
+
+             date_t BETWEEN #{startTime,jdbcType=TIMESTAMP} and  #{endTime,jdbcType=TIMESTAMP}
+
+       </if>
+       <if test="factoryS != null and factoryS != ''">
+          and  FACTORY_S  like #{factoryS}
+       </if> 
+       <if test="areaS != null and areaS !=''">
+         and   AREA_S  like #{areaS}
+       </if> 
+       <if test="groupS!= null and groupS!=''">
+         and   GROUP_S  like #{groupS}
+       </if> 
+       <if test="typeS != null and typeS !=''">
+         and   TYPE_S  like #{typeS}
+       </if>
+       <if test="productNameS != null and productNameS !=''">
+         and   PRODUCT_NAME_S  like #{productNameS}
+       </if>
+       <if test="defectS != null and defectS !=''">
+         and   DEFECT_S  like #{defectS}
+       </if>
+      
+   </where> 
+  </select>
+  <resultMap type="com.peg.model.EntityClass" id="EntityClassbad">
+  	<result column="DEFECT_S" property="badname" jdbcType="VARCHAR" />
+    <result column="badcountnum" property="badnumber" jdbcType="DECIMAL" />
+    <result column="countnum" property="countnumber" jdbcType="DECIMAL" />
+    
+    <result column="month" property="month" jdbcType="VARCHAR"/>
+    <result column="basevalue" property="basevalue" jdbcType="VARCHAR"/>
+    <result column="targetvalue" property="targetvalue" jdbcType="VARCHAR"/>
+    <result column="indexscore" property="indexscore" jdbcType="VARCHAR"/>
+  </resultMap>
+    <select id="getPaintingDailybad" resultMap="EntityClassbad" parameterType="com.peg.model.bph.PaintingDailyReport">
+  	select m.defect_S as badname,sum(m.defect_qty_i) as badcountnum,sum(m.check_qty_i) as countnum  from (
+		select * from AT_paintingDailyReport t where 1=1 
+       <if test="entity.baseFactory != null and entity.baseFactory !=''">
+           and t.factory_s=#{entity.baseFactory}
+       </if> 
+       <if test="entity.baseArea != null and entity.baseArea !=''">
+         	and t.area_s=#{entity.baseArea}
+       </if> 
+       <if test="entity.baseGroup != null and entity.baseGroup !=''">
+         	and t.group_s=#{entity.baseGroup}
+       </if> 
+       <if test="entity.typeS != null and entity.typeS !=''">
+            and t.TYPE_S  like #{entity.typeS}
+       </if>
+       <if test="entity.productNameS != null and entity.productNameS !=''">
+            and t.product_number_S like #{entity.productNameS}
+       </if>
+       <if test="entity.defectS != null and entity.defectS !=''">
+         	and t.DEFECT_S  like #{entity.defectS}
+       </if>    
+       <if test="entity.startTime != null and entity.endTime !=null">
+         and   t.date_t BETWEEN #{entity.startTime,jdbcType=TIMESTAMP} and  #{entity.endTime,jdbcType=TIMESTAMP}
+       </if>
+       <if test="entity.badnum != null and entity.badnum !=''">
+         and   t.defect_qty_i &gt; #{entity.badnum}
+       </if>
+       <if test="entity.badnum2 != null and entity.badnum2 !=''">
+         and   t.defect_qty_i &lt; = #{entity.badnum2}
+       </if>
+        and t.defect_S is not null 
+     ) m group by defect_S order by badcountnum  desc
+  </select>
+  <select id="paintingDailyarrange" resultMap="EntityClassbad" parameterType="com.peg.model.bph.PaintingDailyReport">
+  	select t_3.monthly as month,t_3.base_value as basevalue,t_3.target_value as targetvalue from T_ITEM t_1 inner join T_INDEX t_2 on t_1.item_key=t_2.item_key inner join T_MONTHLY_ASSESSMENT t_3 
+		on t_2.index_key=t_3.index_key inner join t_group_category t_4 on t_4.gc_key=t_1.gc_key inner join t_group t_5 on t_4.gc_key=t_5.category_key where t_2.index_name like '%喷涂一次合格率%'
+	<if test="entity.baseFactory != null and entity.baseFactory !=''">
+    	and t_4.factory  = #{entity.baseFactory}
+    </if> 
+    <if test="entity.baseArea != null and entity.baseArea !=''">
+    	and t_4.area  = #{entity.baseArea}
+    </if> 
+    <if test="entity.baseGroup != null and entity.baseGroup !=''">
+    	and t_5.group_name = #{entity.baseGroup}
+    </if> 
+    order by t_3.monthly
+  </select>
+  <select id="paintingDailyarrangetwo" resultMap="EntityClassbad" parameterType="com.peg.model.bph.PaintingDailyReport">
+  	select t.index_act_value as indexscore,t.sum_date as month from t_item_index_scroe_month t inner join T_INDEX t_2 on t.index_id=t_2.index_key and t_2.index_name like '%喷涂一次合格率%'
+	<if test="entity.baseFactory != null and entity.baseFactory !=''">
+    	and t.factory  = #{entity.baseFactory}
+    </if> 
+    <if test="entity.baseArea != null and entity.baseArea !=''">
+    	and t.area  = #{entity.baseArea}
+    </if> 
+    <if test="entity.baseGroup != null and entity.baseGroup !=''">
+    	and t.shift_group_name = #{entity.baseGroup}
+    </if> 
+    order by t.sum_date
+  </select>
+</mapper>

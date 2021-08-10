@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.part.WareHouseProductRefMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.part.WareHouseProductRef" >
+    <id column="WARE_REF_KEY" property="wareRefKey" jdbcType="DECIMAL" />
+    <result column="WARE_NUMBER" property="wareNumber" jdbcType="VARCHAR" />
+    <result column="WARE_NAME" property="wareName" jdbcType="VARCHAR" />
+    <result column="PROUCT_NUMBER" property="prouctNumber" jdbcType="VARCHAR" />
+    <result column="PRODUCT_NAME" property="productName" jdbcType="VARCHAR" />
+    <result column="CREATION_TIME" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFY_TIME" property="lastModifyTime" jdbcType="TIMESTAMP" />
+    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    WARE_REF_KEY, WARE_NUMBER, WARE_NAME, PROUCT_NUMBER, PRODUCT_NAME, CREATION_TIME, 
+    LAST_MODIFY_TIME, CREATE_USER
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from WARE_HOUSE_PRODUCT_REF
+    where WARE_REF_KEY = #{wareRefKey,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from WARE_HOUSE_PRODUCT_REF
+    where WARE_REF_KEY = #{wareRefKey,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.part.WareHouseProductRef" >
+    insert into WARE_HOUSE_PRODUCT_REF (WARE_REF_KEY, WARE_NUMBER, WARE_NAME, 
+      PROUCT_NUMBER, PRODUCT_NAME, CREATION_TIME, 
+      LAST_MODIFY_TIME, CREATE_USER)
+    values (#{wareRefKey,jdbcType=DECIMAL}, #{wareNumber,jdbcType=VARCHAR}, #{wareName,jdbcType=VARCHAR}, 
+      #{prouctNumber,jdbcType=VARCHAR}, #{productName,jdbcType=VARCHAR}, #{creationTime,jdbcType=TIMESTAMP}, 
+      #{lastModifyTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.part.WareHouseProductRef" >
+    insert into WARE_HOUSE_PRODUCT_REF
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="wareRefKey != null" >
+        WARE_REF_KEY,
+      </if>
+      <if test="wareNumber != null" >
+        WARE_NUMBER,
+      </if>
+      <if test="wareName != null" >
+        WARE_NAME,
+      </if>
+      <if test="prouctNumber != null" >
+        PROUCT_NUMBER,
+      </if>
+      <if test="productName != null" >
+        PRODUCT_NAME,
+      </if>
+      <if test="creationTime != null" >
+        CREATION_TIME,
+      </if>
+      <if test="lastModifyTime != null" >
+        LAST_MODIFY_TIME,
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="wareRefKey != null" >
+        #{wareRefKey,jdbcType=DECIMAL},
+      </if>
+      <if test="wareNumber != null" >
+        #{wareNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="wareName != null" >
+        #{wareName,jdbcType=VARCHAR},
+      </if>
+      <if test="prouctNumber != null" >
+        #{prouctNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="productName != null" >
+        #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="creationTime != null" >
+        #{creationTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastModifyTime != null" >
+        #{lastModifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.part.WareHouseProductRef" >
+    update WARE_HOUSE_PRODUCT_REF
+    <set >
+      <if test="wareNumber != null" >
+        WARE_NUMBER = #{wareNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="wareName != null" >
+        WARE_NAME = #{wareName,jdbcType=VARCHAR},
+      </if>
+      <if test="prouctNumber != null" >
+        PROUCT_NUMBER = #{prouctNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="productName != null" >
+        PRODUCT_NAME = #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="creationTime != null" >
+        CREATION_TIME = #{creationTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastModifyTime != null" >
+        LAST_MODIFY_TIME = #{lastModifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where WARE_REF_KEY = #{wareRefKey,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.part.WareHouseProductRef" >
+    update WARE_HOUSE_PRODUCT_REF
+    set WARE_NUMBER = #{wareNumber,jdbcType=VARCHAR},
+      WARE_NAME = #{wareName,jdbcType=VARCHAR},
+      PROUCT_NUMBER = #{prouctNumber,jdbcType=VARCHAR},
+      PRODUCT_NAME = #{productName,jdbcType=VARCHAR},
+      CREATION_TIME = #{creationTime,jdbcType=TIMESTAMP},
+      LAST_MODIFY_TIME = #{lastModifyTime,jdbcType=TIMESTAMP},
+      CREATE_USER = #{createUser,jdbcType=VARCHAR}
+    where WARE_REF_KEY = #{wareRefKey,jdbcType=DECIMAL}
+  </update>
+  
+  <select id="selectByHouseNumber" resultMap="BaseResultMap">
+   select T.* from WARE_HOUSE_PRODUCT_REF t where t.WARE_NUMBER = #{houseNumber}
+  </select>
+  
+  <select id="findAllByPage" resultMap="BaseResultMap">
+    select T.* from WARE_HOUSE_PRODUCT_REF t 
+    <where>
+         <if test="hashMap.wareNumber != null">
+            t.WARE_NUMBER like '%${hashMap.wareNumber}%'
+         </if>
+         <if test="hashMap.productName != null">
+           and t.PRODUCT_NAME like '%${hashMap.productName}%'
+         </if>
+    </where>
+  </select>
+</mapper>

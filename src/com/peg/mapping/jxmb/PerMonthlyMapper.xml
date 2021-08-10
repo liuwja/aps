@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.jxmb.PerMonthlyMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.jxmb.PerMonthly" >
+    <result column="MONTH_KEY" property="monthKey" jdbcType="DECIMAL" />
+    <result column="INDEX_KEY" property="indexKey" jdbcType="DECIMAL" />
+    <result column="ACCUMULATEDMONTH" property="accumulatedmonth" jdbcType="VARCHAR" />
+    <result column="LASTMONTHACTUAL" property="lastmonthactual" jdbcType="VARCHAR" />
+    <result column="MONTHREALITY" property="monthreality" jdbcType="VARCHAR" />
+    <result column="TARGETVALUEMONTH" property="targetvaluemonth" jdbcType="VARCHAR" />
+    <result column="ACCUMUMONTH" property="accumumonth" jdbcType="VARCHAR" />
+    <result column="RECORD" property="record" jdbcType="VARCHAR" />
+    <result column="RECORDTIME" property="recordtime" jdbcType="TIMESTAMP" />
+    <result column="LASTUPDATETIME" property="lastupdatetime" jdbcType="TIMESTAMP" />
+    <result column="LASTUPDATEUSER" property="lastupdateuser" jdbcType="VARCHAR" />
+    <result column="MONTHVALUE" property="monthvalue" jdbcType="VARCHAR" />
+    <result column="GROUP_KEY" property="groupKey" jdbcType="DECIMAL" />
+  </resultMap>
+  <insert id="insert" parameterType="com.peg.model.jxmb.PerMonthly" >
+    insert into Y_MONTH (MONTH_KEY, INDEX_KEY, ACCUMULATEDMONTH, 
+      LASTMONTHACTUAL, MONTHREALITY, TARGETVALUEMONTH, 
+      ACCUMUMONTH, RECORD, RECORDTIME, 
+      LASTUPDATETIME, LASTUPDATEUSER, MONTHVALUE, 
+      GROUP_KEY)
+    values (#{monthKey,jdbcType=DECIMAL}, #{indexKey,jdbcType=DECIMAL}, #{accumulatedmonth,jdbcType=VARCHAR}, 
+      #{lastmonthactual,jdbcType=VARCHAR}, #{monthreality,jdbcType=VARCHAR}, #{targetvaluemonth,jdbcType=VARCHAR}, 
+      #{accumumonth,jdbcType=VARCHAR}, #{record,jdbcType=VARCHAR}, #{recordtime,jdbcType=TIMESTAMP}, 
+      #{lastupdatetime,jdbcType=TIMESTAMP}, #{lastupdateuser,jdbcType=VARCHAR}, #{monthvalue,jdbcType=VARCHAR}, 
+      #{groupKey,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.jxmb.PerMonthly" >
+    insert into Y_MONTH
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="monthKey != null" >
+        MONTH_KEY,
+      </if>
+      <if test="indexKey != null" >
+        INDEX_KEY,
+      </if>
+      <if test="accumulatedmonth != null" >
+        ACCUMULATEDMONTH,
+      </if>
+      <if test="lastmonthactual != null" >
+        LASTMONTHACTUAL,
+      </if>
+      <if test="monthreality != null" >
+        MONTHREALITY,
+      </if>
+      <if test="targetvaluemonth != null" >
+        TARGETVALUEMONTH,
+      </if>
+      <if test="accumumonth != null" >
+        ACCUMUMONTH,
+      </if>
+      <if test="record != null" >
+        RECORD,
+      </if>
+      <if test="recordtime != null" >
+        RECORDTIME,
+      </if>
+      <if test="lastupdatetime != null" >
+        LASTUPDATETIME,
+      </if>
+      <if test="lastupdateuser != null" >
+        LASTUPDATEUSER,
+      </if>
+      <if test="monthvalue != null" >
+        MONTHVALUE,
+      </if>
+      <if test="groupKey != null" >
+        GROUP_KEY,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="monthKey != null" >
+        #{monthKey,jdbcType=DECIMAL},
+      </if>
+      <if test="indexKey != null" >
+        #{indexKey,jdbcType=DECIMAL},
+      </if>
+      <if test="accumulatedmonth != null" >
+        #{accumulatedmonth,jdbcType=VARCHAR},
+      </if>
+      <if test="lastmonthactual != null" >
+        #{lastmonthactual,jdbcType=VARCHAR},
+      </if>
+      <if test="monthreality != null" >
+        #{monthreality,jdbcType=VARCHAR},
+      </if>
+      <if test="targetvaluemonth != null" >
+        #{targetvaluemonth,jdbcType=VARCHAR},
+      </if>
+      <if test="accumumonth != null" >
+        #{accumumonth,jdbcType=VARCHAR},
+      </if>
+      <if test="record != null" >
+        #{record,jdbcType=VARCHAR},
+      </if>
+      <if test="recordtime != null" >
+        #{recordtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastupdatetime != null" >
+        #{lastupdatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastupdateuser != null" >
+        #{lastupdateuser,jdbcType=VARCHAR},
+      </if>
+      <if test="monthvalue != null" >
+        #{monthvalue,jdbcType=VARCHAR},
+      </if>
+      <if test="groupKey != null" >
+        #{groupKey,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+     <select id="getMonthAllByPage" resultMap="com.peg.dao.jxmb.PerItemMapper.BaseResultMap" >
+      select 
+   	c.index_key,
+    b.id gc_id,b.department gc_department,b.targetclass  gc_targetclass,b.indexcontent gc_indexcontent,  
+    a.ITEM_KEY gc_it_ITEM_KEY, a.id gc_it_id,a.YEARTARGETVALUE gc_it_YEARTARGETVALUE,a.REFERENCEVALUE gc_it_REFERENCEVALUE,  
+    c.index_key gc_it_in_index_key, c.item_key gc_it_in_item_key,c.TARGETVALUE gc_it_in_TARGETVALUE,c.BASEVALUE gc_it_in_BASEVALUE, c.month gc_it_in_month,  
+    d.MONTH_KEY gc_it_in_ma_MONTH_KEY, d.index_key gc_it_in_ma_index_key, d.ACCUMULATEDMONTH gc_it_in_ma_ACCUMULATEDMONTH,
+    d.LASTMONTHACTUAL gc_it_in_ma_LASTMONTHACTUAL,d.monthreality  gc_it_in_ma_monthreality,d.TARGETVALUEMONTH  gc_it_in_ma_TARGETVALUEMONTH,
+    d.accumumonth gc_it_in_ma_accumumonth, d.RECORD gc_it_in_ma_RECORD, 
+    d.LASTUPDATETIME gc_it_in_ma_LASTUPDATETIME, d.LASTUPDATEUSER gc_it_in_ma_LASTUPDATEUSER
+    from y_item a,y_performancecheck b ,y_setup c, y_month d
+    where  a.id = b.id
+    and a.item_key = c.item_key
+    and c.index_key = d.index_key
+ 
+        <if test="hashMap.DEPARTMENT != null">
+           and b.DEPARTMENT like '%${hashMap.DEPARTMENT}%'
+        </if>
+        <if test="hashMap.TARGETCLASS != null">
+           and b.TARGETCLASS like '%${hashMap.TARGETCLASS}%'
+        </if>
+        <if test="hashMap.INDEXCONTENT != null">
+           and   b.INDEXCONTENT like '%${hashMap.INDEXCONTENT}%'
+        </if>
+        <if test="hashMap.ACCUMULATEDMONTH != null">
+           and   d.ACCUMULATEDMONTH like '%${hashMap.ACCUMULATEDMONTH}%'
+        </if>
+ 
+   		<if test="hashMap.itemKey != null">
+   			and a.item_Key = '${hashMap.itemKey}'
+   		</if>
+   		<if test="hashMap.indexKey != null">
+   			and a.index_Key = '${hashMap.indexKey}'
+   		</if>
+       order by b.DEPARTMENT DESC ,b.TARGETCLASS DESC, b.INDEXCONTENT DESC,a.YEARTARGETVALUE,to_number(substr(replace(c.TARGETVALUE,'-',''),2,3)),d.ACCUMULATEDMONTH
+  </select> 
+  <sql id="Base_Column_List" >
+    MONTH_KEY, INDEX_KEY,GROUP_KEY,ACCUMULATEDMONTH, 
+      LASTMONTHACTUAL, MONTHREALITY, 
+      TARGETVALUEMONTH, ACCUMUMONTH, 
+      RECORD, RECORDTIME, LASTUPDATETIME, 
+      LASTUPDATEUSER, MONTHVALUE
+  </sql>
+  
+   <select id="selectByGroupAndMonth" resultMap="BaseResultMap">
+     select 
+   <include refid="Base_Column_List"></include>
+    from Y_MONTH
+    where 1=1
+    <if test="monthKey != null">
+     and monthKey = #{monthKey}
+    </if>
+  </select>
+</mapper>

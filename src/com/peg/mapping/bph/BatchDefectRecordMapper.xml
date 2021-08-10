@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.BatchDefectRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.BatchDefectRecord" >
+    <id column="ATR_KEY" property="atrKey" jdbcType="DECIMAL" />
+    <id column="SITE_NUM" property="siteNum" jdbcType="DECIMAL" />
+    <result column="ATR_NAME" property="atrName" jdbcType="VARCHAR" />
+    <result column="PURGE_STATUS" property="purgeStatus" jdbcType="DECIMAL" />
+    <result column="CREATION_TIME" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="CREATION_TIME_U" property="creationTimeU" jdbcType="TIMESTAMP" />
+    <result column="CREATION_TIME_Z" property="creationTimeZ" jdbcType="VARCHAR" />
+    <result column="LAST_MODIFIED_TIME" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME_U" property="lastModifiedTimeU" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME_Z" property="lastModifiedTimeZ" jdbcType="VARCHAR" />
+    <result column="XFR_INSERT_PID" property="xfrInsertPid" jdbcType="DECIMAL" />
+    <result column="XFR_UPDATE_PID" property="xfrUpdatePid" jdbcType="DECIMAL" />
+    <result column="TRX_ID" property="trxId" jdbcType="CHAR" />
+    <result column="PARENT_KEY" property="parentKey" jdbcType="DECIMAL" />
+    <result column="AREA_S" property="areaS" jdbcType="VARCHAR" />
+    <result column="BATCH_S" property="batchS" jdbcType="VARCHAR" />
+    <result column="DEFECT_S" property="defectS" jdbcType="VARCHAR" />
+    <result column="DEFECT_QTY_I" property="defectQtyI" jdbcType="DECIMAL" />
+    <result column="FACTORY_S" property="factoryS" jdbcType="VARCHAR" />
+    <result column="FINDER_S" property="finderS" jdbcType="VARCHAR" />
+    <result column="GROUP1_S" property="group1S" jdbcType="VARCHAR" />
+    <result column="GROUP2_S" property="group2S" jdbcType="VARCHAR" />
+    <result column="GROUP3_S" property="group3S" jdbcType="VARCHAR" />
+    <result column="LINE_S" property="lineS" jdbcType="VARCHAR" />
+    <result column="ORDER_NUMBER_S" property="orderNumberS" jdbcType="VARCHAR" />
+    <result column="PROCESS_NODE_S" property="processNodeS" jdbcType="VARCHAR" />
+    <result column="PRODUCT_NAME_S" property="productNameS" jdbcType="VARCHAR" />
+    <result column="PRODUCT_NUMBER_S" property="productNumberS" jdbcType="VARCHAR" />
+    <result column="RECORD_DATE_T" property="recordDateT" jdbcType="TIMESTAMP" />
+    <result column="RECORD_DATE_U" property="recordDateU" jdbcType="TIMESTAMP" />
+    <result column="RECORD_DATE_Z" property="recordDateZ" jdbcType="VARCHAR" />
+    <result column="RECORD_MAN_S" property="recordManS" jdbcType="VARCHAR" />
+    <result column="RESULT_S" property="resultS" jdbcType="VARCHAR" />
+    <result column="RISK_SCORE_F" property="riskScoreI" jdbcType="DECIMAL" />
+    <result column="TOTAL_QTY_I" property="totalQtyI" jdbcType="DECIMAL" />
+    <result column="TYPE_S" property="typeS" jdbcType="VARCHAR" />
+    <result column="RATE_S" property="rateS" jdbcType="VARCHAR" />
+    
+    <result column="CHECK_STEP_S" property="checkStep" jdbcType="VARCHAR" />
+    <result column="DUTY_MAN_S" property="dutyMan" jdbcType="VARCHAR" />
+    <result column="GROUP_LEADER_S" property="groupLeader" jdbcType="VARCHAR" />
+    <result column="ME_S" property="meNode" jdbcType="VARCHAR" />
+    <result column="METHOD_S" property="method" jdbcType="VARCHAR" />
+    <result column="WORK_MAN_S" property="workMan" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ATR_KEY, SITE_NUM, ATR_NAME, PURGE_STATUS, CREATION_TIME, CREATION_TIME_U, CREATION_TIME_Z, 
+    LAST_MODIFIED_TIME, LAST_MODIFIED_TIME_U, LAST_MODIFIED_TIME_Z, XFR_INSERT_PID, XFR_UPDATE_PID, 
+    TRX_ID, PARENT_KEY, AREA_S, BATCH_S, DEFECT_S, DEFECT_QTY_I, FACTORY_S, FINDER_S, 
+    GROUP1_S, GROUP2_S, GROUP3_S, LINE_S, ORDER_NUMBER_S, PROCESS_NODE_S, PRODUCT_NAME_S, 
+    PRODUCT_NUMBER_S, RECORD_DATE_T, RECORD_DATE_U, RECORD_DATE_Z, RECORD_MAN_S, RESULT_S, 
+    RISK_SCORE_F, TOTAL_QTY_I, TYPE_S, RATE_S,CHECK_STEP_S,DUTY_MAN_S,GROUP_LEADER_S,ME_S,METHOD_S,WORK_MAN_S
+  </sql>
+   <select id="getBatchDefectAllByPage" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from at_BatchDefectRecord
+    <where>
+        <if test="hashMap.startTime != null and hashMap.endTime !=null">
+
+            RECORD_DATE_T BETWEEN #{hashMap.startTime,jdbcType=TIMESTAMP} and  #{hashMap.endTime,jdbcType=TIMESTAMP}
+
+       </if>
+       <if test="hashMap.factoryS != null">
+           and  FACTORY_S  like '%${hashMap.factoryS}%'
+       </if> 
+       <if test="hashMap.areaS != null">
+        <!--   and   AREA_S  like '%${hashMap.areaS}%' -->
+       </if> 
+       <if test="hashMap.group != null">
+         and ( GROUP1_S  like '%${hashMap.group}%' or  GROUP2_S  like '%${hashMap.group}%' or GROUP3_S  like '%${hashMap.group}%' )  
+       </if> 
+       <if test="hashMap.typeS != null">
+         and   TYPE_S  like '%${hashMap.typeS}%'
+       </if>
+       <if test="hashMap.productNameS != null">
+         and   PRODUCT_NUMBER_S  like '%${hashMap.productNameS}%'
+       </if>
+       <if test="hashMap.defectS != null">
+         and   DEFECT_S  like '%${hashMap.defectS}%'
+       </if>
+       <if test="hashMap.processNodeS != null">
+         and  substr(PROCESS_NODE_S,0,1) like '%${hashMap.processNodeS}%'
+       </if>
+       <if test="hashMap.batchS != null">
+         and   substr(BATCH_S,0,1) like '%${hashMap.batchS}%'
+       </if>
+       <if test="hashMap.resultS != null">
+         and   substr(RESULT_S,0,1) like '%${hashMap.resultS}%'
+       </if>
+        <if test="hashMap.lowRistScore != null and hashMap.topRistScore  != null">
+
+            and  RISK_SCORE_F BETWEEN #{hashMap.lowRistScore,jdbcType=DECIMAL} and #{hashMap.topRistScore,jdbcType=DECIMAL}
+
+       </if>
+     
+    </where>
+    order by RECORD_DATE_T DESC
+  </select>
+  <select id="getBatchDefectList" resultMap="BaseResultMap" parameterType="com.peg.model.bph.BatchDefectRecord">
+   select 
+    <include refid="Base_Column_List" />
+    from at_BatchDefectRecord
+   <where>
+        <if test="startTime != null and endTime !=null">
+
+            RECORD_DATE_T BETWEEN #{startTime,jdbcType=TIMESTAMP} and  #{endTime,jdbcType=TIMESTAMP}
+
+       </if>
+       <if test="factoryS != null and factoryS != ''">
+           and  FACTORY_S  like #{factoryS}
+       </if> 
+       <if test="areaS != null and areaS !=''">
+         and   AREA_S  like #{areaS}
+       </if> 
+       <if test="group != null and group !=''">
+         and   GROUP1_S  like #{group} or  GROUP2_S  like #{group} or GROUP3_S  like #{group}
+       </if> 
+       <if test="typeS != null and typeS !=''">
+         and   TYPE_S  like #{typeS}
+       </if>
+       <if test="productNameS != null and productNameS !=''">
+         and   PRODUCT_NUMBER_S  like #{productNameS}
+       </if>
+       <if test="defectS != null and defectS !=''">
+         and   DEFECT_S  like #{defectS}
+       </if>
+       <if test="processNodeS != null and processNodeS !=''">
+         and  substr(PROCESS_NODE_S,0,1) like #{processNodeS}
+       </if>
+       <if test="batchS != null and batchS != ''">
+         and   substr(BATCH_S,0,1) like #{batchS}
+       </if>
+       <if test="resultS != null and resultS !=''">
+         and   substr(RESULT_S,0,1) like #{resultS}
+       </if>
+        <if test="lowRistScore != null and lowRistScore !='' and topRiskScore  != null and topRiskScore  !=''">
+
+            and  RISK_SCORE_F BETWEEN #{lowRistScore,jdbcType=DECIMAL} and #{topRiskScore,jdbcType=DECIMAL}
+
+       </if>
+   </where> 
+    order by RECORD_DATE_T DESC
+  </select>
+  
+</mapper>

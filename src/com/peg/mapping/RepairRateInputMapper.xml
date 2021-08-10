@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.RepairRateInputMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.RepairRateInput" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="TYPE_CATEGORY" property="typeCategory" jdbcType="VARCHAR" />
+    <result column="REPAIR_MONTH" property="repairMonth" jdbcType="VARCHAR" />
+    <result column="REPAIR_RATE" property="repairRate" jdbcType="DECIMAL" />
+    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="REPAIRED_COUNT" property="repairedCount" jdbcType="DECIMAL" />
+    <result column="SHIP_COUNT" property="shipCount" jdbcType="DECIMAL" />
+    <result column="REPAIR_TOTAL_RATE" property="repairTotalRate" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, TYPE_CATEGORY, REPAIR_MONTH, REPAIR_RATE, CREATE_USER, CREATE_TIME,REPAIRED_COUNT,SHIP_COUNT,REPAIR_TOTAL_RATE
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_REPAIR_RATE_INPUT
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+   <!-- 根据维修月份、机型类别 单条 -->
+   <select id="getByTypeAndMonth" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from T_REPAIR_RATE_INPUT
+    where TYPE_CATEGORY = #{productType,jdbcType=VARCHAR}
+    and REPAIR_MONTH = #{repairMonth,jdbcType=VARCHAR}
+  </select>
+  
+   <select id="findByTypeAndMonth" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from T_REPAIR_RATE_INPUT
+    <where>
+    	<if test="productType!=null and productType!=''">
+    		TYPE_CATEGORY = #{productType,jdbcType=VARCHAR}
+    	</if>
+    	<choose>
+    		<when test="queryMonth!=null and endMonth == null">
+    			REPAIR_MONTH = #{queryMonth,jdbcType=VARCHAR}
+    		</when>
+    		<when test="queryMonth!=null and endMonth != null">
+    			and REPAIR_MONTH between #{queryMonth,jdbcType=VARCHAR} and #{endMonth,jdbcType=VARCHAR}
+    		</when>
+    	</choose>
+    </where>
+    order by type_category,REPAIR_MONTH
+  </select>
+  
+  
+   <!-- 根据维修月份区间、机型类别 -->
+   <select id="getAllByType" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from T_REPAIR_RATE_INPUT
+    where TYPE_CATEGORY = #{productType,jdbcType=VARCHAR}
+    and REPAIR_MONTH between #{startMonth,jdbcType=VARCHAR} and #{endMonth,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="getShifCountByType" resultType="java.lang.Long">
+    select sum(t.ship_count) as total_ship_count 
+        from t_repair_rate_input t
+        where  t.type_category = #{productType,jdbcType=VARCHAR}
+        and t.repair_month between #{startMonth,jdbcType=VARCHAR} and #{endMonth,jdbcType=VARCHAR}
+        group by t.type_category
+  </select>
+  
+  <select id="getRateCountByType" resultType="java.lang.Long">
+     select  sum(t.repaired_count) as total_repair_count
+        from t_repair_rate_input t
+        where  t.type_category = #{productType,jdbcType=VARCHAR}
+        and t.repair_month between #{startMonth,jdbcType=VARCHAR} and #{endMonth,jdbcType=VARCHAR}
+        group by t.type_category
+  </select>
+  
+   <select id="getAllInput" resultType="java.lang.Long">
+     select 
+    <include refid="Base_Column_List" />
+    from T_REPAIR_RATE_INPUT
+    where REPAIR_MONTH = #{repairMonth,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from T_REPAIR_RATE_INPUT
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.RepairRateInput" >
+    insert into T_REPAIR_RATE_INPUT ( TYPE_CATEGORY, REPAIR_MONTH, 
+      REPAIR_RATE, CREATE_USER,REPAIRED_COUNT,SHIP_COUNT,REPAIR_TOTAL_RATE
+      )
+    values (#{typeCategory,jdbcType=VARCHAR}, #{repairMonth,jdbcType=VARCHAR}, 
+      #{repairRate,jdbcType=DECIMAL}, #{createUser,jdbcType=VARCHAR},
+      #{repairedCount,jdbcType=DECIMAL}, #{shipCount,jdbcType=DECIMAL}, #{repairTotalRate,jdbcType=DECIMAL}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.RepairRateInput" >
+    insert into T_REPAIR_RATE_INPUT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="typeCategory != null" >
+        TYPE_CATEGORY,
+      </if>
+      <if test="repairMonth != null" >
+        REPAIR_MONTH,
+      </if>
+      <if test="repairRate != null" >
+        REPAIR_RATE,
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+       <if test="repairedCount != null" >
+        REPAIRED_COUNT,
+      </if>
+       <if test="shipCount != null" >
+        SHIP_COUNT,
+      </if>
+       <if test="repairTotalRate != null" >
+        REPAIR_TOTAL_RATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="typeCategory != null" >
+        #{typeCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="repairMonth != null" >
+        #{repairMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="repairRate != null" >
+        #{repairRate,jdbcType=DECIMAL},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+       <if test="repairedCount != null" >
+         #{repairedCount,jdbcType=DECIMAL},
+      </if>
+       <if test="shipCount != null" >
+         #{shipCount,jdbcType=DECIMAL},
+      </if>
+         <if test="repairTotalRate != null" >
+         #{REPAIR_TOTAL_RATE,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.RepairRateInput" >
+    update T_REPAIR_RATE_INPUT
+    <set >
+      <if test="typeCategory != null" >
+        TYPE_CATEGORY = #{typeCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="repairMonth != null" >
+        REPAIR_MONTH = #{repairMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="repairRate != null" >
+        REPAIR_RATE = #{repairRate,jdbcType=DECIMAL},
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+       <if test="repairedCount != null" >
+        REPAIRED_COUNT = #{repairedCount,jdbcType=DECIMAL},
+      </if>
+       <if test="shipCount != null" >
+         SHIP_COUNT= #{shipCount,jdbcType=DECIMAL},
+      </if>
+      <if test="repairTotalRate != null" >
+         REPAIR_TOTAL_RATE= #{repairTotalRate,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.RepairRateInput" >
+    update T_REPAIR_RATE_INPUT
+    set TYPE_CATEGORY = #{typeCategory,jdbcType=VARCHAR},
+      REPAIR_MONTH = #{repairMonth,jdbcType=VARCHAR},
+      REPAIR_RATE = #{repairRate,jdbcType=DECIMAL},
+      CREATE_USER = #{createUser,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      REPAIRED_COUNT = #{repairedCount,jdbcType=DECIMAL},
+      SHIP_COUNT= #{shipCount,jdbcType=DECIMAL},
+      REPAIR_TOTAL_RATE= #{repairTotalRate,jdbcType=DECIMAL}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  
+  <select id="findAllInput" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from T_REPAIR_RATE_INPUT
+    where 1=1
+    <if test="startMonth != null and endMonth != null">
+    and REPAIR_MONTH between #{startMonth} and #{endMonth}
+    </if>
+    order by type_category , REPAIR_MONTH desc
+  </select>
+</mapper>

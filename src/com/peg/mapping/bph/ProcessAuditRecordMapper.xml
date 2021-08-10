@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.ProcessAuditRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.ProcessAuditRecord" >
+    <id column="ATR_KEY" property="atrKey" jdbcType="DECIMAL" />
+    <id column="SITE_NUM" property="siteNum" jdbcType="DECIMAL" />
+    <result column="ATR_NAME" property="atrName" jdbcType="VARCHAR" />
+    <result column="PURGE_STATUS" property="purgeStatus" jdbcType="DECIMAL" />
+    <result column="CREATION_TIME" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="CREATION_TIME_U" property="creationTimeU" jdbcType="TIMESTAMP" />
+    <result column="CREATION_TIME_Z" property="creationTimeZ" jdbcType="VARCHAR" />
+    <result column="LAST_MODIFIED_TIME" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME_U" property="lastModifiedTimeU" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME_Z" property="lastModifiedTimeZ" jdbcType="VARCHAR" />
+    <result column="XFR_INSERT_PID" property="xfrInsertPid" jdbcType="DECIMAL" />
+    <result column="XFR_UPDATE_PID" property="xfrUpdatePid" jdbcType="DECIMAL" />
+    <result column="TRX_ID" property="trxId" jdbcType="CHAR" />
+    <result column="PARENT_KEY" property="parentKey" jdbcType="DECIMAL" />
+    <result column="AREA_S" property="areaS" jdbcType="VARCHAR" />
+    <result column="AUDIT_BASIS_S" property="auditBasisS" jdbcType="VARCHAR" />
+    <result column="AUDIT_FIND_S" property="auditFindS" jdbcType="VARCHAR" />
+    <result column="AUDIT_MAN_S" property="auditManS" jdbcType="VARCHAR" />
+    <result column="AUDIT_RESULT_S" property="auditResultS" jdbcType="VARCHAR" />
+    <result column="AUDIT_TERMS_S" property="auditTermsS" jdbcType="VARCHAR" />
+    <result column="CHECK_DATE_T" property="checkDateT" jdbcType="TIMESTAMP" />
+    <result column="CHECK_DATE_U" property="checkDateU" jdbcType="TIMESTAMP" />
+    <result column="CHECK_DATE_Z" property="checkDateZ" jdbcType="VARCHAR" />
+    <result column="CHECK_TYPE_S" property="checkTypeS" jdbcType="VARCHAR" />
+    <result column="DEFECT_S" property="defectS" jdbcType="VARCHAR" />
+    <result column="DEFECT_NUMBER_S" property="defectNumberS" jdbcType="VARCHAR" />
+    <result column="DUTY_S" property="dutyS" jdbcType="VARCHAR" />
+    <result column="FACTORY_S" property="factoryS" jdbcType="VARCHAR" />
+    <result column="FOLLOW_MAN_S" property="followManS" jdbcType="VARCHAR" />
+    <result column="FOLLOW_STATE_S" property="followStateS" jdbcType="VARCHAR" />
+    <result column="GROUP_S" property="groupS" jdbcType="VARCHAR" />
+    <result column="GROUP_LEADER_S" property="groupLeaderS" jdbcType="VARCHAR" />
+    <result column="IS_CLOSE_S" property="isCloseS" jdbcType="VARCHAR" />
+    <result column="PLAN_S" property="planS" jdbcType="VARCHAR" />
+    <result column="RECORD_MAN_S" property="recordManS" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ATR_KEY, SITE_NUM, ATR_NAME, PURGE_STATUS, CREATION_TIME, CREATION_TIME_U, CREATION_TIME_Z, 
+    LAST_MODIFIED_TIME, LAST_MODIFIED_TIME_U, LAST_MODIFIED_TIME_Z, XFR_INSERT_PID, XFR_UPDATE_PID, 
+    TRX_ID, PARENT_KEY, AREA_S, AUDIT_BASIS_S, AUDIT_FIND_S, AUDIT_MAN_S, AUDIT_RESULT_S, 
+    AUDIT_TERMS_S, CHECK_DATE_T, CHECK_DATE_U, CHECK_DATE_Z, CHECK_TYPE_S, DEFECT_S, 
+    DEFECT_NUMBER_S, DUTY_S, FACTORY_S, FOLLOW_MAN_S, FOLLOW_STATE_S, GROUP_S, GROUP_LEADER_S, 
+    IS_CLOSE_S, PLAN_S, RECORD_MAN_S
+  </sql>
+  <select id="getProcessAuditAllByPage" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from at_ProcessAuditRecord
+    <where>
+       <if test="hashMap.factoryS != null">
+            FACTORY_S  like '%${hashMap.factoryS}%'
+       </if> 
+       <if test="hashMap.areaS != null">
+         and   AREA_S  like '%${hashMap.areaS}%'
+       </if> 
+       <if test="hashMap.groupS!= null">
+         and   GROUP_S  like '%${hashMap.groupS}%'
+       </if> 
+        <if test="hashMap.defectS!= null">
+         and   DEFECT_S  like '%${hashMap.defectS}%'
+       </if> 
+       <if test="hashMap.dutyS != null">
+         and   DUTY_S  like '%${hashMap.dutyS}%'
+       </if>
+       <if test="hashMap.followManS != null">
+         and   FOLLOW_MAN_S  like '%${hashMap.followManS}%'
+       </if>
+        <if test="hashMap.isCloseS != null">
+         and   IS_CLOSE_S  like '%${hashMap.isCloseS}%'
+       </if>
+        <if test="hashMap.startTime != null and hashMap.endTime !=null">
+
+            and CHECK_DATE_T BETWEEN #{hashMap.startTime,jdbcType=TIMESTAMP} and  #{hashMap.endTime,jdbcType=TIMESTAMP}
+
+       </if>
+      
+    </where>
+    order by  CHECK_DATE_T DESC
+  </select>
+  
+  <select id="getProcessAudit" resultMap="BaseResultMap" parameterType="com.peg.model.bph.ProcessAuditRecord">
+   select 
+    <include refid="Base_Column_List" />
+    from at_ProcessAuditRecord
+    <where>
+     <if test="factoryS != null and factoryS !=''">
+            FACTORY_S  like #{factoryS}
+       </if> 
+       <if test="areaS != null and areaS !=''">
+         and   AREA_S  like #{areaS}
+       </if> 
+       <if test="groupS!= null and groupS!=''">
+         and   GROUP_S  like #{groupS}
+       </if> 
+        <if test="defectS!= null and defectS!=''">
+         and   DEFECT_S  like #{defectS}
+       </if> 
+       <if test="dutyS != null and dutyS !=''">
+         and   DUTY_S  like #{dutyS}
+       </if>
+       <if test="followManS != null and followManS !=''">
+         and   FOLLOW_MAN_S  like #{followManS}
+       </if>
+        <if test="isCloseS != null and isCloseS !=''">
+         and   IS_CLOSE_S  like #{isCloseS}
+       </if>
+        <if test="startTime != null and endTime !=null">
+
+            and CHECK_DATE_T BETWEEN #{startTime,jdbcType=TIMESTAMP} and  #{endTime,jdbcType=TIMESTAMP}
+
+       </if>
+    </where>
+    order by  CHECK_DATE_T DESC
+  </select>
+</mapper>

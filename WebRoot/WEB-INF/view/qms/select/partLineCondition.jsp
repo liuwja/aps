@@ -1,0 +1,52 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%><%@ include file="/common/include.inc.jsp"%>
+					<script type="text/javascript">
+						$(function(){
+							$('#${partTypeDocId}').dropdownlist({
+							    id:'partTypeListTxt',
+							    columns:3,
+							    selectedtext:'',
+							    listboxwidth:450,//下拉框宽
+							    maxchecked:100,
+							    checkbox:true,
+							    listboxmaxheight:400,
+							    width:120,
+							    requiredvalue:[],
+							    selected:[${vo.partTypeListTxt}],
+							    data:${jsonParts},//数据，格式：{value:name}
+							    onchange:function(text,value){
+							    }
+							});
+							$('#${plineDocId}').dropdownlist({
+							    id:'plineListTxt',
+							    columns:3,
+							    selectedtext:'',
+							    listboxwidth:450,//下拉框宽
+							    maxchecked:100,
+							    checkbox:true,
+							    listboxmaxheight:400,
+							    width:120,
+							    requiredvalue:[],
+							    selected:[${vo.plineListTxt}],
+							    data:${jsonLines},//数据，格式：{value:name}
+							    onchange:function(text,value){
+							    }
+							});
+							$('#${productFamilyDocId}').dropdownlist({
+							    id:'productFamilyTxt',
+							    columns:3,
+							    selectedtext:'',
+							    listboxwidth:450,//下拉框宽
+							    maxchecked:100,
+							    checkbox:true,
+							    listboxmaxheight:400,
+							    width:120,
+							    requiredvalue:[],
+							    selectedtext : '',
+							    selected: [${vo.productFamilyTxt}],
+							    data:${jsonProFamily},//数据，格式：{value:name}
+							    onchange:function(text,value){
+							    }
+							});
+						});
+//-->
+</script>            

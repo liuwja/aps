@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.jxmb.PerItemMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.jxmb.PerItem" >
+    <result column="ITEM_KEY" property="itemKey" jdbcType="DECIMAL" />
+    <result column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="UPPERACTUALVALUE" property="upperactualvalue" jdbcType="VARCHAR" />
+    <result column="UPPERHALFTARGETVALUE" property="upperhalftargetvalue" jdbcType="VARCHAR" />
+    <result column="SECONDHALFTARGETVALUE" property="secondhalftargetvalue" jdbcType="VARCHAR" />
+    <result column="YEARTARGETVALUE" property="yeartargetvalue" jdbcType="VARCHAR" />
+    <result column="MEDIAN" property="median" jdbcType="VARCHAR" />
+    <result column="REFERENCEVALUE" property="referencevalue" jdbcType="VARCHAR" />
+    <result column="MAXIMUMVALUE" property="maximumvalue" jdbcType="VARCHAR" />
+    <result column="TARGETVALUE" property="targetvalue" jdbcType="VARCHAR" />
+    <result column="LASTUPDATETIME" property="lastupdatetime" jdbcType="TIMESTAMP" />
+    <result column="LASTUPDATEUSER" property="lastupdateuser" jdbcType="VARCHAR" />
+    <result column="RECORDTIME" property="recordtime" jdbcType="TIMESTAMP" />
+    <result column="RECORD" property="record" jdbcType="VARCHAR" />
+    <result column="FORMULA" property="formula" jdbcType="VARCHAR" />
+    <collection property="uiindexs" resultMap="com.peg.dao.jxmb.PerSetupMapper.BaseResultMap" columnPrefix="in_"></collection>
+  </resultMap>
+  <insert id="insert" parameterType="com.peg.model.jxmb.PerItem" >
+    insert into Y_ITEM (ITEM_KEY, ID, UPPERACTUALVALUE, 
+      UPPERHALFTARGETVALUE, SECONDHALFTARGETVALUE, 
+      YEARTARGETVALUE, MEDIAN, REFERENCEVALUE, 
+      MAXIMUMVALUE, TARGETVALUE, LASTUPDATETIME, 
+      LASTUPDATEUSER, RECORDTIME, RECORD, 
+      FORMULA)
+    values (#{itemKey,jdbcType=DECIMAL}, #{id,jdbcType=DECIMAL}, #{upperactualvalue,jdbcType=VARCHAR}, 
+      #{upperhalftargetvalue,jdbcType=VARCHAR}, #{secondhalftargetvalue,jdbcType=VARCHAR}, 
+      #{yeartargetvalue,jdbcType=VARCHAR}, #{median,jdbcType=VARCHAR}, #{referencevalue,jdbcType=VARCHAR}, 
+      #{maximumvalue,jdbcType=VARCHAR}, #{targetvalue,jdbcType=VARCHAR}, #{lastupdatetime,jdbcType=TIMESTAMP}, 
+      #{lastupdateuser,jdbcType=VARCHAR}, #{recordtime,jdbcType=TIMESTAMP}, #{record,jdbcType=VARCHAR}, 
+      #{formula,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.jxmb.PerItem" >
+    insert into Y_ITEM
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="itemKey != null" >
+        ITEM_KEY,
+      </if>
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="upperactualvalue != null" >
+        UPPERACTUALVALUE,
+      </if>
+      <if test="upperhalftargetvalue != null" >
+        UPPERHALFTARGETVALUE,
+      </if>
+      <if test="secondhalftargetvalue != null" >
+        SECONDHALFTARGETVALUE,
+      </if>
+      <if test="yeartargetvalue != null" >
+        YEARTARGETVALUE,
+      </if>
+      <if test="median != null" >
+        MEDIAN,
+      </if>
+      <if test="referencevalue != null" >
+        REFERENCEVALUE,
+      </if>
+      <if test="maximumvalue != null" >
+        MAXIMUMVALUE,
+      </if>
+      <if test="targetvalue != null" >
+        TARGETVALUE,
+      </if>
+      <if test="lastupdatetime != null" >
+        LASTUPDATETIME,
+      </if>
+      <if test="lastupdateuser != null" >
+        LASTUPDATEUSER,
+      </if>
+      <if test="recordtime != null" >
+        RECORDTIME,
+      </if>
+      <if test="record != null" >
+        RECORD,
+      </if>
+      <if test="formula != null" >
+        FORMULA,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="itemKey != null" >
+        #{itemKey,jdbcType=DECIMAL},
+      </if>
+      <if test="id != null" >
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="upperactualvalue != null" >
+        #{upperactualvalue,jdbcType=VARCHAR},
+      </if>
+      <if test="upperhalftargetvalue != null" >
+        #{upperhalftargetvalue,jdbcType=VARCHAR},
+      </if>
+      <if test="secondhalftargetvalue != null" >
+        #{secondhalftargetvalue,jdbcType=VARCHAR},
+      </if>
+      <if test="yeartargetvalue != null" >
+        #{yeartargetvalue,jdbcType=VARCHAR},
+      </if>
+      <if test="median != null" >
+        #{median,jdbcType=VARCHAR},
+      </if>
+      <if test="referencevalue != null" >
+        #{referencevalue,jdbcType=VARCHAR},
+      </if>
+      <if test="maximumvalue != null" >
+        #{maximumvalue,jdbcType=VARCHAR},
+      </if>
+      <if test="targetvalue != null" >
+        #{targetvalue,jdbcType=VARCHAR},
+      </if>
+      <if test="lastupdatetime != null" >
+        #{lastupdatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastupdateuser != null" >
+        #{lastupdateuser,jdbcType=VARCHAR},
+      </if>
+      <if test="recordtime != null" >
+        #{recordtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record != null" >
+        #{record,jdbcType=VARCHAR},
+      </if>
+      <if test="formula != null" >
+        #{formula,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <sql id="Base_Column_List" >
+    item_key, id, UPPERACTUALVALUE, 
+      UPPERHALFTARGETVALUE, SECONDHALFTARGETVALUE, 
+      YEARTARGETVALUE, MEDIAN, REFERENCEVALUE, 
+      MAXIMUMVALUE, TARGETVALUE, LASTUPDATETIME, 
+      LASTUPDATEUSER, RECORDTIME, RECORD, 
+      FORMULA
+  </sql>
+  <select id="getAllItems" resultMap="BaseResultMap" >
+    select 
+    a.item_key, a.id,a.UPPERACTUALVALUE,a.UPPERHALFTARGETVALUE,a.SECONDHALFTARGETVALUE,
+    a.YEARTARGETVALUE,a.MEDIAN,a.REFERENCEVALUE,a.MAXIMUMVALUE,a.TARGETVALUE,a.LASTUPDATETIME,
+    a.LASTUPDATEUSER,a.RECORDTIME,a.RECORD,a.FORMULA
+    from y_item a,y_performancecheck b
+    where a.id = b.id
+    and b.id=(
+    select id from y_performancecheck
+    where CHEKYEAR =#{CHEKYEAR,jdbcType=VARCHAR}
+    and DEPARTMENT = #{DEPARTMENT,jdbcType=VARCHAR}
+    and TARGETCLASS = #{TARGETCLASS,jdbcType=VARCHAR}
+    and INDEXCONTENT = #{INDEXCONTENT,jdbcType=VARCHAR}
+    and PERFORMANCECONTENT =#{PERFORMANCECONTENT,jdbcType=VARCHAR}
+    and WEIGHT =#{WEIGHT,jdbcType=VARCHAR}
+    
+    and TARGETVALUE=#{TARGETVALUE,jdbcType=VARCHAR}    
+    and COMPANY=#{COMPANY,jdbcType=VARCHAR}
+    and MEDIAN=#{MEDIAN,jdbcType=VARCHAR}
+    )
+  </select>
+  
+  <select id="getItemByGckey" resultMap="BaseResultMap"  parameterType="java.lang.Long" >
+    select 
+    a.item_key, a.id,a.UPPERACTUALVALUE,a.UPPERHALFTARGETVALUE,a.SECONDHALFTARGETVALUE,
+    a.YEARTARGETVALUE,a.MEDIAN,a.REFERENCEVALUE,a.MAXIMUMVALUE,a.TARGETVALUE,a.LASTUPDATETIME,
+    a.LASTUPDATEUSER,a.RECORDTIME,a.RECORD,a.FORMULA
+    from y_item a,y_performancecheck b
+    where a.id = b.id
+    and b.id=#{id}
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List"></include>
+    from y_ITEM
+    where item_key = #{itemKey,jdbcType=DECIMAL}
+  </select>
+  
+  <delete id="deleItemsByGckey" parameterType="java.lang.Long" >
+    delete from y_ITEM
+    where id = #{id,jdbcType=DECIMAL}
+  </delete>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from y_item
+    where item_key = #{itemKey,jdbcType=DECIMAL}
+  </delete>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.bph.Item" >
+    update y_item
+    <set >
+      <if test="id != null" >
+      id = #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="upperactualvalue != null" >
+        upperactualvalue=#{upperactualvalue ,jdbcType=VARCHAR},
+      </if>
+      <if test="upperhalftargetvalue != null" >
+        upperhalftargetvalue=#{upperhalftargetvalue ,jdbcType=VARCHAR},
+      </if>
+      <!-- 新添加三个可修改字段，原来不能修改 -->
+      <if test="secondhalftargetvalue != null" >
+        secondhalftargetvalue=#{secondhalftargetvalue ,jdbcType=VARCHAR},
+      </if>
+      <if test="referencevalue != null" >
+        referencevalue=#{referencevalue ,jdbcType=VARCHAR},
+      </if>
+      <if test="yeartargetvalue != null" >
+        yeartargetvalue=#{yeartargetvalue ,jdbcType=VARCHAR},
+      </if>
+      <if test="lastupdatetime != null" >
+        LASTUPDATETIME=#{lastupdatetime  ,jdbcType=TIMESTAMP},
+      </if>
+       <if test="lastupdateuser != null" >
+        LASTUPDATEUSER=#{lastupdateuser ,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ITEM_KEY = #{itemKey,jdbcType=DECIMAL}
+  </update>
+  
+   <select id="getMonthAllByPage" resultMap="BaseResultMap" >
+    select 
+	    a.item_key,b.targetclass,b.indexcontent,b.performancecontent,
+	    c.index_key in_index_key,a.ITEM_KEY in_ITEM_KEY, c.TARGETVALUE in_TARGETVALUE,
+	    c.BASEVALUE in_BASEVALUE,c.REASONSMODIFICATION in_REASONSMODIFICATION,
+	    d.MONTH_KEY in_ma_MONTH_KEY,
+	    d.group_key in_ma_group_key, d.index_key in_ma_index_key, d.ACCUMULATEDMONTH in_ma_ACCUMULATEDMONTH,
+	    d.LASTMONTHACTUAL in_ma_LASTMONTHACTUAL,d.monthreality  in_ma_monthreality,d.TARGETVALUEMONTH  in_ma_TARGETVALUEMONTH,
+	    d.accumumonth in_ma_accumumonth, d.RECORD in_ma_RECORD, 
+	    d.LASTUPDATETIME in_ma_LASTUPDATETIME, d.LASTUPDATEUSER in_ma_LASTUPDATEUSER
+    from y_item a,y_performancecheck b ,y_setup c, y_month d
+    where  a.id = b.id
+    and a.item_key = c.item_key
+    and c.index_key = d.index_key
+
+   
+    
+    
+        <if test="hashMap.DEPARTMENT != null">
+           and b.DEPARTMENT like '%${hashMap.DEPARTMENT}%'
+        </if>
+        <if test="hashMap.TARGETCLASS != null">
+           and b.TARGETCLASS like '%${hashMap.TARGETCLASS}%'
+        </if>
+        <if test="hashMap.INDEXCONTENT != null">
+           and   b.INDEXCONTENT like '%${hashMap.INDEXCONTENT}%'
+        </if>
+        <if test="hashMap.ACCUMULATEDMONTH != null">
+           and   d.ACCUMULATEDMONTH like '%${hashMap.ACCUMULATEDMONTH}%'
+        </if>
+ 
+   		<if test="hashMap.itemKey != null">
+   			and a.item_Key = '${hashMap.itemKey}'
+   		</if>
+   		<if test="hashMap.indexKey != null">
+   			and a.index_Key = '${hashMap.indexKey}'
+   		</if>
+       order by b.DEPARTMENT DESC ,b.TARGETCLASS DESC, b.INDEXCONTENT DESC,a.YEARTARGETVALUE,to_number(substr(replace(c.TARGETVALUE,'-',''),2,3)),d.ACCUMULATEDMONTH
+  </select> 
+  
+</mapper>

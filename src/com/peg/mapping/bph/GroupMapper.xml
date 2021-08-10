@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.GroupMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.Group" >
+    <id column="GROUP_KEY" property="groupKey" jdbcType="DECIMAL" />
+    <result column="CATEGORY_KEY" property="categoryKey" jdbcType="DECIMAL" />
+     <result column="old_key" property="oldKey" jdbcType="DECIMAL" />
+    <result column="FACTORY" property="factory" jdbcType="VARCHAR" />
+    <result column="AREA" property="area" jdbcType="VARCHAR" />
+    <result column="GROUP_CATEGORY" property="groupCategory" jdbcType="VARCHAR" />
+    <result column="GROUP_NAME" property="groupName" jdbcType="VARCHAR" />
+    <result column="GROUP_CODE" property="groupCode" jdbcType="VARCHAR" />
+    <result column="GROUP_DESCRIPTION" property="groupDescription" jdbcType="VARCHAR" />
+    <result column="PRODUCTION_LINE" property="productionLine" jdbcType="VARCHAR" />
+    <association property="uigroupCategory" resultMap="com.peg.dao.bph.GroupCategoryMapper.BaseResultMap" columnPrefix="gc_"></association>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    GROUP_KEY, CATEGORY_KEY,old_key, FACTORY, AREA, GROUP_CATEGORY, GROUP_NAME, GROUP_CODE, GROUP_DESCRIPTION, 
+    PRODUCTION_LINE
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_GROUP
+    where GROUP_KEY = #{groupKey,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from T_GROUP
+    where GROUP_KEY = #{groupKey,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.bph.Group" >
+    insert into T_GROUP ( CATEGORY_KEY,old_key, FACTORY, 
+      AREA, GROUP_CATEGORY, GROUP_NAME, 
+      GROUP_CODE, GROUP_DESCRIPTION, PRODUCTION_LINE
+      )
+    values ( #{categoryKey,jdbcType=DECIMAL},#{oldKey,jdbcType=DECIMAL}, #{factory,jdbcType=VARCHAR}, 
+      #{area,jdbcType=VARCHAR}, #{groupCategory,jdbcType=VARCHAR}, #{groupName,jdbcType=VARCHAR}, 
+      #{groupCode,jdbcType=VARCHAR}, #{groupDescription,jdbcType=VARCHAR}, #{productionLine,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.bph.Group" >
+    insert into T_GROUP
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="groupKey != null" >
+        GROUP_KEY,
+      </if>
+      <if test="categoryKey != null" >
+        CATEGORY_KEY,
+      </if>
+       <if test="oldKey != null" >
+        old_key,
+      </if>
+      <if test="factory != null" >
+        FACTORY,
+      </if>
+      <if test="area != null" >
+        AREA,
+      </if>
+      <if test="groupCategory != null" >
+        GROUP_CATEGORY,
+      </if>
+      <if test="groupName != null" >
+        GROUP_NAME,
+      </if>
+      <if test="gourpCode != null" >
+        GROUP_CODE,
+      </if>
+      <if test="groupDescription != null" >
+        GROUP_DESCRIPTION,
+      </if>
+      <if test="productionLine != null" >
+        PRODUCTION_LINE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="groupKey != null" >
+        #{groupKey,jdbcType=DECIMAL},
+      </if>
+      <if test="categoryKey != null" >
+        #{categoryKey,jdbcType=DECIMAL},
+      </if>
+       <if test="oldKey != null" >
+        #{oldKey,jdbcType=DECIMAL},
+      </if>
+      <if test="factory != null" >
+        #{factory,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="groupCategory != null" >
+        #{groupCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="groupName != null" >
+        #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="gourpCode != null" >
+        #{groupCode,jdbcType=VARCHAR},
+      </if>
+      <if test="groupDescription != null" >
+        #{groupDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="productionLine != null" >
+        #{productionLine,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.bph.Group" >
+    update T_GROUP
+    <set >
+      <if test="categoryKey != null" >
+        CATEGORY_KEY = #{categoryKey,jdbcType=DECIMAL},
+      </if>
+      <if test="oldKey != null" >
+        old_key = #{oldKey,jdbcType=DECIMAL},
+      </if>
+      <if test="factory != null" >
+        FACTORY = #{factory,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        AREA = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="groupCategory != null" >
+        GROUP_CATEGORY = #{groupCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="groupName != null" >
+        GROUP_NAME = #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="gourpCode != null" >
+        GROUP_CODE = #{groupCode,jdbcType=VARCHAR},
+      </if>
+      <if test="groupDescription != null" >
+        GROUP_DESCRIPTION = #{groupDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="productionLine != null" >
+        PRODUCTION_LINE = #{productionLine,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where GROUP_KEY = #{groupKey,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.bph.Group" >
+    update T_GROUP
+    set CATEGORY_KEY = #{categoryKey,jdbcType=DECIMAL},
+        old_key = #{oldKey,jdbcType=DECIMAL},
+      FACTORY = #{factory,jdbcType=VARCHAR},
+      AREA = #{area,jdbcType=VARCHAR},
+      GROUP_CATEGORY = #{groupCategory,jdbcType=VARCHAR},
+      GROUP_NAME = #{groupName,jdbcType=VARCHAR},
+      GROUP_CODE = #{groupCode,jdbcType=VARCHAR},
+      GROUP_DESCRIPTION = #{groupDescription,jdbcType=VARCHAR},
+      PRODUCTION_LINE = #{productionLine,jdbcType=VARCHAR}
+    where GROUP_KEY = #{groupKey,jdbcType=DECIMAL}
+  </update>
+  <select id="getAllGroup" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from T_GROUP order by GROUP_KEY
+  </select>
+  
+   <select id="getAllGroupFromMes" resultMap="BaseResultMap">
+     select group_key  as GROUP_KEY, group_name as GROUP_CODE, description as group_name,uda_1 as factory, uda_2 as area,
+     uda_4 as GROUP_CATEGORY,uda_3 as PRODUCTION_LINE, group_key as old_key
+     from app_group where category='SHIFT' and uda_1 is not null
+  </select>
+  
+  <select id="getGroupByFag" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from T_GROUP
+    where 1=1
+    <if test="factory !=null">
+      and FACTORY =#{factory}
+    </if>
+    <if test="area != null">
+     and area = #{area}
+    </if>
+    <if test="groupCategory != null">
+     and GROUP_CATEGORY = #{groupCategory}
+    </if>
+    <if test="groupName != null">
+     and GROUP_NAME = #{groupName}
+    </if>
+    
+  </select>
+  
+  <select id="getGroupByFa" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from T_GROUP
+    where 1=1
+    <if test="factory !=null and factory !='' ">
+      and FACTORY =#{factory}
+    </if>
+    <if test="area != null and area != '' ">
+     and area = #{area}
+    </if>
+  </select>
+  
+  <select id="getMonthAllByPage" resultMap="BaseResultMap" >
+    select 
+    b.gc_key gc_gc_key,b.factory gc_factory,b.area  gc_area,b.category gc_category,s.group_key ,s.group_name ,s.group_code,
+    a.item_key gc_it_item_key, a.gc_key gc_it_gc_key,a.ITEM_CODE gc_it_ITEM_CODE,a.ITEM_NAME gc_it_ITEM_NAME,
+    c.index_key gc_it_in_index_key, c.item_key gc_it_in_item_key,c.index_name gc_it_in_index_name,c.index_code gc_it_in_index_code,
+    c.index_description gc_it_in_index_description,c.mainKey gc_it_in_mainKey,
+    d.ma_key gc_it_in_ma_ma_key,d.group_key gc_it_in_ma_group_key, d.index_key gc_it_in_ma_index_key, d.monthly gc_it_in_ma_monthly, 
+    d.item_scale gc_it_in_ma_item_scale, d.index_scale gc_it_in_ma_index_scale, d.index_mainkey gc_it_in_ma_index_mainkey, 
+    d.base_value gc_it_in_ma_base_value, d.target_value gc_it_in_ma_target_value, d.CREATE_TIME gc_it_in_ma_CREATE_TIME, d.CREATE_USER it_in_ma_CREATE_USER
+    from T_ITEM a,t_group_category b ,t_index c, T_MONTHLY_ASSESSMENT d,t_group g,t_group s
+    where b.gc_key = s.category_key
+    and a.gc_key = b.gc_key
+    and a.item_key = c.item_key
+    and c.index_key = d.index_key
+    and d.group_key = g.group_key
+    and s.group_key = g.group_key
+    
+    
+        <if test="hashMap.factory != null">
+           and b.FACTORY like '%${hashMap.factory}%'
+        </if>
+        <if test="hashMap.area != null">
+           and b.area like '%${hashMap.area}%'
+        </if>
+        <if test="hashMap.category != null">
+           and   b.CATEGORY like '%${hashMap.category}%'
+        </if>
+        <if test="hashMap.monthly != null">
+           and   d.monthly like '%${hashMap.monthly}%'
+        </if>
+        <if test="hashMap.groupName != null">
+           and   s.group_name like '%${hashMap.groupName}%'
+        </if>
+   
+       order by b.FACTORY DESC ,b.area DESC, b.CATEGORY DESC,s.group_name,a.item_code,to_number(substr(replace(c.index_code,'-',''),2,3)),d.monthly
+  </select> 
+  
+  <select id="getMonthAllByMonth" resultMap="BaseResultMap" >
+    select 
+    s.group_key ,s.old_key, s.FACTORY, s.AREA, s.GROUP_CATEGORY, s.GROUP_NAME, s.GROUP_CODE, s.GROUP_DESCRIPTION, 
+    b.gc_key gc_gc_key,b.factory gc_factory,b.area  gc_area,b.category gc_category,
+    a.item_key gc_it_item_key, a.gc_key gc_it_gc_key,a.ITEM_CODE gc_it_ITEM_CODE,a.ITEM_NAME gc_it_ITEM_NAME,
+    c.index_key gc_it_in_index_key, c.item_key gc_it_in_item_key,c.index_name gc_it_in_index_name,c.index_code gc_it_in_index_code,
+    c.index_description gc_it_in_index_description,c.mainKey gc_it_in_mainKey,
+    d.ma_key gc_it_in_ma_ma_key,d.group_key gc_it_in_ma_group_key, d.index_key gc_it_in_ma_index_key, d.monthly gc_it_in_ma_monthly, 
+    d.item_scale gc_it_in_ma_item_scale, d.index_scale gc_it_in_ma_index_scale, d.index_mainkey gc_it_in_ma_index_mainkey, 
+    d.base_value gc_it_in_ma_base_value, d.target_value gc_it_in_ma_target_value, d.CREATE_TIME gc_it_in_ma_CREATE_TIME, d.CREATE_USER it_in_ma_CREATE_USER
+    from T_ITEM a,t_group_category b ,t_index c, T_MONTHLY_ASSESSMENT d,t_group g,t_group s
+    where b.gc_key = s.category_key
+    and a.gc_key = b.gc_key
+    and a.item_key = c.item_key
+    and c.index_key = d.index_key
+    and d.group_key = g.group_key
+    and s.group_key = g.group_key
+    
+    
+       
+        <if test="queryMonth != null">
+           and   d.monthly = #{queryMonth}
+        </if>
+       
+   
+       order by b.FACTORY DESC ,b.area DESC, b.CATEGORY DESC,a.item_code,to_number(substr(replace(c.index_code,'-',''),2,3)),d.monthly
+  </select> 
+  
+  <select id="getGroupScoreByMonth" resultMap="BaseResultMap" >
+    select 
+    s.group_key ,s.old_key, s.FACTORY, s.AREA, s.GROUP_CATEGORY, s.GROUP_NAME, s.GROUP_CODE, s.GROUP_DESCRIPTION, 
+    b.gc_key gc_gc_key,b.factory gc_factory,b.area  gc_area,b.category gc_category,
+    a.item_key gc_it_item_key, a.gc_key gc_it_gc_key,a.ITEM_CODE gc_it_ITEM_CODE,a.ITEM_NAME gc_it_ITEM_NAME,
+    it.item_score gc_it_item_score,
+    c.index_key gc_it_in_index_key, c.item_key gc_it_in_item_key,c.index_name gc_it_in_index_name,c.index_code gc_it_in_index_code,
+    c.index_description gc_it_in_index_description,c.mainKey gc_it_in_mainKey,
+    d.ma_key gc_it_in_ma_ma_key,d.group_key gc_it_in_ma_group_key, d.index_key gc_it_in_ma_index_key, d.monthly gc_it_in_ma_monthly, 
+    d.item_scale gc_it_in_ma_item_scale, d.index_scale gc_it_in_ma_index_scale, d.index_mainkey gc_it_in_ma_index_mainkey, 
+    d.base_value gc_it_in_ma_base_value, d.target_value gc_it_in_ma_target_value, 
+    ind.index_act_value gc_it_in_ma_index_act_value,ind.index_score gc_it_in_ma_index_score
+    from T_ITEM a,t_group_category b ,t_index c, T_MONTHLY_ASSESSMENT d,t_group g,t_group s,
+    t_item_scroe it, t_item_index_scroe_month ind
+    where b.gc_key = s.category_key
+    and a.gc_key = b.gc_key
+    and a.item_key = c.item_key
+    and c.index_key = d.index_key
+    and d.group_key = g.group_key
+    and s.group_key = g.group_key
+    and it.item_id = a.item_key
+    and ind.index_id = c.index_key
+    and ind.item_id = it.item_id
+    and it.shift_group_code = s.group_code
+    and ind.shift_group_code = s.group_code
+    and to_char(it.sum_date,'yyyy-mm') =  d.monthly 
+    and to_char(ind.sum_date,'yyyy-mm') =  d.monthly 
+    
+         <if test="factory != null">
+           and b.FACTORY like '%${factory}%'
+        </if>
+        <if test="area != null">
+           and b.area like '%${area}%'
+        </if>
+       
+        <if test="monthly != null">
+           and   d.monthly like '%${monthly}%'
+        </if>
+        <if test="groupName != null">
+           and   s.group_name like '%${groupName}%'
+        </if>
+       
+   
+       order by b.FACTORY DESC ,b.area DESC, b.CATEGORY DESC,a.item_code,to_number(substr(replace(c.index_code,'-',''),2,3)),d.monthly
+  </select> 
+  
+   <select id="getIndexAllByGroup" resultMap="BaseResultMap" >
+    select 
+    s.group_key ,s.old_key, s.FACTORY, s.AREA, s.GROUP_CATEGORY, s.GROUP_NAME, s.GROUP_CODE, s.GROUP_DESCRIPTION, 
+    b.gc_key gc_gc_key ,b.factory gc_factory ,b.area  gc_area ,b.category gc_category ,
+    a.item_key gc_it_item_key, a.gc_key gc_it_gc_key,a.ITEM_CODE gc_it_ITEM_CODE,a.ITEM_NAME gc_it_ITEM_NAME,
+    c.index_key gc_it_in_index_key, c.item_key gc_it_in_item_key,c.index_name gc_it_in_index_name,c.index_code gc_it_in_index_code,
+    c.index_description gc_it_in_index_description,c.mainKey gc_it_in_mainKey
+    from T_ITEM a,t_group_category b ,t_index c,t_group s
+    where b.gc_key = s.category_key
+    and a.gc_key = b.gc_key
+    and a.item_key = c.item_key
+      
+        <if test="factory != null">
+           and b.FACTORY like '%${factory}%'
+        </if>
+        <if test="area != null">
+           and b.area like '%${area}%'
+        </if>
+        <if test="groupName != null">
+           and   s.group_name like '%${groupName}%'
+        </if>
+   
+       order by b.FACTORY DESC ,b.area DESC, b.CATEGORY DESC,a.item_code
+  </select> 
+  
+</mapper>

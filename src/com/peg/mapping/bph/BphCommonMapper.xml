@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.BphCommonMapper" >
+
+<resultMap id="BaseResultMap" type="com.peg.model.bph.BphCommonVo" >
+	<id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="region" property="region" jdbcType="VARCHAR" />
+    <result column="base_month" property="baseMonth" jdbcType="VARCHAR" />
+    <result column="factory" property="factory" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="shift_group_name" property="shiftGroupTxt" jdbcType="VARCHAR" />
+    <result column="shift_group_code" property="shiftGroupCode" jdbcType="VARCHAR" />
+    <result column="shift_group_score" property="shiftGroupScore" jdbcType="DECIMAL" />
+    <result column="category" property="category" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+    <result column="index_name" property="indexName" jdbcType="VARCHAR" />
+    <result column="sum_date" property="sumDate" jdbcType="VARCHAR" />
+    <result column="row_id" property="rowId" jdbcType="DECIMAL" />
+    <result column="col_1" property="col1" jdbcType="DECIMAL" />
+    <result column="col_2" property="col2" jdbcType="DECIMAL" />
+    <result column="col_3" property="col3" jdbcType="DECIMAL" />
+</resultMap>
+
+  
+   <!-- 根据班组名称获取班组绩效 -->
+  <select id="getShiftGroupPerFormanceByGroup" resultMap="BaseResultMap" parameterType="com.peg.model.bph.BphCommonVo" >
+	<![CDATA[	    
+		select tis.factory , tis.shift_group_name ,tis.shift_group_code ,sum(tis.item_score) as shift_group_score
+		from T_ITEM_SCROE tis 
+	]]>
+	<where>
+	 <if test="shiftGroups != null" >
+        and tis.shift_group_name in
+        <foreach item="item" index="index" collection="shiftGroups" open="(" separator="," close=")">  
+            #{item}  
+        </foreach> 
+    </if>
+    <if test="queryMonth != null" >
+		and to_char(tis.sum_date,'YYYY-MM') = #{queryMonth,jdbcType=VARCHAR}
+	</if>
+	<if test="startTime != null and endTime != null" >
+		and to_char(tis.sum_date,'YYYY-MM') between #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	</where>
+	<![CDATA[
+		group by tis.factory, tis.shift_group_name ,tis.shift_group_code
+		order by sum(tis.item_score) desc
+	]]>
+  </select>
+  <!-- 根据班组名称获取班组绩效 列表 -->
+   <select id="getShiftGroupPerformanceList" resultMap="BaseResultMap"  >
+    
+		select tis.factory , tis.shift_group_name ,tis.shift_group_code ,sum(tis.item_score) as shift_group_score
+		from T_ITEM_SCROE tis 
+
+	<where>
+	 <if test="hashMap.shiftGroupTxt != null" >
+        and tis.shift_group_name like '%${hashMap.shiftGroupTxt}%'
+       
+    </if>
+     <if test="hashMap.factory != null" >
+        and tis.factory like '%${hashMap.factory}%'
+       
+    </if>
+	<if test="hashMap.startTime != null and hashMap.endTime != null" >
+		and to_char(tis.sum_date,'YYYY-MM')  BETWEEN #{hashMap.startTime,jdbcType=VARCHAR} and  #{hashMap.endTime,jdbcType=VARCHAR}
+	</if>
+	</where>
+
+		group by tis.factory, tis.shift_group_name ,tis.shift_group_code
+		order by sum(tis.item_score) desc
+
+  </select>
+  
+   <!-- 根据月份获取班组绩效 列表过滤-->
+   <select id="getShiftGroupPerformanceByMonth" resultMap="BaseResultMap"  >
+   select * from (
+   select tis.factory ,a.uda_2 as area,a.uda_4 as category, tis.shift_group_name ,tis.shift_group_code ,
+   case when trunc(sum(tis.item_score),2)  &lt; 0 then 0 else trunc(sum(tis.item_score),2) end  as shift_group_score
+    from T_ITEM_SCROE tis,app_group a 
+    where 1=1
+    and tis.shift_group_code = a.group_name
+   <if test="hashMap.startTime != null and hashMap.endTime != null" >
+			and  to_char(tis.sum_date,'YYYY-MM') BETWEEN #{hashMap.startTime,jdbcType=VARCHAR} and  #{hashMap.endTime,jdbcType=VARCHAR}
+   </if>
+   <if test="hashMap.factory!= null " >
+			and tis.factory = #{hashMap.factory,jdbcType=VARCHAR}
+   </if>
+    group by tis.factory,a.uda_2 ,a.uda_4, tis.shift_group_name ,tis.shift_group_code
+    
+    union all 
+    select a.uda_1 as factory ,a.uda_2 as area ,a.uda_4 as category ,
+    a.description as shift_group_name, a.group_name as shift_group_code, -1 as shift_group_score
+    from app_group a
+    where a.uda_4 is not null
+    and a.group_name not in (
+     select t.shift_group_code from T_ITEM_SCROE t 
+     where 1=1
+     <if test="hashMap.startTime != null and hashMap.endTime != null" >
+			and  to_char(t.sum_date,'yyyy-mm') BETWEEN #{hashMap.startTime,jdbcType=VARCHAR} and  #{hashMap.endTime,jdbcType=VARCHAR}
+    </if>
+    )
+    <if test="hashMap.factory!= null " >
+			and a.uda_1 = #{hashMap.factory,jdbcType=VARCHAR}
+    </if>
+    )a order by a.factory, a.shift_group_score desc
+    
+  </select>
+ 
+  
+    <!-- 查询一个班组一年中每个月的得分 -->
+  <select id="sumItemScoreByYear"  parameterType="com.peg.model.bph.BphCommonVo" resultMap="BaseResultMap">
+   select 
+   to_char(t.sum_date,'YYYY-MM') as base_month,t.factory as factory,t.shift_group_name as shift_group_name,sum(t.item_score) as shift_group_score
+   from t_item_scroe t where t.shift_group_name=#{shiftGroupTxt,jdbcType=VARCHAR} 
+   and t.sum_date between add_months(to_date(#{startTime},'yyyy-mm') ,-11) and to_date(#{startTime},'yyyy-mm')
+   group by to_char(t.sum_date,'YYYY-MM'),t.factory,t.shift_group_name
+   order by to_char(t.sum_date,'YYYY-MM')
+  </select>
+  
+   <!-- 查询一个班组期间中每个月的得分 -->
+  <select id="sumItemScoreBySelectMonth"  parameterType="com.peg.model.bph.BphCommonVo" resultMap="BaseResultMap">
+   select 
+   to_char(t.sum_date,'YYYY-MM') as base_month,t.factory as factory,t.shift_group_name as shift_group_name,sum(t.item_score) as shift_group_score
+   from t_item_scroe t where t.shift_group_name=#{shiftGroupTxt,jdbcType=VARCHAR} 
+   and to_char(t.sum_date,'YYYY-MM') between #{endTime,jdbcType=VARCHAR} and #{startTime,jdbcType=VARCHAR}
+   group by to_char(t.sum_date,'YYYY-MM'),t.factory,t.shift_group_name
+   order by to_char(t.sum_date,'YYYY-MM')
+  </select>
+  
+  <select id="selectGroupRank"  parameterType="com.peg.model.bph.BphCommonVo" resultMap="BaseResultMap">
+     select t.* from(
+     select temp.*, rownum row_id from 
+     ( select  tis.sum_date, tis.factory , tis.shift_group_name ,tis.shift_group_code ,sum(tis.item_score) as shift_group_score
+	 from T_ITEM_SCROE tis  
+	 <where>
+	    <if test="factory != null" >
+        and tis.factory = #{factory,jdbcType=VARCHAR}
+	    </if>
+		<if test="queryMonth !=null" >
+			and to_char(tis.sum_date,'YYYY-MM') = #{queryMonth,jdbcType=VARCHAR} 
+		</if>
+	 </where>
+     group by  tis.sum_date, tis.factory, tis.shift_group_name ,tis.shift_group_code
+	 order by sum(tis.item_score) desc) temp ) t
+	<where>
+	 <if test="shiftGroupTxt != null" >
+        and t.shift_group_name = #{shiftGroupTxt,jdbcType=VARCHAR}
+       
+    </if>
+	</where>
+  </select>
+  
+  <select id="getIndexScoreAllByPage"   resultMap="BaseResultMap">
+   ${hashMap.sql}   
+  </select>
+  
+  	<resultMap id="group" type="com.peg.model.bph.Group" >
+		<id column="groupKey" property="groupKey" jdbcType="BIGINT" />
+    	<result column="groupName" property="groupName" jdbcType="VARCHAR" />
+	</resultMap>
+  	<select id="getgroupName" resultMap="group" parameterType="com.peg.model.bph.IndexScroe">
+  		select group_key as groupKey,group_name as groupName from t_group m
+  		<where>
+			<if test="baseFactory != null">
+				and m.factory =#{baseFactory}
+			</if>
+			<if test="baseArea != null">
+				and m.area =#{baseArea}
+			</if>
+			<if test="baseCategory != null">
+				and m.group_category =#{baseCategory}
+			</if>
+		</where>
+  	</select>
+  	<select id="getgroupName2" resultMap="group">
+  		select group_key as groupKey,group_name as groupName from t_group m where 1=1
+		<if test="list != null and list.size()>0">
+		and m.group_key in 
+		<foreach collection="list" open="(" separator="," close=")" item="item" index="index">
+			#{item}
+		</foreach>
+		</if>
+  	</select>
+  	<resultMap id="Item" type="com.peg.model.bph.Item" >
+		<id column="itemKey" property="itemKey" jdbcType="BIGINT" />
+    	<result column="itemName" property="itemName" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="getItemName" resultMap="Item" parameterType="com.peg.model.bph.IndexScroe">
+		select Item_key as itemKey,Item_name as itemName from T_ITEM t inner join t_group_category m on t.gc_key=m.gc_key
+		<where>
+			<if test="baseFactory != null">
+				and m.factory =#{baseFactory}
+			</if>
+			<if test="baseArea != null">
+				and m.area =#{baseArea}
+			</if>
+			<if test="baseCategory != null">
+				and m.category =#{baseCategory}
+			</if>
+		</where>
+	</select>
+	<resultMap id="Index" type="com.peg.model.bph.Index" >
+		<id column="indexKey" property="indexKey" jdbcType="BIGINT" />
+    	<result column="indexName" property="indexName" jdbcType="VARCHAR" />
+	    <result column="itemKey" property="itemKey" jdbcType="VARCHAR"/>
+	</resultMap>
+	<select id="getIndexName" resultMap="Index" parameterType="java.util.List">
+		select index_key as indexKey,index_name as indexName from T_INDEX 
+	    <where>
+	    	<if test="list!=null and list.size()>0">
+				and item_key in 
+				<foreach collection="list" open="(" separator="," close=")" item="item" index="index">
+					#{item}
+				</foreach>
+			</if>
+		</where> 
+	</select>
+	<resultMap id="Contrast" type="com.peg.model.bph.Contrast" >
+		<result column="itemkey" property="itemkey" jdbcType="VARCHAR" />
+    	<result column="itemname" property="itemname" jdbcType="VARCHAR" />
+    	<result column="indexkey" property="indexkey" jdbcType="VARCHAR" />
+    	<result column="indexname" property="indexname" jdbcType="VARCHAR" />
+    	<result column="shiftgroupcode" property="shiftgroupcode" jdbcType="VARCHAR" />
+    	<result column="shiftgroupname" property="shiftgroupname" jdbcType="VARCHAR" />
+    	<result column="indexactvalue" property="indexactvalue" jdbcType="DECIMAL" />
+	</resultMap>
+	<select id="getgrouplist" resultMap="Contrast">
+		select t_2.item_key as itemkey,t_2.item_name as itemname,t_3.index_key as indexkey,t_3.index_name as indexname,t_1.shift_group_code as shiftgroupcode,t_1.shift_group_name as shiftgroupname,
+	    t_1.index_act_value as indexactvalue  from t_item_index_scroe_month t_1 inner join t_Item t_2 on t_1.item_id=t_2.item_key inner join T_index t_3 on t_1.index_id=t_3.index_key inner join t_Group t_4 
+	    on t_1.shift_group_code=t_4.group_code where 1=1
+		<if test="group!=null and group.size()>0">
+			and t_4.group_key in
+			<foreach collection="group" open="(" separator="," close=")" item="gr" index="index">
+				${gr}
+			</foreach>
+		</if>
+		<if test="item!=null and item.size()>0">
+			and t_1.item_id in 
+			<foreach collection="item" open="(" separator="," close=")" item="it" index="index">
+				${it}
+			</foreach>
+		</if>
+		<if test="indexl!=null and indexl.size()>0">
+			and t_1.index_id in 
+			<foreach collection="indexl" open="(" separator="," close=")" item="ind" index="index">
+				${ind}
+			</foreach>
+		</if>
+		<if test="mon!=null and mon!=''">
+			and t_1.sum_date=to_date('${mon}','yyyy-mm')
+		</if> 
+	</select>
+	<resultMap type="com.peg.model.EntityClass" id="EntityClassbad">
+	    <result column="sumdate" property="sumdate" jdbcType="VARCHAR"/>
+	    <result column="indexactvalue" property="indexactvalue" jdbcType="VARCHAR"/>
+	    <result column="shiftgroupname" property="shiftgroupname" jdbcType="VARCHAR"/>
+	</resultMap>
+	<select id="getentitylist" resultMap="EntityClassbad">
+		select t.sum_date as sumdate,t.index_act_value as indexactvalue,t.shift_group_name as shiftgroupname from t_item_index_scroe_month t where index_id=#{key}
+		and t.shift_group_name in 
+		<foreach collection="str" open="(" separator="," close=")" item="s" index="index">
+			#{s}
+		</foreach>
+		<if test="mon!=null and mon!=''">
+			and sum_date BETWEEN  add_months(to_date(#{mon},'yyyy-mm'),-5) and to_date(#{mon},'yyyy-mm') 
+		</if>
+	</select>
+	<select id="getnullitemlist" resultMap="Item" parameterType="com.peg.model.bph.IndexScroe">
+		select t_1.item_key as itemKey,t_1.item_name as itemName from t_item t_1 inner join t_group_category t_2 on t_1.gc_key=t_2.gc_key inner join t_group t_3 on t_2.gc_key=t_3.category_key where 1=1
+		<if test="entity.baseFactory!=null and entity.baseFactory!=''">
+			and t_2.factory =#{entity.baseFactory}
+		</if>
+		<if test="entity.baseArea!= null and entity.baseArea!=''">
+			and t_2.area =#{entity.baseArea}
+		</if>
+		<if test="entity.baseCategory!= null and entity.baseCategory!=''">
+			and t_2.category =#{entity.baseCategory}
+		</if>
+		order by t_1.item_key
+	</select>
+	<select id="getnullindexlist" resultMap="Index">
+		select t.index_key as indexKey,t.item_key as itemKey,t.index_name as indexName from t_index t where 1=1
+		<if test="list!=null and list.size()>0">
+			and t.item_key in
+			<foreach collection="list" open="(" separator="," close=")" item="gr" index="i">
+				#{gr}
+			</foreach>
+		</if>
+		order by t.index_key
+	</select>
+	<select id="getindexlistkey" resultMap="Index">
+		select t.index_key as indexKey,t.item_key as itemKey,t.index_name as indexName from t_index t where 1=1
+		<if test="list!=null and list.size()>0">
+			and t.index_key in
+			<foreach collection="list" open="(" separator="," close=")" item="gr" index="i">
+				#{gr}
+			</foreach>
+		</if>
+	</select>
+	<select id="getitemlistkey" resultMap="Item" parameterType="com.peg.model.bph.IndexScroe">
+		select t.item_key as itemkey,t.item_name as itemname from T_ITEM t where 1=1
+		<if test="list!=null and list.size()>0">
+			and t.item_key in
+			<foreach collection="list" open="(" separator="," close=")" item="gr" index="i">
+				#{gr}
+			</foreach>
+		</if>
+		order by t.item_key
+	</select>
+</mapper>

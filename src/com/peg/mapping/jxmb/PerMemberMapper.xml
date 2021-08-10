@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.jxmb.PerMemberMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.jxmb.PerMember" >
+    <id column="GROUP_KEY" property="groupKey" jdbcType="DECIMAL" />
+    <result column="CATEGORY_KEY" property="categoryKey" jdbcType="DECIMAL" />
+    <result column="OLD_KEY" property="oldKey" jdbcType="DECIMAL" />
+    <result column="FACTORY" property="factory" jdbcType="VARCHAR" />
+    <result column="AREA" property="area" jdbcType="VARCHAR" />
+    <result column="GROUP_CATEGORY" property="groupCategory" jdbcType="VARCHAR" />
+    <result column="GROUP_NAME" property="groupName" jdbcType="VARCHAR" />
+    <result column="GROUP_CODE" property="groupCode" jdbcType="VARCHAR" />
+    <result column="GROUP_DESCRIPTION" property="groupDescription" jdbcType="VARCHAR" />
+    <result column="PRODUCTION_LINE" property="productionLine" jdbcType="VARCHAR" />
+    <result column="ITEM_KEY" property="itemKey" jdbcType="VARCHAR" />
+    <association property="uigroupCategory" resultMap="com.peg.dao.jxmb.PerGroupMapper.BaseResultMap" columnPrefix="gc_"></association>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    GROUP_KEY, CATEGORY_KEY, OLD_KEY, FACTORY, AREA, GROUP_CATEGORY, GROUP_NAME, GROUP_CODE, 
+    GROUP_DESCRIPTION, PRODUCTION_LINE
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from Y_MEMBER
+    where GROUP_KEY = #{groupKey,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from Y_MEMBER
+    where GROUP_KEY = #{groupKey,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.jxmb.PerMember" >
+    insert into Y_MEMBER (GROUP_KEY, CATEGORY_KEY, OLD_KEY, 
+      FACTORY, AREA, GROUP_CATEGORY, 
+      GROUP_NAME, GROUP_CODE, GROUP_DESCRIPTION, 
+      PRODUCTION_LINE)
+    values (#{groupKey,jdbcType=DECIMAL}, #{categoryKey,jdbcType=DECIMAL}, #{oldKey,jdbcType=DECIMAL}, 
+      #{factory,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, #{groupCategory,jdbcType=VARCHAR}, 
+      #{groupName,jdbcType=VARCHAR}, #{groupCode,jdbcType=VARCHAR}, #{groupDescription,jdbcType=VARCHAR}, 
+      #{productionLine,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.jxmb.PerMember" >
+    insert into Y_MEMBER
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="groupKey != null" >
+        GROUP_KEY,
+      </if>
+      <if test="categoryKey != null" >
+        CATEGORY_KEY,
+      </if>
+      <if test="oldKey != null" >
+        OLD_KEY,
+      </if>
+      <if test="factory != null" >
+        FACTORY,
+      </if>
+      <if test="area != null" >
+        AREA,
+      </if>
+      <if test="groupCategory != null" >
+        GROUP_CATEGORY,
+      </if>
+      <if test="groupName != null" >
+        GROUP_NAME,
+      </if>
+      <if test="groupCode != null" >
+        GROUP_CODE,
+      </if>
+      <if test="groupDescription != null" >
+        GROUP_DESCRIPTION,
+      </if>
+      <if test="productionLine != null" >
+        PRODUCTION_LINE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="groupKey != null" >
+        #{groupKey,jdbcType=DECIMAL},
+      </if>
+      <if test="categoryKey != null" >
+        #{categoryKey,jdbcType=DECIMAL},
+      </if>
+      <if test="oldKey != null" >
+        #{oldKey,jdbcType=DECIMAL},
+      </if>
+      <if test="factory != null" >
+        #{factory,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="groupCategory != null" >
+        #{groupCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="groupName != null" >
+        #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="groupCode != null" >
+        #{groupCode,jdbcType=VARCHAR},
+      </if>
+      <if test="groupDescription != null" >
+        #{groupDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="productionLine != null" >
+        #{productionLine,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.jxmb.PerMember" >
+    update Y_MEMBER
+    <set >
+      <if test="categoryKey != null" >
+        CATEGORY_KEY = #{categoryKey,jdbcType=DECIMAL},
+      </if>
+      <if test="oldKey != null" >
+        OLD_KEY = #{oldKey,jdbcType=DECIMAL},
+      </if>
+      <if test="factory != null" >
+        FACTORY = #{factory,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        AREA = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="groupCategory != null" >
+        GROUP_CATEGORY = #{groupCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="groupName != null" >
+        GROUP_NAME = #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="groupCode != null" >
+        GROUP_CODE = #{groupCode,jdbcType=VARCHAR},
+      </if>
+      <if test="groupDescription != null" >
+        GROUP_DESCRIPTION = #{groupDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="productionLine != null" >
+        PRODUCTION_LINE = #{productionLine,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where GROUP_KEY = #{groupKey,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.jxmb.PerMember" >
+    update Y_MEMBER
+    set CATEGORY_KEY = #{categoryKey,jdbcType=DECIMAL},
+      OLD_KEY = #{oldKey,jdbcType=DECIMAL},
+      FACTORY = #{factory,jdbcType=VARCHAR},
+      AREA = #{area,jdbcType=VARCHAR},
+      GROUP_CATEGORY = #{groupCategory,jdbcType=VARCHAR},
+      GROUP_NAME = #{groupName,jdbcType=VARCHAR},
+      GROUP_CODE = #{groupCode,jdbcType=VARCHAR},
+      GROUP_DESCRIPTION = #{groupDescription,jdbcType=VARCHAR},
+      PRODUCTION_LINE = #{productionLine,jdbcType=VARCHAR}
+    where GROUP_KEY = #{groupKey,jdbcType=DECIMAL}
+  </update>
+ 
+     <select id="getMonthAll" resultMap="com.peg.dao.jxmb.PerItemMapper.BaseResultMap" >
+    select 
+    a.item_key, b.id gc_id,b.department gc_department,b.targetclass  gc_targetclass,b.indexcontent gc_indexcontent,b.performancecontent gc_performancecontent,  
+    a.ITEM_KEY gc_it_ITEM_KEY, a.id gc_it_id,a.YEARTARGETVALUE gc_it_YEARTARGETVALUE,a.REFERENCEVALUE gc_it_REFERENCEVALUE,  
+    c.index_key gc_it_in_index_key, c.item_key gc_it_in_item_key,c.TARGETVALUE gc_it_in_TARGETVALUE,
+   	c.MONTH gc_it_in_MONTH,c.BASEVALUE gc_it_in_BASEVALUE,  
+    d.MONTH_KEY gc_it_in_ma_MONTH_KEY, d.index_key gc_it_in_ma_index_key, d.ACCUMULATEDMONTH gc_it_in_ma_ACCUMULATEDMONTH,
+    d.LASTMONTHACTUAL gc_it_in_ma_LASTMONTHACTUAL,d.monthreality  gc_it_in_ma_monthreality,d.TARGETVALUEMONTH  gc_it_in_ma_TARGETVALUEMONTH,
+    d.accumumonth gc_it_in_ma_accumumonth, d.RECORD gc_it_in_ma_RECORD, 
+    d.LASTUPDATETIME gc_it_in_ma_LASTUPDATETIME, d.LASTUPDATEUSER gc_it_in_ma_LASTUPDATEUSER
+    from y_item a,y_performancecheck b ,y_setup c, y_month d
+    where  a.id = b.id
+    and a.item_key = c.item_key
+    and c.index_key = d.index_key
+
+    
+    
+        <if test="hashMap.DEPARTMENT != null">
+           and b.DEPARTMENT like '%${hashMap.DEPARTMENT}%'
+        </if>
+        <if test="hashMap.TARGETCLASS != null">
+           and b.TARGETCLASS like '%${hashMap.TARGETCLASS}%'
+        </if>
+        <if test="hashMap.INDEXCONTENT != null">
+           and   b.INDEXCONTENT like '%${hashMap.INDEXCONTENT}%'
+        </if>
+        <if test="hashMap.ACCUMULATEDMONTH != null">
+           and   d.ACCUMULATEDMONTH like '%${hashMap.ACCUMULATEDMONTH}%'
+        </if>
+       
+   		<if test="hashMap.itemKey != null">
+   			and a.item_key = '${hashMap.itemKey}'
+   		</if>
+       order by b.DEPARTMENT DESC ,b.TARGETCLASS DESC, b.INDEXCONTENT DESC,a.YEARTARGETVALUE,to_number(substr(replace(c.TARGETVALUE,'-',''),2,3)),d.ACCUMULATEDMONTH
+  </select> 
+ 
+   <select id="getMonthAllByPage" resultMap="com.peg.dao.jxmb.PerItemMapper.BaseResultMap" >
+      select 
+    a.item_key, b.id gc_id,b.department gc_department,b.targetclass  gc_targetclass,b.indexcontent gc_indexcontent,b.performancecontent gc_performancecontent,  
+    a.ITEM_KEY gc_it_ITEM_KEY, a.id gc_it_id,a.YEARTARGETVALUE gc_it_YEARTARGETVALUE,a.REFERENCEVALUE gc_it_REFERENCEVALUE,  
+    c.index_key gc_it_in_index_key, c.item_key gc_it_in_item_key,c.TARGETVALUE gc_it_in_TARGETVALUE,
+   	c.MONTH gc_it_in_MONTH,c.BASEVALUE gc_it_in_BASEVALUE,  
+    d.MONTH_KEY gc_it_in_ma_MONTH_KEY, d.index_key gc_it_in_ma_index_key, d.ACCUMULATEDMONTH gc_it_in_ma_ACCUMULATEDMONTH,
+    d.LASTMONTHACTUAL gc_it_in_ma_LASTMONTHACTUAL,d.monthreality  gc_it_in_ma_monthreality,d.TARGETVALUEMONTH  gc_it_in_ma_TARGETVALUEMONTH,
+    d.accumumonth gc_it_in_ma_accumumonth, d.RECORD gc_it_in_ma_RECORD, 
+    d.LASTUPDATETIME gc_it_in_ma_LASTUPDATETIME, d.LASTUPDATEUSER gc_it_in_ma_LASTUPDATEUSER
+    from y_item a,y_performancecheck b ,y_setup c, y_month d
+    where  a.id = b.id
+    and a.item_key = c.item_key
+    and c.index_key = d.index_key
+ 
+        <if test="hashMap.DEPARTMENT != null">
+           and b.DEPARTMENT like '%${hashMap.DEPARTMENT}%'
+        </if>
+        <if test="hashMap.TARGETCLASS != null">
+           and b.TARGETCLASS like '%${hashMap.TARGETCLASS}%'
+        </if>
+        <if test="hashMap.INDEXCONTENT != null">
+           and   b.INDEXCONTENT like '%${hashMap.INDEXCONTENT}%'
+        </if>
+        <if test="hashMap.ACCUMULATEDMONTH != null">
+           and   d.ACCUMULATEDMONTH like '%${hashMap.ACCUMULATEDMONTH}%'
+        </if>
+ 
+   		<if test="hashMap.itemKey != null">
+   			and a.item_Key = '${hashMap.itemKey}'
+   		</if>
+   		<if test="hashMap.indexKey != null">
+   			and a.index_Key = '${hashMap.indexKey}'
+   		</if>
+       order by b.DEPARTMENT DESC ,b.TARGETCLASS DESC, b.INDEXCONTENT DESC,a.YEARTARGETVALUE,to_number(substr(replace(c.TARGETVALUE,'-',''),2,3)),d.ACCUMULATEDMONTH
+  </select> 
+  
+</mapper>

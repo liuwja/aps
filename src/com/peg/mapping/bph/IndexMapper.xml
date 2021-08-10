@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.bph.IndexMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.bph.Index" >
+    <id column="index_key" property="indexKey" jdbcType="DECIMAL" />
+    <result column="item_key" property="itemKey" jdbcType="DECIMAL" />
+    <result column="index_name" property="indexName" jdbcType="VARCHAR" />
+    <result column="index_code" property="indexCode" jdbcType="VARCHAR" />
+    <result column="index_description" property="indexDescription" jdbcType="VARCHAR" />
+    <result column="mainKey" property="mainKey" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+    <result column="LAST_UPDATE_TIME" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_UPDATE_User" property="lastUpdateUser" jdbcType="VARCHAR" />
+    <collection property="monthAssessments" resultMap="com.peg.dao.bph.MonthAssessmentMapper.BaseResultMap" columnPrefix="ma_"></collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    index_key, item_key,index_name,index_code,index_description,mainKey,CREATE_TIME,CREATE_USER,LAST_UPDATE_TIME,LAST_UPDATE_User
+  </sql>
+
+  
+   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List"></include>
+    from t_index
+    where index_key = #{indexKey,jdbcType=DECIMAL}
+  </select>
+   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_index
+    where index_key = #{indexKey,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.bph.Index" >
+    insert into t_index ( item_key,index_name,index_code,index_description,mainKey,CREATE_USER,CREATE_TIME,
+    LAST_UPDATE_TIME,LAST_UPDATE_USER )
+    values (#{itemKey,jdbcType=DECIMAL}, #{indexName,jdbcType=VARCHAR}, 
+    #{indexCode,jdbcType=VARCHAR},#{indexDescription,jdbcType=VARCHAR},#{mainKey,jdbcType=VARCHAR},
+    #{createUser,jdbcType=VARCHAR},SYSDATE,
+    #{lastUpdateTime,jdbcType=TIMESTAMP},#{lastUpdateUser,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.bph.Index" >
+    insert into t_index
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="itemKey != null" >
+        item_key,
+      </if>
+      <if test="indexName != null" >
+       index_name,
+      </if>
+      <if test="indexCode != null" >
+        index_code,
+      </if>
+      <if test="indexDescription != null" >
+        index_description,
+      </if>
+      <if test="mainKey != null" >
+        mainKey,
+      </if>
+      <if test="createUser != null" >
+        CREATE_USER,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+       <if test="LastUpdateUser != null" >
+        LAST_UPDATE_USER,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="itemKey != null" >
+        #{itemKey,jdbcType=DECIMAL},
+      </if>
+      <if test="indexName != null" >
+        #{indexName,jdbcType=VARCHAR},
+      </if>
+      <if test="indexCode != null" >
+        #{indexCode,jdbcType=TIMESTAMP},
+      </if>
+      <if test="indexDescription != null" >
+        #{indexDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="mainKey != null" >
+        #{mainKey,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="targetValue != null" >
+       #{targetValue,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="LastUpdateUser != null" >
+        #{LastUpdateUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.bph.Index" >
+    update T_INDEX
+    <set >
+      <if test="itemKey != null" >
+      item_key = #{itemKey,jdbcType=DECIMAL},
+      </if>
+      <if test="indexName != null" >
+        index_name=#{indexName ,jdbcType=VARCHAR},
+      </if>
+      <if test="indexCode != null" >
+        index_code=#{indexCode ,jdbcType=VARCHAR},
+      </if>
+       <if test="indexDescription != null" >
+        index_description =#{indexDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="mainKey != null" >
+        mainKey =#{mainKey, jdbcType=VARCHAR},
+      </if>
+      <if test="lastUpdateTime != null" >
+        LAST_UPDATE_TIME=#{lastUpdateTime  ,jdbcType=TIMESTAMP},
+      </if>
+       <if test="lastUpdateUser != null" >
+        LAST_UPDATE_USER=#{lastUpdateUser ,jdbcType=VARCHAR},
+      </if>
+      
+    </set>
+    where index_key = #{indexKey,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.bph.Index" >
+    update T_INDEX
+    set item_key = #{itemKey,jdbcType=VARCHAR},
+      index_name=#{indexName ,jdbcType=VARCHAR},
+      index_code=#{indexCode ,jdbcType=VARCHAR},
+      index_description =#{indexDescription,jdbcType=VARCHAR},
+      mainKey =#{mainKey, jdbcType=VARCHAR},
+      LAST_UPDATE_TIME = #{lastUpdateTime,jdbcType=VARCHAR},
+      LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=VARCHAR},
+    where index_key = #{indexKey,jdbcType=DECIMAL}
+  </update>
+  
+  <select id="getIndexByItemKey" resultMap="BaseResultMap">
+     select 
+   <include refid="Base_Column_List"></include>
+    from t_index
+    where 1=1
+    <if test="itemKey != null">
+     and item_key = #{itemKey}
+    </if>
+  </select>
+  <select id="findByIndexCode" resultMap="BaseResultMap">
+    select 
+    ind.index_key, ind.item_key,ind.index_name,ind.index_code,ind.index_description,ind.mainKey,
+    ind.CREATE_TIME,ind.CREATE_USER,ind.LAST_UPDATE_TIME,ind.LAST_UPDATE_User
+    from t_index ind,t_item it,t_group_category gc
+    where gc.gc_key = it.gc_key
+    and it.item_key  = ind.item_key 
+    <if test="factory != null">
+     and gc.factory = #{factory}
+    </if>
+    <if test="area != null">
+     and gc.area = #{area}
+    </if>
+     <if test="category != null">
+     and gc.category = #{category}
+    </if>
+    <if test="indexCode != null">
+     and ind.index_code = #{indexCode}
+    </if>
+    order by ind.CREATE_TIME
+  </select>
+  <delete id="deleteIndexByGcKey" parameterType="java.lang.Long" >
+    delete from t_index
+    where item_key in (select item_key from t_item where gc_key=#{gcKey,jdbcType=DECIMAL} ) 
+  </delete>
+ </mapper>

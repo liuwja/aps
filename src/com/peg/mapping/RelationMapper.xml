@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.RelationMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.Relation" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="CRM" property="crm" jdbcType="VARCHAR" />
+    <result column="MES" property="mes" jdbcType="VARCHAR" />
+    <result column="ENTRY_NAME" property="entryName" jdbcType="VARCHAR" />
+    <result column="ENTRY_TIME" property="entryTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, CRM, MES, ENTRY_NAME, ENTRY_TIME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from T_RELATION
+    where ID = #{id,jdbcType=DECIMAL}
+    order by crm
+  </select>
+  <select id="getAllByPage" resultMap="BaseResultMap"  >
+    select 
+    <include refid="Base_Column_List" />
+    from T_RELATION
+     <where>
+      <if test="hashMap.crm != null" >
+        CRM like '%${hashMap.crm}%'
+      </if>
+      <if test="hashMap.mes != null" >
+        and MES like '%${hashMap.mes}%'
+      </if>
+    </where>
+    order by crm
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from T_RELATION
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.Relation" >
+  <selectKey resultType="long" order="BEFORE" keyProperty="id">
+      select seq_t_relation.nextval as ID from dual
+    </selectKey>
+    insert into T_RELATION (ID, CRM, MES, 
+      ENTRY_NAME, ENTRY_TIME)
+    values (#{id,jdbcType=DECIMAL}, #{crm,jdbcType=VARCHAR}, #{mes,jdbcType=VARCHAR}, 
+      #{entryName,jdbcType=VARCHAR}, SYSDATE)
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.Relation" >
+    insert into T_RELATION
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="crm != null" >
+        CRM,
+      </if>
+      <if test="mes != null" >
+        MES,
+      </if>
+      <if test="entryName != null" >
+        ENTRY_NAME,
+      </if>
+      <if test="entryTime != null" >
+        ENTRY_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="crm != null" >
+        #{crm,jdbcType=VARCHAR},
+      </if>
+      <if test="mes != null" >
+        #{mes,jdbcType=VARCHAR},
+      </if>
+      <if test="entryName != null" >
+        #{entryName,jdbcType=VARCHAR},
+      </if>
+      <if test="entryTime != null" >
+        #{entryTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.Relation" >
+    update T_RELATION
+    <set >
+      <if test="crm != null" >
+        CRM = #{crm,jdbcType=VARCHAR},
+      </if>
+      <if test="mes != null" >
+        MES = #{mes,jdbcType=VARCHAR},
+      </if>
+      <if test="entryName != null" >
+        ENTRY_NAME = #{entryName,jdbcType=VARCHAR},
+      </if>
+      <if test="entryTime != null" >
+        ENTRY_TIME = #{entryTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.Relation" >
+    update T_RELATION
+    set CRM = #{crm,jdbcType=VARCHAR},
+      MES = #{mes,jdbcType=VARCHAR},
+      ENTRY_NAME = #{entryName,jdbcType=VARCHAR},
+      ENTRY_TIME = #{entryTime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+</mapper>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.system.GroupPrivilegeMapper" >
+  <resultMap id="BaseResultMap" type="com.peg.model.system.GroupPrivilege" >
+    <id column="GROUP_PRIVILEGE_KEY" property="groupPrivilegeKey" jdbcType="DECIMAL" />
+    <result column="GROUP_KEY" property="groupKey" jdbcType="DECIMAL" />
+    <result column="PRIVILEGE_KEY" property="privilegeKey" jdbcType="DECIMAL" />
+    <result column="CREATION_TIME" property="creationTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_MODIFIED_TIME" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    GROUP_PRIVILEGE_KEY, GROUP_KEY, PRIVILEGE_KEY, CREATION_TIME, LAST_MODIFIED_TIME
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from SYS_GROUP_PRIVILEGE
+    where GROUP_PRIVILEGE_KEY = #{groupPrivilegeKey,jdbcType=DECIMAL}
+  </select>
+  
+  <delete id="deleteByGroupKeyNPlgKey" >
+    delete from SYS_GROUP_PRIVILEGE
+    where GROUP_KEY = #{groupKey} and PRIVILEGE_KEY=#{plgKey}
+  </delete>  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from SYS_GROUP_PRIVILEGE
+    where GROUP_PRIVILEGE_KEY = #{groupPrivilegeKey,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.peg.model.system.GroupPrivilege" >
+    insert into SYS_GROUP_PRIVILEGE (GROUP_PRIVILEGE_KEY, GROUP_KEY, PRIVILEGE_KEY)
+    values (#{groupPrivilegeKey,jdbcType=DECIMAL}, #{groupKey,jdbcType=DECIMAL}, #{privilegeKey,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.peg.model.system.GroupPrivilege" >
+    insert into SYS_GROUP_PRIVILEGE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="groupPrivilegeKey != null" >
+        GROUP_PRIVILEGE_KEY,
+      </if>
+      <if test="groupKey != null" >
+        GROUP_KEY,
+      </if>
+      <if test="privilegeKey != null" >
+        PRIVILEGE_KEY,
+      </if>
+      <if test="creationTime != null" >
+        CREATION_TIME,
+      </if>
+      <if test="lastModifiedTime != null" >
+        LAST_MODIFIED_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="groupPrivilegeKey != null" >
+        #{groupPrivilegeKey,jdbcType=DECIMAL},
+      </if>
+      <if test="groupKey != null" >
+        #{groupKey,jdbcType=DECIMAL},
+      </if>
+      <if test="privilegeKey != null" >
+        #{privilegeKey,jdbcType=DECIMAL},
+      </if>
+      <if test="creationTime != null" >
+        #{creationTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastModifiedTime != null" >
+        #{lastModifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.peg.model.system.GroupPrivilege" >
+    update SYS_GROUP_PRIVILEGE
+    <set >
+      <if test="groupKey != null" >
+        GROUP_KEY = #{groupKey,jdbcType=DECIMAL},
+      </if>
+      <if test="privilegeKey != null" >
+        PRIVILEGE_KEY = #{privilegeKey,jdbcType=DECIMAL},
+      </if>
+      <if test="creationTime != null" >
+        CREATION_TIME = #{creationTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastModifiedTime != null" >
+        LAST_MODIFIED_TIME = #{lastModifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where GROUP_PRIVILEGE_KEY = #{groupPrivilegeKey,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.peg.model.system.GroupPrivilege" >
+    update SYS_GROUP_PRIVILEGE
+    set GROUP_KEY = #{groupKey,jdbcType=DECIMAL},
+      PRIVILEGE_KEY = #{privilegeKey,jdbcType=DECIMAL},
+      CREATION_TIME = #{creationTime,jdbcType=TIMESTAMP},
+      LAST_MODIFIED_TIME = #{lastModifiedTime,jdbcType=TIMESTAMP}
+    where GROUP_PRIVILEGE_KEY = #{groupPrivilegeKey,jdbcType=DECIMAL}
+  </update>
+</mapper>

@@ -1,0 +1,1663 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.part.MarketPartMapper">
+<resultMap id="BaseResultMap" type="com.peg.model.part.MarketPart">
+	<id column="ID" property="id" jdbcType="DECIMAL" />
+	<result column="quantity" property="quantity" jdbcType="FLOAT" />
+	<result column="shipCount" property="shipCount" jdbcType="FLOAT" />
+	<result column="repairCount" property="repairCount" jdbcType="VARCHAR" />
+	<result column="region" property="region" jdbcType="VARCHAR" />
+	<result column="commonName" property="commonName" jdbcType="VARCHAR" />
+	<result column="repairDate" property="repairDate" jdbcType="VARCHAR" />
+	<result column="serial_number" property="serialNumber" jdbcType="VARCHAR" />
+	<result column="part_number" property="partNumber" jdbcType="VARCHAR" />
+	<result column="part_name" property="partName" jdbcType="VARCHAR" />
+	<result column="supplier_number" property="supplierNumber" jdbcType="VARCHAR" />
+	<result column="supplier_name" property="supplier" jdbcType="VARCHAR" />
+	<result column="fault_type_code" property="faultTypeCode" jdbcType="VARCHAR" />
+	<result column="fault_type_name" property="faultTypeName" jdbcType="VARCHAR" />
+	<result column="fault_reason_code" property="faultReasonCode" jdbcType="VARCHAR" />
+	<result column="fault_reason_name" property="faultReasonTxt" jdbcType="VARCHAR" />
+	<result column="part_serial" property="partSerial" jdbcType="VARCHAR" />
+	<result column="part_serial" property="partSerial" jdbcType="VARCHAR" />
+	<result column="part_Maturity" property="partMaturity" jdbcType="VARCHAR" />
+	<result column="supplierId" property="supplierId" jdbcType="VARCHAR" />
+	<result column="partId" property="partId" jdbcType="VARCHAR" />
+	<result column="faultTypeID" property="faultTypeID" jdbcType="VARCHAR" />
+	<result column="faultReasonID" property="faultReasonID" jdbcType="VARCHAR" />
+	<result column="product_Type" property="productType" jdbcType="VARCHAR" />
+	<result column="part_Family" property="partFamily" jdbcType="VARCHAR" />
+	<result column="part_type" property="partType" jdbcType="VARCHAR" />
+	<result column="isConsumed" property="isConsumed" jdbcType="VARCHAR" />
+	<result column="queryMonth" property="queryMonth" jdbcType="VARCHAR" />
+	<result column="PART_LEVEL" property="partLevel" jdbcType="VARCHAR" />
+	<result column="SUPPLIER_SHORT_NAME" property="supplierShortName" jdbcType="VARCHAR" />
+	<result column="DOWNLINE_TIME" property="downlineTime" jdbcType="VARCHAR" />
+	<result column="PRODUCT_QMS_TYPE" property="qmsType" jdbcType="VARCHAR" />
+	<result column="SHIP_DATE" property="shipDate" jdbcType="VARCHAR" />
+	<result column="mes_part_number" property="mesPartNumber" jdbcType="VARCHAR" />
+	<result column="order_number" property="orderNumber" jdbcType="VARCHAR" />
+	<result column="DETAIL_DESCRIPTION" property="detailDescription" jdbcType="VARCHAR" />
+	<result column="DEFECT_LOCAL_DESCRIPTION" property="defectLocalDescription" jdbcType="VARCHAR" />
+	<result column="SERVICE_POINT" property="servicePoint" jdbcType="VARCHAR" />
+	<result column="SERVICE_PERSON" property="servicePerson" jdbcType="VARCHAR" />
+	<result column="TELEPHONE" property="telephont" jdbcType="VARCHAR" />
+	<result column="MOBILEPHONE" property="mobilePhone" jdbcType="VARCHAR" />
+	<result column="BUY_THE_WAY" property="buyTheWay" jdbcType="VARCHAR" />
+	<result column="CONSUMPTION_TYPE" property="consumptionType" jdbcType="VARCHAR" />
+	<result column="product_family" property="productFamily" jdbcType="VARCHAR" />
+</resultMap>
+
+<!-- 供应商不良数 -->
+<select id="getDefectBySupplier" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		select tr.supplier_number,nvl(tr.supplier_short_name, tr.supplier_name) as commonName,count(1) as repairCount from t_market_repair_part_record tr,
+		t_fault_reason tfr, t_fault_type tft
+		where 1 = 1 and tr.supplier_name is not null and tr.fault_reason_code = tfr.code and tr.fault_type_code = tft.code
+	]]>
+	<include refid="multiple_select_List" />
+	group by tr.supplier_number,nvl(tr.supplier_short_name, tr.supplier_name) order by repairCount desc
+</select>
+
+<!-- 零部件不良 -->
+<select id="getDefectByPart" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<if test="hasVersion == 1"> <!-- 零部件带版本查询 -->
+		<![CDATA[
+			select tr.part_number,tr.part_name as commonName,count(1) as repairCount from t_market_repair_part_record tr,
+			t_fault_reason tfr, t_fault_type tft
+			where 1 = 1 and tr.part_number is not null and tr.fault_reason_code = tfr.code and tr.fault_type_code = tft.code
+		]]>
+		<include refid="multiple_select_List" />
+		group by tr.part_number,tr.part_name order by repairCount desc
+	</if>
+	<if test="hasVersion == 2"> <!-- 零部件不带版本查询 -->
+		<![CDATA[
+			select SUBSTR(tr.part_number, 0, length(tr.part_number) - 1) as part_number,tr.part_name as commonName,count(1) as repairCount from t_market_repair_part_record tr,
+			t_fault_reason tfr, t_fault_type tft
+			where 1 = 1 and tr.part_number is not null and tr.fault_reason_code = tfr.code and tr.fault_type_code = tft.code
+		]]>
+		<include refid="multiple_select_List" />
+		group by SUBSTR(tr.part_number, 0, length(tr.part_number) - 1),tr.part_name order by repairCount desc
+	</if>
+</select>
+	
+<!-- 区域不良 -->
+<select id="getDefectByRegion" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		select tr.region as commonName,count(1) as repairCount from t_market_repair_part_record tr,
+		t_fault_reason tfr, t_fault_type tft
+		where 1 = 1 and tr.region is not null and tr.fault_reason_code = tfr.code and tr.fault_type_code = tft.code
+	]]>
+	<include refid="multiple_select_List" />
+	group by tr.region order by repairCount desc
+</select>
+	
+<!-- 故障大类不良 -->
+<select id="getDefectByFaultType" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		select tr.fault_type_code,tft.name as commonName,count(1) as repairCount from t_market_repair_part_record tr,
+		t_fault_reason tfr, t_fault_type tft
+		where 1 = 1 and tr.fault_reason_code = tfr.code and tr.fault_type_code = tft.code
+	]]>
+	<include refid="multiple_select_List" />
+	group by tr.fault_type_code,tft.name order by repairCount desc
+</select>
+
+<!-- 故障小类不良 -->
+<select id="getDefectByFaultReason" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		select tr.fault_reason_code,tfr.name as commonName,count(1) as repairCount from t_market_repair_part_record tr,
+		t_fault_reason tfr, t_fault_type tft
+		where 1 = 1 and tr.fault_reason_code = tfr.code and tr.fault_type_code = tft.code
+	]]>
+	<include refid="multiple_select_List" />
+	group by tr.fault_reason_code,tfr.name order by repairCount desc
+</select>
+
+<!-- 物料级别市场不良 -->
+<select id="getDefectByPartLevel" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		SELECT nvl(tr.part_level, '无') as commonName, count(1) as repairCount FROM t_market_repair_part_record tr, t_fault_reason tfr, t_fault_type tft
+		where 1 = 1 and tr.fault_reason_code = tfr.code and tr.fault_type_code = tft.code
+	]]>
+	<include refid="multiple_select_List" />
+	group by tr.part_level order by repairCount desc
+</select>
+
+<!-- 物料类型市场不良 -->
+<select id="getDefectByPartType" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		SELECT nvl(tr.PART_TYPE, '无') as commonName, count(1) as repairCount FROM t_market_repair_part_record tr, t_fault_reason tfr, t_fault_type tft
+		where 1 = 1 and tr.fault_reason_code = tfr.code and tr.fault_type_code = tft.code and tr.part_type is not null
+	]]>
+	<include refid="multiple_select_List" />
+	GROUP BY tr.PART_TYPE
+</select>
+
+<!-- 市场不良趋势图维修数-物料 -->
+<select id="getDefectTrend" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		SELECT TO_CHAR(TR.REPAIR_DATE,'YYYY-MM') AS commonName, COUNT(1) AS repairCount FROM T_MARKET_REPAIR_PART_RECORD TR, T_FAULT_REASON TFR, T_FAULT_TYPE TFT
+		WHERE TR.FAULT_REASON_CODE = TFR.CODE AND TR.FAULT_TYPE_CODE = TFT.CODE
+	]]>
+	<include refid="multiple_select_List" />
+	GROUP BY TO_CHAR(TR.REPAIR_DATE,'YYYY-MM') ORDER BY TO_CHAR(TR.REPAIR_DATE,'YYYY-MM')
+</select>
+
+<!-- 总不良 -->
+<select id="getDefect" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		select count(1) as repairCount from t_market_repair_part_record tr,
+		t_fault_reason tfr, t_fault_type tft
+		where 1 = 1 and tr.fault_reason_code = tfr.code and tr.fault_type_code = tft.code
+	]]>
+	<include refid="multiple_select_List" />
+</select>
+
+<!-- 明细不良 -->
+<select id="getDefectDataPage" resultMap="BaseResultMap">
+		select * from (select tr.CONSUMPTION_TYPE,tr.order_number, tr.serial_number,tdsr.product_family,tdsr.part_type, tr.region, tr.part_number, tr.part_name, tr.part_serial,
+		tr.supplier_number, tr.supplier_name, tr.fault_type_code, tft.name as fault_type_name, tr.mes_part_number,
+		tr.fault_reason_code, tfr.name as fault_reason_name, to_char(tr.repair_date,'yyyy-mm-dd') as repairDate from t_market_repair_part_record tr,
+		t_fault_reason tfr, t_fault_type tft,t_downline_ship_record tdsr		
+		where  tr.fault_reason_code = tfr.code and tr.fault_type_code = tft.code and tr.serial_number =tdsr.PART_CODE(+)
+	<if test="marketPart.productType != null and marketPart.productType != ''">
+		and tr.product_Type = '${marketPart.productType}'
+	</if>
+	 <if test="marketPart.serialNumber != null and marketPart.serialNumber != ''">
+		and tr.serial_number = '${marketPart.serialNumber}'
+	</if>
+	<if test="marketPart.isOver != null and marketPart.isOver!= ''">
+		and tr.is_over = '${marketPart.isOver}'
+	</if>
+	<if test="marketPart.partLevel != null and marketPart.partLevel != '' and marketPart.partLevel != '无'.toString()">
+		and tr.PART_LEVEL in (${marketPart.partLevel})
+	</if>
+ 	<if test="marketPart.partLevel != null and marketPart.partLevel != '' and marketPart.partLevel == '无'.toString()">
+ 		and tr.Part_level is null
+	</if>
+	<if test="marketPart.faultReasonValid != null and marketPart.faultReasonValid != ''">
+		and tfr.valid = '${marketPart.faultReasonValid}'
+	</if>
+	<if test="marketPart.isConsumed != null and marketPart.isConsumed == 0">
+		and tr.CONSUMPTION_TYPE = '关键件'
+	</if>
+	<if test="marketPart.isConsumed != null and marketPart.isConsumed == 1">
+		and tr.CONSUMPTION_TYPE = '非关键件'
+	</if>
+	<if test="marketPart.isConsumed != null and marketPart.isConsumed == 2">
+		and tr.CONSUMPTION_TYPE = '附件'
+	</if>
+	<if test="marketPart.startTime != null and marketPart.startTime !='' and marketPart.endTime != null and marketPart.endTime != ''">
+		and to_char(tr.repair_date, 'yyyy-mm') BETWEEN #{marketPart.startTime,jdbcType=VARCHAR} and #{marketPart.endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="marketPart.partMaturity != null and marketPart.partMaturity != ''">
+		and tr.part_Maturity = '${marketPart.partMaturity}'
+	</if>
+	<if test="partTypeList != null and partTypeList != ''">
+		and tr.PART_TYPE in (${partTypeList})
+	</if>
+	<if test="supplierNumberList != null and supplierNumberList != ''">
+		and tr.supplier_number in (${supplierNumberList})
+	</if>
+	<if test="partNumberList !=null and partNumberList != '' and marketPart.hasVersion != null and marketPart.hasVersion == 2">
+		and SUBSTR(tr.part_number,0, length(tr.part_number)-1) in (${partNumberList})
+	</if>
+	<if test="partNumberList !=null and partNumberList != '' and marketPart.hasVersion != null and marketPart.hasVersion == 1">
+		and tr.part_number in (${partNumberList})
+	</if>
+<!---->
+	<if test="mesPartNumberList !=null and mesPartNumberList != '' and marketPart.hasVersion != null and marketPart.hasVersion == 2">
+		and SUBSTR(tr.mes_part_number,0, length(tr.mes_part_number)-1) in (${mesPartNumberList})
+	</if>
+	<if test="mesPartNumberList !=null and mesPartNumberList != '' and marketPart.hasVersion != null and marketPart.hasVersion == 1">
+		and tr.mes_part_number in (${mesPartNumberList})
+	</if>
+<!---->
+	<if test="regionList != null and regionList != ''">
+		and tr.region in (${regionList})
+	</if>
+ 	<if test="faultTypeCodeList != null and faultTypeCodeList != ''">
+ 		and tr.fault_type_code in (${faultTypeCodeList})
+ 	</if>
+	<if test="faultReasonCodeList != null and faultReasonCodeList != ''">
+		and tr.fault_reason_code in (${faultReasonCodeList})
+	</if>
+	<if test="marketPart.productFamilyList != null and marketPart.productFamilyList != ''">
+	    and tdsr.product_family in
+		<foreach item="item" index="index" collection="marketPart.productFamilyList" open="(" separator="," close=")">
+			'${item}'
+		</foreach>
+	</if>
+	
+	<if test="marketPart.partTypeList != null and marketPart.partTypeList != ''">
+		and tdsr.part_type in 
+		<foreach item="item" index="index" collection="marketPart.partTypeList" open="(" separator="," close=")">
+			'${item}'
+		</foreach>
+	</if>
+	)tr left join 
+    (select PART_CLASS2_S crm_class2,SUBSTR(PART_NUMBER_S,0,LENGTH(PART_NUMBER_S)-1) CRM_PART_NUMBER 
+    from AT_SUPPLIER@MES_TEST_LINK group by PART_CLASS2_S,SUBSTR(PART_NUMBER_S,0,LENGTH(PART_NUMBER_S)-1)) CRM on crm.crm_part_number = substr(tr.part_number,0,length(tr.part_number)-1)
+    left join
+		(select PART_CLASS2_S mes_class2,SUBSTR(PART_NUMBER_S,0,LENGTH(PART_NUMBER_S)-1) MES_PART_NUMBER 
+    from AT_SUPPLIER@MES_TEST_LINK group by PART_CLASS2_S,SUBSTR(PART_NUMBER_S,0,LENGTH(PART_NUMBER_S)-1)) MES on MES.MES_part_number = substr(tr.mes_part_number,0,length(tr.mes_part_number)-1)
+    where 1=1
+    	<if test="marketPart.crmPartCategoryTwoList !=null">
+	AND CRM.crm_CLASS2 IN
+		<foreach item="item" index="index"  collection="marketPart.crmPartCategoryTwoList" open="(" separator="," close=")">
+			'${item}'
+		</foreach>
+	</if>
+	<if test="marketPart.mesPartCategoryTwoList !=null">
+	AND MES.mes_CLASS2 IN
+		<foreach item="item" index="index" collection="marketPart.mesPartCategoryTwoList" open="(" separator="," close=")">
+			'${item}'
+		</foreach>
+	</if>
+</select>
+
+<select id="getDefectData" resultMap="BaseResultMap">
+		select * from (select tr.order_number, tr.serial_number, tr.region, tr.part_number, tr.part_name, tr.part_serial,
+		tr.supplier_number, tr.supplier_name, tr.fault_type_code, tft.name as fault_type_name, tr.mes_part_number,
+		tr.fault_reason_code, tfr.name as fault_reason_name, to_char(tr.repair_date,'yyyy-mm-dd') as repairDate from t_market_repair_part_record tr,
+		t_fault_reason tfr, t_fault_type tft
+		where 1 = 1 and tr.fault_reason_code = tfr.code and tr.fault_type_code = tft.code
+	<if test="marketPart.productType != null and marketPart.productType != ''">
+		and tr.product_Type = '${marketPart.productType}'
+	</if>
+	 <if test="marketPart.serialNumber != null and marketPart.serialNumber != ''">
+		and tr.serial_number = '${marketPart.serialNumber}'
+	</if>
+	<if test="marketPart.isOver != null and marketPart.isOver!= ''">
+		and tr.is_over = '${marketPart.isOver}'
+	</if>
+	<if test="marketPart.partLevel != null and marketPart.partLevel != '' and marketPart.partLevel != '无'.toString()">
+		and tr.PART_LEVEL in (${marketPart.partLevel})
+	</if>
+ 	<if test="marketPart.partLevel != null and marketPart.partLevel != '' and marketPart.partLevel == '无'.toString()">
+ 		and tr.Part_level is null
+	</if>
+	<if test="marketPart.faultReasonValid != null and marketPart.faultReasonValid != ''">
+		and tfr.valid = '${marketPart.faultReasonValid}'
+	</if>
+	<if test="marketPart.isConsumed != null and marketPart.isConsumed == 0">
+		and tr.CONSUMPTION_TYPE = '关键件'
+	</if>
+	<if test="marketPart.isConsumed != null and marketPart.isConsumed == 1">
+		and tr.CONSUMPTION_TYPE = '非关键件'
+	</if>
+	<if test="marketPart.isConsumed != null and marketPart.isConsumed == 2">
+		and tr.CONSUMPTION_TYPE = '附件'
+	</if>
+	<if test="marketPart.startTime != null and marketPart.startTime !='' and marketPart.endTime != null and marketPart.endTime != ''">
+		and to_char(tr.repair_date, 'yyyy-mm') BETWEEN #{marketPart.startTime,jdbcType=VARCHAR} and #{marketPart.endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="marketPart.partMaturity != null and marketPart.partMaturity != ''">
+		and tr.part_Maturity = '${marketPart.partMaturity}'
+	</if>
+	<if test="supplierNumberList != null and supplierNumberList != ''">
+		and tr.supplier_number in (${supplierNumberList})
+	</if>
+	<if test="partTypeList != null and partTypeList != ''">
+		and tr.PART_TYPE in (${partTypeList})
+	</if>
+	<if test="partNumberList !=null and partNumberList != '' and marketPart.hasVersion != null and marketPart.hasVersion == 2">
+		and SUBSTR(tr.part_number,0, length(tr.part_number)-1) in (${partNumberList})
+	</if>
+	<if test="partNumberList !=null and partNumberList != '' and marketPart.hasVersion != null and marketPart.hasVersion == 1">
+		and tr.part_number in (${partNumberList})
+	</if>
+<!-- -->
+	<if test="mesPartNumberList !=null and mesPartNumberList != '' and marketPart.hasVersion != null and marketPart.hasVersion == 2">
+		and SUBSTR(tr.mes_part_number,0, length(tr.mes_part_number)-1) in (${mesPartNumberList})
+	</if>
+	<if test="mesPartNumberList !=null and mesPartNumberList != '' and marketPart.hasVersion != null and marketPart.hasVersion == 1">
+		and tr.mes_part_number in (${mesPartNumberList})
+	</if>
+<!-- -->
+	<if test="regionList != null and regionList != ''">
+		and tr.region in (${regionList})
+	</if>
+ 	<if test="faultTypeCodeList != null and faultTypeCodeList != ''">
+ 		and tr.fault_type_code in (${faultTypeCodeList})
+ 	</if>
+	<if test="faultReasonCodeList != null and faultReasonCodeList != ''">
+		and tr.fault_reason_code in (${faultReasonCodeList})
+	</if>
+	)tr left join 
+    (select PART_CLASS2_S crm_class2,SUBSTR(PART_NUMBER_S,0,LENGTH(PART_NUMBER_S)-1) CRM_PART_NUMBER 
+    from AT_SUPPLIER@MES_TEST_LINK group by PART_CLASS2_S,SUBSTR(PART_NUMBER_S,0,LENGTH(PART_NUMBER_S)-1)) CRM on crm.crm_part_number = substr(tr.part_number,0,length(tr.part_number)-1)
+    left join
+		(select PART_CLASS2_S mes_class2,SUBSTR(PART_NUMBER_S,0,LENGTH(PART_NUMBER_S)-1) MES_PART_NUMBER 
+    from AT_SUPPLIER@MES_TEST_LINK group by PART_CLASS2_S,SUBSTR(PART_NUMBER_S,0,LENGTH(PART_NUMBER_S)-1)) MES on MES.MES_part_number = substr(tr.mes_part_number,0,length(tr.mes_part_number)-1)
+    where 1=1
+    	<if test="marketPart.crmPartCategoryTwoList !=null">
+	AND CRM.crm_CLASS2 IN
+		<foreach item="item" index="index"  collection="marketPart.crmPartCategoryTwoList" open="(" separator="," close=")">
+			'${item}'
+		</foreach>
+	</if>
+	<if test="marketPart.mesPartCategoryTwoList !=null">
+	AND MES.mes_CLASS2 IN
+		<foreach item="item" index="index" collection="marketPart.mesPartCategoryTwoList" open="(" separator="," close=")">
+			'${item}'
+		</foreach>
+	</if>
+</select>
+
+<sql id="multiple_select_List">
+	<if test="productType != null and productType != ''">
+		and tr.product_Type = '${productType}'
+	</if>
+	<if test="isOver != null and isOver != ''">
+		and tr.is_over = '${isOver}'
+	</if>
+	<if test="faultReasonValid != null and faultReasonValid != ''">
+		and tfr.valid = '${faultReasonValid}'
+	</if>
+	<if test='partLevel != null and partLevel != "" and partLevel != "无"'>
+		and tr.PART_LEVEL in (${partLevel})
+	</if>
+	<if test='partLevel != null and partLevel != "" and partLevel == "无"'>
+		and tr.PART_LEVEL is null
+	</if>
+	<if test="partTypes != null">
+		and tr.PART_TYPE in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''">
+		<if test="dateType != null and dateType == 1">
+			and to_char(tr.repair_date, 'yyyy-mm') BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+		</if>
+		<if test="dateType != null and dateType == 2">
+			and tr.repair_date BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+		</if>
+	</if>
+	<if test="partMaturity != null and partMaturity != ''">
+		and tr.part_Maturity = '${partMaturity}'
+	</if>
+	<if test="isConsumed != null and isConsumed == 0">
+		and tr.CONSUMPTION_TYPE = '关键件'
+	</if>
+	<if test="isConsumed != null and isConsumed == 1">
+		and tr.CONSUMPTION_TYPE = '非关键件'
+	</if>
+	<if test="isConsumed != null and isConsumed == 2">
+		and tr.CONSUMPTION_TYPE = '附件'
+	</if>
+	<if test="supplierNumbers != null">
+		and tr.supplier_number in
+		<foreach item="item" index="index" collection="supplierNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion == 1">
+		and tr.part_number in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion == 2">
+		and SUBSTR(tr.part_number,0, length(tr.part_number)-1) in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+<!-- -->
+	<if test="mesPartNumbers !=null and hasVersion == 1">
+		and tr.mes_part_number in
+		<foreach item="item" index="index" collection="mesPartNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="mesPartNumbers !=null and hasVersion == 2">
+		and SUBSTR(tr.mes_part_number,0, length(tr.mes_part_number)-1) in
+		<foreach item="item" index="index" collection="mesPartNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+<!-- -->
+	<if test="regions != null">
+		and tr.region in 
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="faultTypes != null">
+		and tr.fault_type_code in 
+		<foreach item="item" index="index" collection="faultTypes" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="faultReasons != null">
+		and tr.fault_reason_code in 
+		<foreach item="item" index="index" collection="faultReasons" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+</sql>
+
+<!-- 供应商发货数 -->
+<select id="getShipCountBySupplier" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		select nvl(supplier_short_name, supplier_name) as commonName,count(1) as quantity from t_ship_part_record tp where 1 = 1 and tp.supplier_name is not null
+	]]>
+	<include refid="ship_multiple_select_List" />
+	group by nvl(supplier_short_name, supplier_name) order by quantity desc
+</select>
+
+<!-- 零部件发货数 -->
+<select id="getShipCountByPart" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<if test="hasVersion == 1"> <!-- 零部件带版本查询 -->
+		<![CDATA[
+			select part_number,nvl(part_name, '无') as commonName,count(1) as quantity from t_ship_part_record tp where 1 = 1 and part_name is not null
+		]]>
+		<include refid="ship_multiple_select_List" />
+		group by part_number,part_name order by quantity desc
+	</if>
+	<if test="hasVersion == 2"> <!-- 零部件不带版本查询 -->
+		<![CDATA[
+			select SUBSTR(tp.part_number, 0, length(tp.part_number) - 1) as part_number,nvl(part_name, '无') as commonName,count(1) as quantity from t_ship_part_record tp where 1 = 1 and part_name is not null
+		]]>
+		<include refid="ship_multiple_select_List" />
+		group by SUBSTR(tp.part_number, 0, length(tp.part_number) - 1),part_name order by quantity desc
+	</if>
+</select>
+
+<!-- 区域发货数 -->
+<select id="getShipCountByRegion" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		select nvl(region, '无') as commonName,count(1) as quantity from t_ship_part_record tp where 1 = 1 and tp.region is not null
+	]]>
+	<include refid="ship_multiple_select_List" />
+	group by region order by quantity desc
+</select>
+
+<!-- 故障大类，原因发货数 -->
+<select id="getShipCount" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		select count(1) as quantity from t_ship_part_record tp where 1 = 1
+	]]>
+	<include refid="ship_multiple_select_List" />
+</select>
+
+<!-- 物料级别发货数 -->
+<select id="getShipCountByPartLevel" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		select nvl(part_level, '无') as commonName,count(1) as quantity from t_ship_part_record tp where 1 = 1 and tp.part_level is not null
+	]]>
+	<include refid="ship_multiple_select_List" />
+	group by nvl(part_level, '无') order by quantity desc
+</select>
+
+<!-- 物料类型发货数 -->
+<select id="getShipCountByPartType" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		select nvl(part_type, '无') as commonName,count(1) as quantity from t_ship_part_record tp where 1 = 1 and tp.part_type is not null
+	]]>
+	<include refid="ship_multiple_select_List" />
+	group by nvl(part_type, '无') order by quantity desc
+</select>
+
+<!-- 市场不良趋势图发货数-物料 -->
+<select id="getShipTrend" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<!-- select ship_date as commonName,count(1) as quantity from t_ship_part_record tp where 1 = 1 group by ship_date order by quantity desc -->
+	<![CDATA[
+		SELECT SHIP_DATE AS commonName, SUM(QUANTITY) AS quantity FROM T_SHIP_PART_RECORD_SUMMARY tp WHERE 1 = 1
+	]]>
+	<include refid="ship_multiple_select_List" />
+	GROUP BY SHIP_DATE ORDER BY SHIP_DATE
+</select>
+
+<!-- 趋势发货数-单月维修 -->
+<select id="getShipTrendByMonth" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		SELECT SHIP_DATE as commonName, COUNT(1) as quantity FROM T_SHIP_PART_RECORD tp WHERE 1 = 1 AND SHIP_DATE IS NOT NULL
+	]]>
+	AND ROWID IN 
+	(SELECT MIN(ROWID) FROM T_SHIP_PART_RECORD TSP WHERE 1 = 1 AND SHIP_DATE IS NOT NULL
+	<include refid="ship_month_multiple_select_List" />
+	GROUP BY SERIAL_NUMBER)
+	<include refid="ship_multiple_select_List" />
+	GROUP BY SHIP_DATE ORDER BY SHIP_DATE
+</select>
+
+<!-- 发货数查询条件 -->
+<sql id="ship_multiple_select_List">
+	<if test="productType != null and productType != ''">
+		and tp.product_Type = '${productType}'
+	</if>
+	<if test="partLevel != null and partLevel != ''">
+		and tp.PART_LEVEL in (${partLevel})
+	</if>
+	<if test="partTypes != null">
+		and tp.PART_TYPE in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''">
+		<if test="dateType != null and dateType == 1">
+			and tp.ship_date BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+		</if>
+	</if>
+	<if test="downStartTime != null and downStartTime !='' and downEndTime != null and downEndTime != ''">
+		and tp.DOWNLINE_TIME BETWEEN TO_DATE(#{downStartTime,jdbcType=VARCHAR}, 'yyyy-mm-dd hh24:mi:ss') and TO_DATE(#{downEndTime,jdbcType=VARCHAR}, 'yyyy-mm-dd hh24:mi:ss')
+	</if>
+	<if test="partMaturity != null and partMaturity != ''">
+		and tp.part_Maturity = '${partMaturity}'
+	</if>
+	<if test="supplierNumbers != null">
+		and tp.supplier_number in
+		<foreach item="item" index="index" collection="supplierNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion == 2">
+		and SUBSTR(tp.part_number,0, length(tp.part_number)-1) in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion == 1">
+		and tp.part_number in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="regions != null">
+		and tp.region in 
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+</sql>
+
+<!-- 发货数查询条件-单月 -->
+<sql id="ship_month_multiple_select_List">
+	<if test="productType != null and productType != ''">
+		and tsp.product_Type = '${productType}'
+	</if>
+	<if test="partLevel != null and partLevel != ''">
+		and tsp.PART_LEVEL in (${partLevel})
+	</if>
+	<if test="partTypes != null">
+		and tsp.PART_TYPE in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''">
+		and tsp.ship_date BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="partMaturity != null and partMaturity != ''">
+		and tsp.part_Maturity = '${partMaturity}'
+	</if>
+	<if test="supplierNumbers != null">
+		and tsp.supplier_number in
+		<foreach item="item" index="index" collection="supplierNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion == 2">
+		and SUBSTR(tsp.part_number,0, length(tsp.part_number)-1) in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion == 1">
+		and tsp.part_number in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="regions != null">
+		and tsp.region in 
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+</sql>
+
+<!-- 三角阵数据 -->
+<select id="getMatrixData" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<!--
+		select /*+INDEX(tp TSPR_SN) INDEX(tr TMRPR_SN)*/
+		tp.ship_date as commonName,to_char(tr.repair_date,'yyyy-mm') as repairDate,count(1) as repairCount
+		from T_SHIP_PART_RECORD tp,T_MARKET_REPAIR_PART_RECORD tr WHERE tp.serial_number = tr.serial_number
+	-->
+	<![CDATA[
+		select substr(tr.downline_date, 0, 7) as commonName, to_char(tr.repair_date, 'yyyy-mm') as repairDate, count(1) as repairCount from t_market_repair_part_record tr,
+		t_fault_reason tfr, t_fault_type tft
+		where 1 = 1 and tr.fault_reason_code = tfr.code and tr.fault_type_code = tft.code
+	]]>
+	<if test="productType != null and productType != ''">
+		and tr.product_Type = '${productType}'
+	</if>
+	<if test="isOver != null and isOver != ''">
+		and tr.is_over = '${isOver}'
+	</if>
+	<if test="faultReasonValid != null and faultReasonValid != ''">
+		and tfr.valid = '${faultReasonValid}'
+	</if>
+	<if test="partLevel != null and partLevel != ''">
+		and tr.PART_LEVEL in (${partLevel})
+	</if>
+	<if test="partTypes != null">
+		and tr.PART_TYPE in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''">
+		and to_char(tr.repair_date, 'yyyy-mm') BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="partMaturity != null and partMaturity != ''">
+		and tr.part_Maturity = '${partMaturity}'
+	</if>
+	<if test="isConsumed != null and isConsumed == 0">
+		and tr.CONSUMPTION_TYPE = '关键件'
+	</if>
+	<if test="isConsumed != null and isConsumed == 1">
+		and tr.CONSUMPTION_TYPE = '非关键件'
+	</if>
+		<if test="isConsumed != null and isConsumed == 2">
+		and tr.CONSUMPTION_TYPE = '附件'
+	</if>
+	<if test="partNumbers !=null and hasVersion != null and hasVersion == 2">
+		and SUBSTR(tr.part_number,0, length(tr.part_number)-1) in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion != null and hasVersion == 1">
+		and tr.part_number in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+<!-- -->
+	<if test="mesPartNumbers !=null and hasVersion != null and hasVersion == 2">
+		and SUBSTR(tr.mes_part_number,0, length(tr.mes_part_number)-1) in
+		<foreach item="item" index="index" collection="mesPartNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="mesPartNumbers !=null and hasVersion != null and hasVersion == 1">
+		and tr.mes_part_number in
+		<foreach item="item" index="index" collection="mesPartNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+<!-- -->
+	<if test="regions != null">
+		and tr.region in 
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="supplierNumbers != null">
+		and tr.supplier_number in
+		<foreach item="item" index="index" collection="supplierNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="faultTypes != null">
+		and tr.fault_type_code in 
+		<foreach item="item" index="index" collection="faultTypes" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="faultReasons != null">
+		and tr.fault_reason_code in 
+		<foreach item="item" index="index" collection="faultReasons" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	group by substr(downline_date, 0, 7), to_char(repair_date, 'yyyy-mm')
+</select>
+
+<!-- 发货数按日期汇总 -->
+<select id="getShipPartByDate" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<!-- select tp.SHIP_DATE as commonName,COUNT(1) as quantity from T_SHIP_PART_RECORD tp where 1 = 1 -->
+	<![CDATA[
+		select to_char(tp.downline_time, 'yyyy-mm') as commonName,COUNT(1) as quantity from T_SHIP_PART_RECORD tp where 1 = 1
+	]]>
+	<if test="productType != null and productType != ''">
+		and tp.product_Type = '${productType}'
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''">
+		and to_char(tp.downline_time, 'yyyy-mm') BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="partMaturity != null and partMaturity != ''">
+		and tp.part_Maturity = '${partMaturity}'
+	</if>
+	<if test="partNumbers !=null and hasVersion != null and hasVersion == 2">
+		and SUBSTR(tp.part_number,0, length(tp.part_number)-1) in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion != null and hasVersion == 1">
+		and tp.part_number in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="regions != null">
+		and tp.region in 
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="supplierNumbers != null">
+		and tp.supplier_number in
+		<foreach item="item" index="index" collection="supplierNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	group by to_char(tp.downline_time, 'yyyy-mm') order by to_char(tp.downline_time, 'yyyy-mm')
+</select>
+
+<!-- 供应商入库数 -->
+<select id="getQuantityBySupplier" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		select supplier_number_s as supplier_number,ul.supplier_s as commonName, sum(l.uda_6) as quantity
+		from uda_lot@mes_test_link ul, lot@mes_test_link l, part p, uda_part ud
+		where ul.object_key = l.lot_key and l.part_number = p.part_number and p.part_key = ud.object_key and ul.supplier_s is not null
+	]]>
+	<if test="productType != null and productType != ''">
+		and ud.mold_type_s = '${productType}'
+	</if>
+	<if test="partLevel != null and partLevel != ''">
+		and ud.PART_LEVEL_S in (${partLevel})
+	</if>
+	<if test="partTypes != null">
+		and ud.PART_TYPE_S in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>	
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''">
+		and to_char(l.udt_2, 'yyyy-mm') BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="partMaturity != null and partMaturity != ''">
+		and ud.is_new_s = '${partMaturity}'
+	</if>
+	<if test="supplierNumbers != null">
+		and ul.supplier_number_s in
+		<foreach item="item" index="index" collection="supplierNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion != null and hasVersion == 2">
+		and SUBSTR(p.part_number,0, length(p.part_number)-1) in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion != null and hasVersion == 1">
+		and p.part_number in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	group by supplier_number_s,ul.supplier_s order by sum(l.uda_6) desc
+</select>
+
+<!-- 零部件入库数 -->
+<select id="getQuantityByPart" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<if test="hasVersion == 1"> <!-- 零部件带版本查询 -->
+		<![CDATA[
+			select p.description as commonName, p.part_number, sum(l.uda_6) as quantity
+			from uda_lot@mes_test_link ul, lot@mes_test_link l, part p, uda_part ud
+			where ul.object_key = l.lot_key and l.part_number = p.part_number and p.part_key = ud.object_key and p.description is not null
+		]]>
+	</if>
+	<if test="hasVersion == 2"> <!-- 零部件不带版本查询 -->
+		<![CDATA[
+			select p.description as commonName, SUBSTR(p.part_number, 0, length(p.part_number) - 1) as part_number, sum(l.uda_6) as quantity
+			from uda_lot@mes_test_link ul, lot@mes_test_link l, part p, uda_part ud
+			where ul.object_key = l.lot_key and l.part_number = p.part_number and p.part_key = ud.object_key and p.description is not null
+		]]>
+	</if>
+	<if test="partLevel != null and partLevel != ''">
+		and ud.PART_LEVEL_S in (${partLevel})
+	</if>
+	<if test="partTypes != null">
+		and ud.PART_TYPE_S in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="productType != null and productType != ''">
+		and ud.mold_type_s = '${productType}'
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''">
+		and to_char(l.udt_2, 'yyyy-mm') BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="partMaturity != null and partMaturity != ''">
+		and ud.is_new_s = '${partMaturity}'
+	</if>
+	<if test="supplierNumbers != null">
+		and ul.supplier_number_s in
+		<foreach item="item" index="index" collection="supplierNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion != null and hasVersion == 2">
+		and SUBSTR(p.part_number,0, length(p.part_number)-1) in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion != null and hasVersion == 1">
+		and p.part_number in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	group by p.description, p.part_number order by sum(l.uda_6) desc
+</select>
+
+<!-- 物料类型入库数 -->
+<select id="getQuantityByPartType" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		SELECT nvl(ud.PART_TYPE_S, '无') AS commonName, sum(l.uda_6) as quantity
+		from uda_lot@mes_test_link ul, lot@mes_test_link l, part p, uda_part ud
+		where ul.object_key = l.lot_key and l.part_number = p.part_number and p.part_key = ud.object_key
+	]]>
+	<if test="partLevel != null and partLevel != ''">
+		and ud.PART_LEVEL_S in (${partLevel})
+	</if>
+	<if test="partTypes != null">
+		and ud.PART_TYPE_S in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="productType != null and productType != ''">
+		and ud.mold_type_s = '${productType}'
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''">
+		and to_char(l.udt_2, 'yyyy-mm') BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="partMaturity != null and partMaturity != ''">
+		and ud.is_new_s = '${partMaturity}'
+	</if>
+	<if test="partNumbers !=null and hasVersion != null and hasVersion == 2">
+		and SUBSTR(p.part_number,0, length(p.part_number)-1) in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion != null and hasVersion == 1">
+		and p.part_number in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	group by nvl(ud.PART_TYPE_S, '无')
+</select>
+
+<!-- 日期入库数 -->
+<select id="getQuantityByDate" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		select to_char(l.udt_2, 'yyyy-mm') as commonName, sum(l.uda_6) as quantity
+		from uda_lot@mes_test_link ul, lot@mes_test_link l, part p, uda_part ud
+		where ul.object_key = l.lot_key and l.part_number = p.part_number and p.part_key = ud.object_key
+	]]>
+	<if test="partLevel != null and partLevel != ''">
+		and ud.PART_LEVEL_S in (${partLevel})
+	</if>
+	<if test="partTypes != null">
+		and ud.PART_TYPE_S in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="productType != null and productType != ''">
+		and ud.mold_type_s = '${productType}'
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''">
+		and to_char(l.udt_2, 'yyyy-mm') BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="partMaturity != null and partMaturity != ''">
+		and ud.is_new_s = '${partMaturity}'
+	</if>
+	<if test="partNumbers !=null and hasVersion != null and hasVersion == 2">
+		and SUBSTR(p.part_number,0, length(p.part_number)-1) in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion != null and hasVersion == 1">
+		and p.part_number in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	group by to_char(l.udt_2, 'yyyy-mm') order by to_char(l.udt_2, 'yyyy-mm') desc
+</select>
+
+<!-- 总入库数 -->
+<select id="getQuantity" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		select sum(l.uda_6) as quantity
+		from uda_lot@mes_test_link ul, lot@mes_test_link l, part p, uda_part ud
+		where ul.object_key = l.lot_key and l.part_number = p.part_number and p.part_key = ud.object_key
+	]]>
+	<if test="productType != null and productType != ''">
+		and ud.mold_type_s = '${productType}'
+	</if>
+	<if test="partLevel != null and partLevel != ''">
+		and ud.PART_LEVEL_S in (${partLevel})
+	</if>
+	<if test="partTypes != null">
+		and ud.PART_TYPE_S in
+		<foreach item="item" index="index" collection="partTypes" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''">
+		and to_char(l.udt_2, 'yyyy-mm') BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="partMaturity != null and partMaturity != ''">
+		and ud.is_new_s = '${partMaturity}'
+	</if>
+	<if test="supplierNumbers != null">
+		and ul.supplier_number_s in
+		<foreach item="item" index="index" collection="supplierNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion != null and hasVersion == 2">
+		and SUBSTR(p.part_number,0, length(p.part_number)-1) in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion != null and hasVersion == 1">
+		and p.part_number in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+</select>
+
+<select id="getSupplierId" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		select account_key as supplierId from account@mes_test_link where 1 = 1
+	]]>
+	<if test="supplierNumber != ''">
+		and account_name = '${supplierNumber}'
+	</if>
+	and rownum = 1
+</select>
+
+<select id="getPartId" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		select part_key as partId, part_number, description as part_name from part where 1 = 1
+	]]>
+	<if test="hasVersion == 1 and partNumber != ''"> <!-- 零部件带版本查询 -->
+		and part_number = '${partNumber}'
+	</if>
+	<if test="hasVersion == 2 and partNumber != ''">
+		and SUBSTR(part_number, 0, length(part_number) - 1) = '${partNumber}'
+	</if>
+	and rownum = 1
+</select>
+
+<select id="getFaultTypeId" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		select id as faultTypeID from t_fault_type where 1 = 1
+	]]>
+	<if test="faultTypeCode != ''">
+		and code = '${faultTypeCode}'
+	</if>
+	and rownum = 1
+</select>
+
+<select id="getFaultReasonId" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		select id as faultReasonID from t_fault_reason where 1 = 1
+	]]>
+	<if test="faultReasonCode != ''">
+		and code = '${faultReasonCode}'
+	</if>
+	and rownum = 1
+</select>
+
+<!-- 明细-来料入库 -->
+<select id="getIncomingPartDataPage" resultMap="BaseResultMap">
+	<![CDATA[
+		select ul.SUPPLIER_S supplier_name, p.PART_NUMBER, p.DESCRIPTION PART_NAME, p.CONSUMPTION_TYPE isConsumed, l.uda_6 quantity,
+       	ud.MOLD_TYPE_S as PRODUCT_TYPE, ud.PRODUCT_FAMILY_S AS PART_FAMILY, ud.PRODUCT_TYPE_S AS PART_TYPE, ud.IS_NEW_S part_Maturity, to_char(l.udt_2, 'yyyy-mm') as queryMonth from uda_lot@mes_test_link ul, lot@mes_test_link l, part p, uda_part ud
+		where ul.object_key = l.lot_key and l.part_number = p.part_number and p.part_key = ud.object_key and p.CONSUMPTION_TYPE = 'Quantity'
+	]]>
+	<if test="marketPart.productType != null and marketPart.productType != ''">
+		and ud.mold_type_s = '${marketPart.productType}'
+	</if>
+	<if test="marketPart.partLevel != null and marketPart.partLevel != ''">
+		and ud.PART_LEVEL_S in (${marketPart.partLevel})
+	</if>
+	<if test="partTypeList != null and partTypeList != ''">
+		and ud.PART_TYPE_S in (${partTypeList})
+	</if>
+	<if test="marketPart.startTime != null and marketPart.startTime !='' and marketPart.endTime != null and marketPart.endTime != ''">
+		and to_char(l.udt_2, 'yyyy-mm') BETWEEN #{marketPart.startTime,jdbcType=VARCHAR} and #{marketPart.endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="marketPart.partMaturity != null and marketPart.partMaturity != ''">
+		and ud.is_new_s = '${marketPart.partMaturity}'
+	</if>
+	<if test="supplierNumberList != null and supplierNumberList != ''">
+		and ul.supplier_number_s in (${supplierNumberList})
+	</if>
+	<if test="partNumberList !=null and partNumberList != '' and marketPart.hasVersion != null and marketPart.hasVersion == 2">
+		and SUBSTR(p.part_number,0, length(p.part_number)-1) in (${partNumberList})
+	</if>
+	<if test="partNumberList !=null and partNumberList != '' and marketPart.hasVersion != null and marketPart.hasVersion == 1">
+		and p.part_number in (${partNumberList})
+	</if>
+</select>
+
+<select id="getIncomingPartData" resultMap="BaseResultMap">
+	<![CDATA[
+		select ul.SUPPLIER_S supplier_name, p.PART_NUMBER, p.DESCRIPTION PART_NAME, p.CONSUMPTION_TYPE isConsumed, l.uda_6 quantity,
+       	ud.MOLD_TYPE_S as PRODUCT_TYPE, ud.PRODUCT_FAMILY_S AS PART_FAMILY, ud.PRODUCT_TYPE_S AS PART_TYPE, ud.IS_NEW_S part_Maturity, to_char(l.udt_2, 'yyyy-mm') as queryMonth from uda_lot@mes_test_link ul, lot@mes_test_link l, part p, uda_part ud
+		where ul.object_key = l.lot_key and l.part_number = p.part_number and p.part_key = ud.object_key and p.CONSUMPTION_TYPE = 'Quantity'
+	]]>
+	<if test="marketPart.productType != null and marketPart.productType != ''">
+		and ud.mold_type_s = '${marketPart.productType}'
+	</if>
+	<if test="marketPart.partLevel != null and marketPart.partLevel != ''">
+		and ud.PART_LEVEL_S in (${marketPart.partLevel})
+	</if>
+	<if test="partTypeList != null and partTypeList != ''">
+		and ud.PART_TYPE_S in (${partTypeList})
+	</if>
+	<if test="marketPart.startTime != null and marketPart.startTime !='' and marketPart.endTime != null and marketPart.endTime != ''">
+		and to_char(l.udt_2, 'yyyy-mm') BETWEEN #{marketPart.startTime,jdbcType=VARCHAR} and #{marketPart.endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="marketPart.partMaturity != null and marketPart.partMaturity != ''">
+		and ud.is_new_s = '${marketPart.partMaturity}'
+	</if>
+	<if test="supplierNumberList != null and supplierNumberList != ''">
+		and ul.supplier_number_s in (${supplierNumberList})
+	</if>
+	<if test="partNumberList !=null and partNumberList != '' and marketPart.hasVersion != null and marketPart.hasVersion == 2">
+		and SUBSTR(p.part_number,0, length(p.part_number)-1) in (${partNumberList})
+	</if>
+	<if test="partNumberList !=null and partNumberList != '' and marketPart.hasVersion != null and marketPart.hasVersion == 1">
+		and p.part_number in (${partNumberList})
+	</if>
+</select>
+
+<!-- 明细-扫码入库 -->
+<select id="getSerialPartDataPage" resultMap="BaseResultMap">
+	<![CDATA[
+		SELECT SERIAL_NUMBER, PART_NUMBER, PART_SERIAL, PART_MATURITY, PART_NAME, PRODUCT_TYPE, PRODUCT_FAMILY PART_FAMILY, PRODUCT_QMS_TYPE, PART_TYPE, PART_LEVEL,
+		REGION, SUPPLIER_NAME, SUPPLIER_SHORT_NAME, SUPPLIER_NUMBER, TO_CHAR(DOWNLINE_TIME, 'yyyy-mm') DOWNLINE_TIME, SHIP_DATE FROM T_SHIP_PART_RECORD WHERE 1 = 1
+	]]>
+	<if test="marketPart.serialNumber != null and marketPart.serialNumber != ''">
+		and SERIAL_NUMBER = '${marketPart.serialNumber}'
+	</if>
+	<if test="marketPart.productType != null and marketPart.productType != ''">
+		and PRODUCT_TYPE = '${marketPart.productType}'
+	</if>
+	<if test="marketPart.partMaturity != null and marketPart.partMaturity != ''">
+		and PART_MATURITY = '${marketPart.partMaturity}'
+	</if>
+	<if test="marketPart.partLevel != null and marketPart.partLevel != ''">
+		and PART_LEVEL in (${marketPart.partLevel})
+	</if>
+	<if test="marketPart.downStartTime != null and marketPart.downStartTime !='' and marketPart.downEndTime != null and marketPart.downEndTime != ''">
+		and to_char(DOWNLINE_TIME, 'yyyy-mm') BETWEEN #{marketPart.downStartTime,jdbcType=VARCHAR} and #{marketPart.downEndTime,jdbcType=VARCHAR}
+	</if>
+	<if test="marketPart.startTime != null and marketPart.startTime !='' and marketPart.endTime != null and marketPart.endTime != ''">
+		and SHIP_DATE BETWEEN #{marketPart.startTime,jdbcType=VARCHAR} and #{marketPart.endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="partTypeList != null and partTypeList != ''">
+		and PART_TYPE in (${partTypeList})
+	</if>
+	<if test="supplierNumberList != null and supplierNumberList != ''">
+		and SUPPLIER_NUMBER in (${supplierNumberList})
+	</if>
+	<if test="regionList != null and regionList != ''">
+		and REGION IN (${regionList})
+	</if>
+	<if test="partNumberList !=null and partNumberList != '' and marketPart.hasVersion != null and marketPart.hasVersion == 2">
+		and SUBSTR(PART_NUMBER , 0, length(PART_NUMBER) - 1) in (${partNumberList})
+	</if>
+	<if test="partNumberList !=null and partNumberList != '' and marketPart.hasVersion != null and marketPart.hasVersion == 1">
+		and PART_NUMBER in (${partNumberList})
+	</if>
+</select>
+
+<select id="getSerialPartData" resultMap="BaseResultMap">
+	<![CDATA[
+		SELECT SERIAL_NUMBER, PART_NUMBER, PART_SERIAL, PART_MATURITY, PART_NAME, PRODUCT_TYPE, PRODUCT_FAMILY PART_FAMILY, PRODUCT_QMS_TYPE, PART_TYPE, PART_LEVEL,
+		REGION, SUPPLIER_NAME, SUPPLIER_SHORT_NAME, SUPPLIER_NUMBER, TO_CHAR(DOWNLINE_TIME, 'yyyy-mm') DOWNLINE_TIME FROM, SHIP_DATE T_SHIP_PART_RECORD WHERE 1 = 1
+	]]>
+	<if test="marketPart.productType != null and marketPart.productType != ''">
+		and PRODUCT_TYPE = '${marketPart.productType}'
+	</if>
+	<if test="marketPart.partMaturity != null and marketPart.partMaturity != ''">
+		and PART_MATURITY = '${marketPart.partMaturity}'
+	</if>
+	<if test="marketPart.partLevel != null and marketPart.partLevel != ''">
+		and PART_LEVEL in (${marketPart.partLevel})
+	</if>
+	<if test="marketPart.downStartTime != null and marketPart.downStartTime !='' and marketPart.downEndTime != null and marketPart.downEndTime != ''">
+		and to_char(DOWNLINE_TIME, 'yyyy-mm') BETWEEN #{marketPart.downStartTime,jdbcType=VARCHAR} and #{marketPart.downEndTime,jdbcType=VARCHAR}
+	</if>
+	<if test="marketPart.startTime != null and marketPart.startTime !='' and marketPart.endTime != null and marketPart.endTime != ''">
+		and SHIP_DATE BETWEEN #{marketPart.startTime,jdbcType=VARCHAR} and #{marketPart.endTime,jdbcType=VARCHAR}
+	</if>
+	<if test="partTypeList != null and partTypeList != ''">
+		and PART_TYPE in (${partTypeList})
+	</if>
+	<if test="supplierNumberList != null and supplierNumberList != ''">
+		and SUPPLIER_NUMBER in (${supplierNumberList})
+	</if>
+	<if test="regionList != null and regionList != ''">
+		and REGION IN (${regionList})
+	</if>
+	<if test="partNumberList !=null and partNumberList != '' and marketPart.hasVersion != null and marketPart.hasVersion == 2">
+		and SUBSTR(PART_NUMBER , 0, length(PART_NUMBER) - 1) in (${partNumberList})
+	</if>
+	<if test="partNumberList !=null and partNumberList != '' and marketPart.hasVersion != null and marketPart.hasVersion == 1">
+		and PART_NUMBER in (${partNumberList})
+	</if>
+</select>
+
+<!-- 获取旧物料代码 -->
+<select id="getOldPartNumber" resultType="String" parameterType="com.peg.model.part.MarketPart">
+	select old_part_number from new_part_ref where 1 = 1
+	<if test="partNumbers !=null">
+		and new_part_number in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+</select>
+
+<!-- 获取新物料代码 -->
+<select id="getNewPartNumber" resultType="String" parameterType="com.peg.model.part.MarketPart">
+	select new_part_number from new_part_ref where 1 = 1
+	<if test="partNumbers !=null">
+		and old_part_number in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+</select>
+
+<!-- 市场不良趋势图（新）维修量 -->
+<select id="getDefectTrendNew" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+	select commonName,sum(REPAIRCOUNT) REPAIRCOUNT FROM(
+		select * from (SELECT REPAIR_DATE commonName,substr(TR.PART_NUMBER,0,length(tr.part_number)-1) part_number,substr(TR.MES_PART_NUMBER,0,length(tr.mes_part_number)-1) mes_part_number,SUM(QTY) repairCount 
+		FROM T_MARKET_REPAIR_PART_SUM TR, T_FAULT_TYPE TFT, T_FAULT_REASON TFR, PART P,uda_part@MES_TEST_LINK UP
+		WHERE TR.FAULT_TYPE_CODE = TFT.CODE AND TR.FAULT_REASON_CODE = TFR.CODE AND TR.PART_NUMBER = P.PART_NUMBER 
+		AND UP.OBJECT_KEY = P.PART_KEY
+		
+	]]>
+	<if test="productType != null and productType != ''">
+		AND TR.PRODUCT_TYPE = '${productType}'
+	</if>
+	<if test="isOver != null and isOver != ''">
+		AND TR.IS_OVER = '${isOver}'
+	</if>
+	<if test="faultReasonValid != null and faultReasonValid != ''">
+		AND TFR.VALID = '${faultReasonValid}'
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''">
+		AND TR.REPAIR_DATE BETWEEN #{startTime, jdbcType=VARCHAR} and #{endTime, jdbcType=VARCHAR}
+	</if>
+	<if test="isConsumed != null and isConsumed == 0">
+		AND UP.CONTROL_NUMBER_S = '关键件'
+	</if>
+	<if test="isConsumed != null and isConsumed == 1">
+		AND UP.CONTROL_NUMBER_S = '非关键件'
+	</if>
+	<if test="isConsumed != null and isConsumed == 2">
+		AND UP.CONTROL_NUMBER_S = '附件'
+	</if>
+	<if test="supplierNumbers != null">
+		AND TR.SUPPLIER_NUMBER IN
+		<foreach item="item" index="index" collection="supplierNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion == 1">
+		AND TR.PART_NUMBER IN
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion == 2">
+		AND SUBSTR(TR.PART_NUMBER, 0, length(TR.PART_NUMBER) - 1) in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="mesPartNumbers !=null and hasVersion == 1">
+		AND TR.MES_PART_NUMBER IN
+		<foreach item="item" index="index" collection="mesPartNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="mesPartNumbers !=null and hasVersion == 2">
+		AND SUBSTR(TR.MES_PART_NUMBER, 0, length(TR.MES_PART_NUMBER) - 1) in
+		<foreach item="item" index="index" collection="mesPartNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="regions != null">
+		AND TR.REGION IN 
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="faultTypes != null">
+		AND TR.FAULT_TYPE_CODE IN 
+		<foreach item="item" index="index" collection="faultTypes" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="faultReasons != null">
+		AND TR.FAULT_REASON_CODE IN 
+		<foreach item="item" index="index" collection="faultReasons" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	GROUP BY REPAIR_DATE,substr(TR.PART_NUMBER,0,length(tr.part_number)-1),substr(TR.MES_PART_NUMBER,0,length(tr.mes_part_number)-1)
+	)tr left join 
+    (select PART_CLASS2_S crm_class2,SUBSTR(PART_NUMBER_S,0,LENGTH(PART_NUMBER_S)-1) CRM_PART_NUMBER 
+    from AT_SUPPLIER@MES_TEST_LINK group by PART_CLASS2_S,SUBSTR(PART_NUMBER_S,0,LENGTH(PART_NUMBER_S)-1)) CRM on crm.crm_part_number = tr.part_number
+    left join
+		(select PART_CLASS2_S mes_class2,SUBSTR(PART_NUMBER_S,0,LENGTH(PART_NUMBER_S)-1) MES_PART_NUMBER 
+    from AT_SUPPLIER@MES_TEST_LINK group by PART_CLASS2_S,SUBSTR(PART_NUMBER_S,0,LENGTH(PART_NUMBER_S)-1)) MES on MES.MES_part_number = tr.mes_part_number
+    where 1=1
+    	<if test="crmPartCategoryTwoList !=null">
+	AND CRM.crm_CLASS2 IN
+		<foreach item="item" index="index"  collection="crmPartCategoryTwoList" open="(" separator="," close=")">
+			'${item}'
+		</foreach>
+	</if>
+	<if test="mesPartCategoryTwoList !=null">
+	AND MES.mes_CLASS2 IN
+		<foreach item="item" index="index" collection="mesPartCategoryTwoList" open="(" separator="," close=")">
+			'${item}'
+		</foreach>
+	</if>
+	) group by commonName order by commonName
+</select>
+
+<!-- 市场不良趋势图入库量 -->
+<select id="getDownLineTrend" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		SELECT  commonName, SUM(quantity) quantity FROM (
+		SELECT  DOWNLINE_TIME AS commonName,QTY quantity,substr(PART_NUMBER,0,length(PART_NUMBER)-1) part_number FROM T_DOWNLINE_PART_SUM TP WHERE 1 = 1
+	]]>
+	<if test="productType != null and productType != ''">
+		AND TP.PRODUCT_TYPE = '${productType}'
+	</if>
+	<if test ="productFamilyList !=null and productFamilyList !=''">
+			AND TP.PRODUCT_FAMILY IN 
+		<foreach item="item" index="index" collection="productFamilyList" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="regions != null">
+		AND TP.REGION IN
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test ="partTypeList !=null and partTypeList !=''">
+			AND TP.PRODUCT_QMS_TYPE IN 
+		<foreach item="item" index="index" collection="partTypeList" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''">
+		AND TP.DOWNLINE_TIME BETWEEN #{startTime, jdbcType=VARCHAR} and #{endTime, jdbcType=VARCHAR}
+	</if>
+	<if test="supplierNumbers != null">
+		AND TP.SUPPLIER_NUMBER IN
+		<foreach item="item" index="index" collection="supplierNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="mesPartNumbers !=null and hasVersion == 1">
+		AND TP.PART_NUMBER IN
+		<foreach item="item" index="index" collection="mesPartNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="mesPartNumbers !=null and hasVersion == 2">
+		AND SUBSTR(TP.PART_NUMBER, 0, length(TP.PART_NUMBER) - 1) in
+		<foreach item="item" index="index" collection="mesPartNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion == 1">
+		AND TP.PART_NUMBER IN
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion == 2">
+		AND SUBSTR(TP.PART_NUMBER, 0, length(TP.PART_NUMBER) - 1) in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>	
+	)tr left join 
+    (select PART_CLASS2_S crm_class2,SUBSTR(PART_NUMBER_S,0,LENGTH(PART_NUMBER_S)-1) CRM_PART_NUMBER 
+    from AT_SUPPLIER@MES_TEST_LINK group by PART_CLASS2_S,SUBSTR(PART_NUMBER_S,0,LENGTH(PART_NUMBER_S)-1)) CRM on crm.crm_part_number = tr.part_number
+    left join
+		(select PART_CLASS2_S mes_class2,SUBSTR(PART_NUMBER_S,0,LENGTH(PART_NUMBER_S)-1) MES_PART_NUMBER 
+    from AT_SUPPLIER@MES_TEST_LINK group by PART_CLASS2_S,SUBSTR(PART_NUMBER_S,0,LENGTH(PART_NUMBER_S)-1)) MES on MES.MES_part_number = tr.part_number
+    where 1=1
+    	<if test="crmPartCategoryTwoList !=null">
+	AND CRM.crm_CLASS2 IN
+		<foreach item="item" index="index"  collection="crmPartCategoryTwoList" open="(" separator="," close=")">
+			'${item}'
+		</foreach>
+	</if>
+	<if test="mesPartCategoryTwoList !=null">
+	AND MES.mes_CLASS2 IN
+		<foreach item="item" index="index" collection="mesPartCategoryTwoList" open="(" separator="," close=")">
+			'${item}'
+		</foreach>
+	</if>
+	GROUP BY TR.commonName ORDER BY TR.commonName
+</select>
+
+<!-- 市场不良趋势图(新)发货数 -->
+<select id="getShip" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+	<![CDATA[
+		SELECT STATISTICS_MONTH AS commonName, SUM(SHIP_COUNT) quantity FROM T_SHIP_TOTAL_RECORD TP WHERE 1 = 1
+	]]>
+	<if test="productType != null and productType != ''">
+		AND TP.PRODUCT_TYPE like '%${productType}%'
+	</if>
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''">
+		AND TP.STATISTICS_MONTH BETWEEN #{startTime, jdbcType=VARCHAR} and #{endTime, jdbcType=VARCHAR}
+	</if>
+	<if test="productFamilyList != null">
+		AND TP.PRODUCT_FAMILY IN
+		<foreach item="item" index="index" collection="productFamilyList" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partTypeList != null">
+		AND TP.PART_TYPE IN
+		<foreach item="item" index="index" collection="partTypeList" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="regions != null">
+		AND TP.REGION IN
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<!-- <if test="supplierNumbers != null">
+		AND TP.SUPPLIER_NUMBER IN
+		<foreach item="item" index="index" collection="supplierNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion == 1">
+		AND TP.PART_NUMBER IN
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partNumbers !=null and hasVersion == 2">
+		AND SUBSTR(TP.PART_NUMBER, 0, length(TP.PART_NUMBER) - 1) in
+		<foreach item="item" index="index" collection="partNumbers" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if> -->
+	GROUP BY STATISTICS_MONTH ORDER BY STATISTICS_MONTH
+</select>
+
+<!-- 删除零配件发货 -->
+<delete id="deleteMarketShipPart" parameterType="com.peg.model.CommonVo">
+	DELETE FROM T_SHIP_PART_RECORD TSPR WHERE 1 = 1
+	<if test="startTime != null and endTime != null">
+		AND TO_CHAR(TSPR.DOWNLINE_TIME, 'yyyy-mm-dd') BETWEEN #{startTime,jdbcType=VARCHAR} AND #{endTime,jdbcType=VARCHAR}
+	</if>
+</delete>
+
+<insert id="shipDataAll" parameterType="com.peg.model.CommonVo">
+      	<![CDATA[
+	INSERT INTO T_DOWNLINE_PART_SUM
+	SELECT PRODUCT_TYPE,
+	  PRODUCT_FAMILY,
+	  PRODUCT_QMS_TYPE,
+	  PART_NUMBER,
+	  SUPPLIER_NUMBER,
+	  SUPPLIER_NAME,
+	  SUPPLIER_SHORT_NAME,
+	  TO_CHAR(DOWNLINE_TIME, 'yyyy-mm'),
+	  COUNT(1),
+	  REGION
+	FROM T_SHIP_PART_RECORD
+	WHERE 1=1
+  		]]>
+	<if test="startTime != null and endTime != null">
+				AND DOWNLINE_TIME BETWEEN TO_DATE(#{startTime,jdbcType=VARCHAR},'YYYY-MM-DD') AND TO_DATE(#{endTime,jdbcType=VARCHAR},'YYYY-MM-DD')
+	</if>
+	<![CDATA[
+	GROUP BY PRODUCT_TYPE,
+	  REGION,
+	  PRODUCT_FAMILY,
+	  PRODUCT_QMS_TYPE,
+	  PART_NUMBER,
+	  SUPPLIER_NUMBER,
+	  SUPPLIER_NAME,
+	  SUPPLIER_SHORT_NAME,
+	  TO_CHAR(DOWNLINE_TIME, 'yyyy-mm')
+	]]>
+</insert>
+
+
+
+<!-- 零配件发货汇总 -->
+<!-- AND (INSTR(U.SERIAL_NUMBER, 'L') < 12 OR (INSTR(U.SERIAL_NUMBER, 'L') = 12 AND SUBSTR(U.SERIAL_NUMBER, 7, 3) <= '008')) -->
+<insert id="shipDataRecord" parameterType="com.peg.model.CommonVo">
+      	<![CDATA[
+		INSERT INTO T_SHIP_PART_RECORD (SERIAL_NUMBER, PART_NUMBER, PART_SERIAL, SUPPLIER_CODE, PRODUCT_PART_NUMBER, PART_NAME, PRODUCT_TYPE, product_FAMILY, PRODUCT_QMS_TYPE, REGION, REGION_NUMBER, PART_MATURITY, SHIP_DATE, DOWNLINE_TIME, PART_LEVEL, PART_TYPE)
+  		SELECT T.SERIAL_NUMBER, T.PART_NUMBER, T.PART_SERIAL, T.SUPPLIER_CODE, T.PRODUCT_PART_NUMBER, P1.DESCRIPTION, T.MOLD_TYPE_S, T.PRODUCT_FAMILY_S, T.PRODUCT_TYPE_S,
+        T.MERGE_REGION, T.DESTINATION_ID_S, UP1.IS_NEW_S, T.SHIP_DATE, T.FINISHED_TIME, UP1.PART_LEVEL_S, UP1.PART_TYPE_S FROM
+  		(
+			SELECT U.SERIAL_NUMBER,CP.PART_NUMBER,CP.PART_SERIAL,SUBSTR(CP.PART_SERIAL, LENGTH(CP.PART_NUMBER) + 1, 1) as SUPPLIER_CODE,U.PART_NUMBER AS PRODUCT_PART_NUMBER,
+          	UP.MOLD_TYPE_S,UP.PRODUCT_FAMILY_S, UP.PRODUCT_TYPE_S,TLR.MERGE_REGION,SO.DESTINATION_ID_S,
+          	UP.IS_NEW_S,to_char((CASE U.UDA_0 WHEN '已出库' then nvl(U.PROMISED_TIME, U.LAST_MODIFIED_TIME) ELSE NULL END), 'yyyy-mm') AS SHIP_DATE, 
+          	U.FINISHED_TIME
+   			FROM UNIT U, CONSUMED_PART@MES_TEST_LINK CP, PART P, UDA_PART UP, AT_STORAGEORDER SO, T_LOCATION_REGION TLR
+    		WHERE U.UNIT_KEY = CP.TOBJ_KEY AND U.UDA_6 = SO.STORAGE_NUMBER_S(+) AND U.PART_NUMBER = P.PART_NUMBER(+)
+        	AND P.PART_KEY = UP.OBJECT_KEY(+) 
+        	AND (U.SERIAL_NUMBER like '7%' OR U.SERIAL_NUMBER like '10%L%')
+        	AND SO.DESTINATION_ID_S = TLR.LOCATION_CODE(+)
+        	AND P.DESCRIPTION not like '%展示%' AND P.DESCRIPTION NOT LIKE '%空壳%'
+		]]>
+      	<if test="startTime != null and endTime != null">
+			AND TO_CHAR(U.FINISHED_TIME, 'yyyy-mm-dd') BETWEEN #{startTime,jdbcType=VARCHAR} AND #{endTime,jdbcType=VARCHAR}
+		</if>
+	) T, PART P1, UDA_PART UP1
+	WHERE T.PART_NUMBER = P1.PART_NUMBER AND P1.PART_KEY = UP1.OBJECT_KEY AND P1.CONSUMPTION_TYPE = 'SerialNumber'
+</insert>
+
+<!-- 零配件发货供应商 -->
+<update id="updateSupplierByShip" parameterType="com.peg.model.CommonVo">
+	<![CDATA[
+		UPDATE T_SHIP_PART_RECORD T SET (T.SUPPLIER_NAME, T.SUPPLIER_NUMBER) = 
+		(SELECT SUP.ERP_SUPPLIER_NAME_S, SUP.ERP_SUPPLIER_NO_S FROM AT_SUPPLIER@MES_TEST_LINK SUP 
+		WHERE SUBSTR(T.PART_NUMBER, 0, LENGTH(T.PART_NUMBER) - 1) = SUBSTR(SUP.PART_NUMBER_S, 0, LENGTH(SUP.PART_NUMBER_S) - 1) AND T.SUPPLIER_CODE = SUP.SUPPLIER_NO_S AND ROWNUM = 1)		
+	]]>
+	<if test="startTime != null and endTime != null">
+		where TO_CHAR(T.DOWNLINE_TIME, 'yyyy-mm-dd') BETWEEN #{startTime,jdbcType=VARCHAR} AND #{endTime,jdbcType=VARCHAR}
+	</if>
+</update>
+
+<!-- 删除零配件维修 -->
+<delete id="deleteMarketRepairPart" parameterType="com.peg.model.CommonVo">
+	DELETE FROM T_MARKET_REPAIR_PART_RECORD TMRR WHERE 1 = 1
+	<if test="startTime != null and endTime != null">
+		AND TO_CHAR(TMRR.REPAIR_DATE, 'yyyy-mm-dd') BETWEEN #{startTime,jdbcType=VARCHAR} AND #{endTime,jdbcType=VARCHAR}
+	</if>
+</delete>
+<!-- 删除维修汇总 -->
+<delete id="deleteMarketRepairPartSum" parameterType="com.peg.model.CommonVo">
+	DELETE FROM T_MARKET_REPAIR_PART_SUM TMRR WHERE 1 = 1
+	<if test="startTime != null and endTime != null">
+		AND REPAIR_DATE BETWEEN to_char(to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd'),'yyyy-mm') AND to_char(to_date(#{endTime,jdbcType=VARCHAR},'yyyy-mm-dd'),'yyyy-mm')
+	</if>
+</delete>
+
+<!-- 零配件维修汇总 -->
+<insert id="repairDataRecord" parameterType="com.peg.model.CommonVo">
+	<![CDATA[
+		insert into T_MARKET_REPAIR_PART_RECORD (
+		ORDER_NUMBER, SERIAL_NUMBER, PART_NUMBER, CONSUMPTION_TYPE, PART_MATURITY, PART_NAME, PRODUCT_TYPE, IS_OVER,
+		PART_FAMILY, PRODUCT_QMS_TYPE, REGION, RAW_REGION, FAULT_TYPE_CODE, FAULT_TYPE_NAME, FAULT_REASON_CODE,
+		FAULT_REASON_NAME, INSTALL_DATE, DOWNLINE_DATE, REPAIR_DATE, PART_LEVEL, PART_TYPE)
+
+		SELECT CAL.JOB_NUMBER, TMRR.PART_CODE, CAL.PARTS_NO, UP.control_number_s, UP.IS_NEW_S, P.DESCRIPTION, TMRR.PRODUCT_TYPE, TMRR.IS_OVER,
+		TMRR.PRODUCT_FAMILY, TMRR.PART_TYPE, TMRR.SERVICE_CENTER, TMRR.RAW_SERVICE_CENTER, TMRR.FAULT_TYPE_CODE, TMRR.FAULT_TYPE_NAME, TMRR.FAULT_REASON_CODE,
+		TMRR.FAULT_REASON_NAME, TO_CHAR(TMRR.INTALL_DATE, 'yyyy-mm'), TMRR.DOWNLINE_DATE, TMRR.FINISH_DATE, UP.PART_LEVEL_S, UP.PART_TYPE_S 
+
+		FROM T_MARKET_REPAIR_RECORD TMRR, CRM_ACCESSORIES_LIST CAL, PART P, UDA_PART UP
+   
+		WHERE CAL.JOB_NUMBER = TMRR.ORDER_NUMBER(+)
+		AND CAL.PARTS_NO = P.PART_NUMBER(+)
+		AND P.PART_KEY = UP.OBJECT_KEY(+)
+	]]>
+	<if test="startTime != null and endTime != null">
+		AND TO_CHAR(TMRR.FINISH_DATE, 'yyyy-mm-dd') BETWEEN #{startTime,jdbcType=VARCHAR} AND #{endTime,jdbcType=VARCHAR}
+	</if>
+</insert>
+
+<!-- 更新零部件供应商代码 -->
+<!-- <update id="updateSupplierCodeByRepair" parameterType="com.peg.model.CommonVo"> -->
+<!-- 	<![CDATA[ -->
+<!-- 		UPDATE T_MARKET_REPAIR_PART_RECORD T SET (SUPPLIER_CODE, PART_SERIAL) = -->
+<!-- 		(SELECT SUBSTR(CP.PART_SERIAL, LENGTH(CP.PART_NUMBER) + 1, 1), CP.PART_SERIAL FROM CONSUMED_PART@MES_TEST_LINK CP, UNIT U -->
+<!-- 		WHERE U.UNIT_KEY = CP.TOBJ_KEY AND T.SERIAL_NUMBER = U.SERIAL_NUMBER -->
+<!-- 		AND SUBSTR(T.PART_NUMBER, 0, LENGTH(T.PART_NUMBER) - 1) = SUBSTR(CP.PART_NUMBER, 0, LENGTH(CP.PART_NUMBER) - 1) AND ROWNUM = 1) -->
+<!-- 		WHERE T.SUPPLIER_CODE IS NULL AND T.CONSUMPTION_TYPE = 'SerialNumber' -->
+<!-- 	]]> -->
+<!-- 	<if test="startTime != null and endTime != null"> -->
+<!-- 		AND TO_CHAR(T.REPAIR_DATE, 'yyyy-mm-dd') BETWEEN #{startTime,jdbcType=VARCHAR} AND #{endTime,jdbcType=VARCHAR} -->
+<!-- 	</if> -->
+<!-- </update> -->
+
+<!-- 更新零部件供应商代码 -->
+<update id="updateSupplierCodeByRepair" parameterType="com.peg.model.CommonVo">
+	<![CDATA[
+		CALL UPDATE_SUPPLIER_CODE(#{startTime,jdbcType=VARCHAR}, #{endTime,jdbcType=VARCHAR})
+	]]>
+</update>
+<!-- 更新供应商信息(新) -->
+<update id="updateSupplierNew" parameterType="com.peg.model.CommonVo">
+<![CDATA[
+		CALL UPDATE_SUPPLIER_NEW(#{startTime,jdbcType=VARCHAR}, #{endTime,jdbcType=VARCHAR})
+	]]>
+</update>
+<!-- 更新供应商信息(新) -->
+<update id="updateMarketRepairPartSum" parameterType="com.peg.model.CommonVo">
+<![CDATA[
+		INSERT INTO T_MARKET_REPAIR_PART_SUM
+		SELECT TO_CHAR(REPAIR_DATE, 'yyyy-mm') REPAIR_DATE, PRODUCT_TYPE, IS_OVER, RAW_REGION, FAULT_TYPE_CODE, FAULT_REASON_CODE, PART_NUMBER, MES_PART_NUMBER, SUPPLIER_NUMBER, SUPPLIER_NAME, SUPPLIER_SHORT_NAME, COUNT(1) QTY
+		FROM T_MARKET_REPAIR_PART_RECORD 
+		WHERE 1=1
+]]>
+		<if test="startTime != null and startTime !='' and endTime != null and endTime != ''">
+			AND TO_CHAR(REPAIR_DATE,'yyyy-mm-dd') BETWEEN #{startTime, jdbcType=VARCHAR} and #{endTime, jdbcType=VARCHAR}
+		</if>
+<![CDATA[
+		GROUP BY TO_CHAR(REPAIR_DATE, 'yyyy-mm'), PRODUCT_TYPE, IS_OVER, RAW_REGION, FAULT_TYPE_CODE, FAULT_REASON_CODE, PART_NUMBER, MES_PART_NUMBER, SUPPLIER_NUMBER, SUPPLIER_NAME, SUPPLIER_SHORT_NAME
+]]>
+</update>
+
+
+
+<!-- 零配件维修供应商 -->
+<update id="updateSupplierByRepair" parameterType="com.peg.model.CommonVo">
+	<![CDATA[
+		CALL UPDATE_SUPPLIER(#{startTime,jdbcType=VARCHAR}, #{endTime,jdbcType=VARCHAR})
+	]]>
+</update>
+<select id="getRepair" resultMap="BaseResultMap" parameterType="com.peg.model.part.MarketPart">
+
+	SELECT REPAIRED_MONTH commonName, SUM(REPAIRED_COUNT) repairCount FROM T_MARKET_REPAIR_TOTAL_RECORD TRE , T_FAULT_REASON TFR
+	WHERE tRE.fault_reason_code = tfr.code(+)
+	<if test="startTime != null and startTime !='' and endTime != null and endTime != ''">
+		AND TRE.REPAIRED_MONTH BETWEEN #{startTime, jdbcType=VARCHAR} and #{endTime, jdbcType=VARCHAR}
+	</if>
+		<if test="productType != null and productType != ''">
+		AND TRE.PRODUCT_TYPE = '${productType}'
+	</if>
+	<if test="faultReasonValid != null and faultReasonValid != ''">
+		AND TFR.VALID = '${faultReasonValid}'
+	</if>
+	<if test="productFamilyList != null">
+		AND TRE.PRODUCT_FAMILY IN
+		<foreach item="item" index="index" collection="productFamilyList" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="partTypeList != null">
+		AND TRE.PART_TYPE IN
+		<foreach item="item" index="index" collection="partTypeList" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="regions != null">
+		AND TRE.REGION IN
+		<foreach item="item" index="index" collection="regions" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="faultTypes !=null">
+		AND TRE.FAULT_TYPE_CODE IN 
+		<foreach item="item" index="index" collection="faultTypes" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="faultReasons !=null">
+		AND TRE.FAULT_REASON_CODE IN 
+		<foreach item="item" index="index" collection="faultReasons" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</if>
+	<if test="isOver != null and isOver!= ''">
+		and TRE.is_over = '${isOver}'
+	</if>
+	GROUP BY TRE.REPAIRED_MONTH 
+	ORDER BY TRE.REPAIRED_MONTH
+</select>
+
+<!-- 零配件维修供应商 -->
+<!-- <update id="updateSupplierByRepair" parameterType="com.peg.model.CommonVo"> -->
+<!-- 	<![CDATA[ -->
+<!-- 		UPDATE T_MARKET_REPAIR_PART_RECORD T SET (T.SUPPLIER_NUMBER, T.SUPPLIER_NAME, T.SUPPLIER_SHORT_NAME) = -->
+<!-- 		(SELECT TSP.SUPPLIER_NUMBER_N, TSP.SUPPLIER_NAME, TSP.SUPPLIER_SHORT_NAME FROM T_SUPPLIER_PART TSP -->
+<!-- 		WHERE SUBSTR(T.PART_NUMBER, 0, LENGTH(T.PART_NUMBER) - 1) = SUBSTR(TSP.PART_NUMBER, 0, LENGTH(TSP.PART_NUMBER) - 1) AND T.SUPPLIER_CODE = TSP.SUPPLIER_CODE AND ROWNUM = 1) -->
+
+<!-- 	]]> -->
+<!-- 	<if test="startTime != null and endTime != null"> -->
+<!-- 		WHERE TO_CHAR(T.REPAIR_DATE, 'yyyy-mm-dd') BETWEEN #{startTime,jdbcType=VARCHAR} AND #{endTime,jdbcType=VARCHAR} -->
+<!-- 	</if> -->
+<!-- </update> -->
+</mapper>

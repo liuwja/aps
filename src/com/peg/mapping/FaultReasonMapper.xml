@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.peg.dao.FaultReasonMapper">
+	<resultMap id="BaseResultMap" type="com.peg.model.FaultReason">
+		<id column="ID" property="id" jdbcType="DECIMAL" />
+		<result column="CODE" property="code" jdbcType="VARCHAR" />
+		<result column="NAME" property="name" jdbcType="VARCHAR" />
+		<result column="VALID" property="valid" jdbcType="VARCHAR" />
+		<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+		<result column="LAST_UPDATE_TIME" property="lastUpdateTime" jdbcType="TIMESTAMP" />
+		<result column="LAST_UPDATE_USER" property="lastUpdateUser" jdbcType="VARCHAR" />
+		<result column="LAST_UPDATE_USER" property="lastUpdateUser" jdbcType="VARCHAR" />
+		<result column="LAST_UPDATE_TYPE" property="lastUpdateType" jdbcType="VARCHAR" />
+		<result column="MESHFAULTNAME" property="meshFaultName" jdbcType="VARCHAR" />
+		<result column="MESHFAULTCODE" property="meshFaultCode" jdbcType="VARCHAR" />
+		<result column="PRODUCT_TYPE" property="productType" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, CODE, NAME, VALID, CREATE_TIME, CREATE_USER,
+		LAST_UPDATE_TIME,MESHFAULTCODE,
+		LAST_UPDATE_USER, MESHFAULTNAME,PRODUCT_TYPE,LAST_UPDATE_TYPE
+	</sql>
+	<select id="getAll" resultMap="BaseResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from T_FAULT_REASON
+		where ID = #{id,jdbcType=DECIMAL}
+		order by code,name
+	</select>
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from T_FAULT_REASON
+		where ID = #{id,jdbcType=DECIMAL}
+		order by code,name
+	</select>
+
+	<select id="getAllByPage" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" /> from T_FAULT_REASON
+		<where>
+			<if test="faultReason.code != null and faultReason.code != ''">
+				CODE like '%${faultReason.code}%'
+			</if>
+			<if test="faultReason.name != null and faultReason.name != ''">
+				and NAME like '%${faultReason.name}%'
+			</if>
+			<if test="faultReason.meshFaultName != null and faultReason.meshFaultName != ''">
+				and MESHFAULTNAME like '%${faultReason.meshFaultName}%'
+			</if>
+			<if test="faultReason.valid != null and faultReason.valid != ''">
+				and VALID = '${faultReason.valid}'
+			</if>
+			<if test="faultReason.productType != null and faultReason.productType!=''">
+				and PRODUCT_TYPE = '${faultReason.productType}' or PRODUCT_TYPE = '公共'
+			</if>
+		</where>
+		order by MESHFAULTNAME,code,name
+	</select>
+
+	<select id="getAllResult" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" /> from T_FAULT_REASON
+		<where>
+			<if test="faultReason.code != null and faultReason.code != ''">
+				CODE like '%${faultReason.code}%'
+			</if>
+			<if test="faultReason.name != null and faultReason.name != ''">
+				and NAME like '%${faultReason.name}%'
+			</if>
+			<if test="faultReason.meshFaultName != null and faultReason.meshFaultName != ''">
+				and MESHFAULTNAME like '%${faultReason.meshFaultName}%'
+			</if>
+			<if test="faultReason.valid != null and faultReason.valid != ''">
+				and VALID = '${faultReason.valid}'
+			</if>
+			<if test="faultReason.productType != null and faultReason.productType!=''">
+				and PRODUCT_TYPE = '${faultReason.productType}'
+			</if>
+		</where>
+		order by MESHFAULTNAME,code,name
+	</select>
+	<select id="findAllMeshNamesByPage" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="Base_Column_List" /> 
+		  FROM T_FAULT_REASON 
+		<!--  WHERE id IN (SELECT MAX(id) FROM T_FAULT_REASON GROUP BY meshfaultname) -->
+		<where>
+			<if test="faultReason.meshFaultName != null and faultReason.meshFaultName!=''">
+			    meshfaultname like '%${faultReason.meshFaultName}%'
+			</if>
+			<if test="faultReason.code != null and faultReason.code!=''">
+				and code like '%${faultReason.code}%'
+			</if>
+			<if test="faultReason.productType != null and faultReason.productType!=''">
+				and PRODUCT_TYPE like '%${faultReason.productType}%'
+			</if>
+		</where>
+	</select>
+	
+	<select id="getMeshFaultReason" resultMap="BaseResultMap" parameterType="com.peg.model.FaultReason">
+		SELECT PRODUCT_TYPE, MESHFAULTNAME, MESHFAULTCODE FROM T_FAULT_REASON WHERE 1 = 1
+		<if test="productType != null and productType != ''">
+			AND PRODUCT_TYPE = '${productType}'
+		</if>
+		<if test="meshFaultName != null and meshFaultName != ''">
+			AND MESHFAULTNAME LIKE '%${meshFaultName}%'
+		</if>
+		GROUP BY PRODUCT_TYPE, MESHFAULTNAME, MESHFAULTCODE
+	</select>
+	
+<!-- 根据合并故障代码获取合并故障名称 -->
+<select id="getMeshNameByMeshCode" resultMap="BaseResultMap" parameterType="com.peg.model.FaultReason">
+	SELECT MESHFAULTNAME FROM T_FAULT_REASON WHERE 1 = 1 AND ROWNUM = 1
+	<if test="meshFaultCode != null and meshFaultCode != ''">
+		AND MESHFAULTCODE = '${meshFaultCode}'
+	</if>
+</select>	
+
+<!-- 根据合并故障名称获取合并故障代码 -->
+<select id="getMeshCodeByMeshName" resultMap="BaseResultMap" parameterType="com.peg.model.FaultReason">
+	SELECT MESHFAULTCODE FROM T_FAULT_REASON WHERE 1 = 1 AND ROWNUM = 1
+	<if test="meshFaultNameArr != null">
+		AND MESHFAULTNAME in
+		<foreach item="item" index="index" collection="meshFaultNameArr" open="(" separator="," close=")">  
+            #{item}  
+        </foreach>
+	</if>
+	<if test="productType != null and productType != ''">
+		AND PRODUCT_TYPE = '${productType}'
+	</if>
+</select>
+
+	<update id="saveMesh">
+		update T_FAULT_REASON 
+		set meshfaultcode = #{meshfaultcode,jdbcType=VARCHAR},
+		meshfaultname = #{meshFaultName,jdbcType=VARCHAR},
+		LAST_UPDATE_TIME = SYSDATE,
+		LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=VARCHAR},
+		LAST_UPDATE_TYPE = #{lastUpdateType,jdbcType=VARCHAR}
+		where id in 
+		<foreach item="item" index="index" collection="idList" open="(" separator="," close=")">  
+            #{item}  
+        </foreach>
+	</update>
+	
+	<update id="breakMesh">
+		update T_FAULT_REASON 
+		set meshfaultcode = code,
+		meshfaultname = name,
+		LAST_UPDATE_TIME = SYSDATE,
+		LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=VARCHAR},
+		LAST_UPDATE_TYPE = #{lastUpdateType,jdbcType=VARCHAR}
+		where id in 
+		<foreach item="item" index="index" collection="idList" open="(" separator="," close=")">  
+            #{item}  
+        </foreach>
+	</update>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from
+		T_FAULT_REASON
+		where ID = #{id,jdbcType=DECIMAL}
+	</delete>
+	<insert id="insert" parameterType="com.peg.model.FaultReason">
+		<selectKey resultType="long" order="BEFORE" keyProperty="id">
+			select seq_t_fault_reason.nextval as ID from dual
+		</selectKey>
+		insert into T_FAULT_REASON (ID, CODE, NAME, MESHFAULTNAME, MESHFAULTCODE,
+		VALID, CREATE_TIME,
+		CREATE_USER,
+		LAST_UPDATE_TIME, LAST_UPDATE_USER, LAST_UPDATE_TYPE, PRODUCT_TYPE)
+		values
+		(#{id,jdbcType=DECIMAL}, #{code,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR},
+		#{valid,jdbcType=VARCHAR}, SYSDATE,
+		#{createUser,jdbcType=VARCHAR},
+		#{lastUpdateTime,jdbcType=TIMESTAMP},
+		#{lastUpdateUser,jdbcType=VARCHAR},#{lastUpdateType,jdbcType=VARCHAR},#{productType,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.peg.model.FaultReason">
+		insert into T_FAULT_REASON
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="code != null">
+				CODE,
+			</if>
+			<if test="name != null">
+				NAME,
+			</if>
+			<if test="valid != null">
+				VALID,
+			</if>
+			<if test="createTime != null">
+				CREATE_TIME,
+			</if>
+			<if test="createUser != null">
+				CREATE_USER,
+			</if>
+			<if test="lastUpdateTime != null">
+				LAST_UPDATE_TIME,
+			</if>
+			<if test="lastUpdateUser != null">
+				LAST_UPDATE_USER,
+			</if>
+			<if test="productType != null">
+				PRODUCT_TYPE,
+			</if>
+			
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=DECIMAL},
+			</if>
+			<if test="code != null">
+				#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="valid != null">
+				#{valid,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				#{createUser,jdbcType=VARCHAR},
+			</if>
+			<if test="lastUpdateTime != null">
+				#{lastUpdateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdateUser != null">
+				#{lastUpdateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="productType != null">
+				#{productType,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.peg.model.FaultReason">
+		update T_FAULT_REASON
+		<set>
+			<if test="code != null">
+				CODE = #{code,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				NAME = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="valid != null">
+				VALID = #{valid,jdbcType=VARCHAR},
+			</if>
+			<if test="meshFaultName != null">
+				MESHFAULTNAME = #{meshFaultName,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUser != null">
+				CREATE_USER = #{createUser,jdbcType=VARCHAR},
+			</if>
+
+			LAST_UPDATE_TIME = SYSDATE,
+
+			<if test="lastUpdateUser != null">
+				LAST_UPDATE_USER = #{lastUpdateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="lastUpdateType != null">
+				LAST_UPDATE_TYPE = #{lastUpdateType,jdbcType=VARCHAR},
+			</if>
+			<if test="productType != null">
+				PRODUCT_TYPE = #{productType,jdbcType=VARCHAR},
+			</if>
+			
+		</set>
+		where ID = #{id,jdbcType=DECIMAL}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.peg.model.FaultReason">
+		update
+		T_FAULT_REASON
+		set CODE = #{code,jdbcType=VARCHAR},
+		NAME =
+		#{name,jdbcType=VARCHAR},
+		VALID = #{valid,jdbcType=VARCHAR},
+		LAST_UPDATE_TIME = SYSDATE,
+		LAST_UPDATE_USER =
+		#{lastUpdateUser,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=DECIMAL}
+	</update>
+
+	<update id="setMeshFaultNamebyKey" parameterType="com.peg.model.FaultReason">
+		update
+		T_FAULT_REASON
+		set MESHFAULTNAME = #{meshFaultName,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=DECIMAL}
+	</update>
+
+	<update id="synchronous" parameterType="com.peg.model.FaultReason">
+		update T_FAULT_REASON
+		set
+		MESHFAULTNAME = NAME
+		where MESHFAULTNAME is null
+	</update>
+</mapper>
